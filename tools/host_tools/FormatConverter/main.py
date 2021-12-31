@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from datasource import genericdatasource
 from satxml import satxml
 from lamedb import lamedb
@@ -27,7 +29,7 @@ while True:
 		break
 
 	while True:
-		print datasources[index].getStatus()
+		print(datasources[index].getStatus())
 		list = []
 		for action in datasources[index].getCapabilities():
 			list.append(action[0])
@@ -37,5 +39,5 @@ while True:
 
 		datasources[index].getCapabilities()[action][1]()
 		#except:
-		#	print sys.exc_info()
-		#	print "sorry, could not execute that command"
+		#	print(sys.exc_info())
+		#	print("sorry, could not execute that command")

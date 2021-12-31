@@ -1,3 +1,4 @@
+
 import time
 
 real_time = None
@@ -33,7 +34,7 @@ time.time = my_time
 def my_sleep(sleep):
 	global time_offset
 	time_offset -= sleep
-	print "[fake_time] faking %f seconds" % sleep
+	print(("(faking %f seconds)" % sleep))
 
 
 time.sleep = my_sleep

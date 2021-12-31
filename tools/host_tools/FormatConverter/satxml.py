@@ -1,3 +1,4 @@
+
 import os
 from datasource import datasource
 from xml.dom import minidom
@@ -11,7 +12,7 @@ class satxml(datasource):
 		datasource.__init__(self)
 
 		if not os.path.isfile(filename):
-			print "[satxml] File %s doesn't exist. Creating it." % filename
+			print("[satxml] File %s doesn't exist. Creating it." % filename)
 
 	def getStatus(self):
 		text = datasource.getStatus(self)
@@ -24,20 +25,20 @@ class satxml(datasource):
 		return "satellites.xml"
 
 	def setFilename(self):
-		print "[satxml] Please give a filename <satellites.xml>:"
+		print("[satxml] Please give a filename <satellites.xml>:")
 		filename = inputText()
 		if filename == "":
 			self.filename = "satellites.xml"
 		else:
 			self.filename = filename
-		print "[satxml] Filename set to %s" % self.filename
+		print("[satxml] Filename set to %s" % self.filename)
 
 	def read(self):
 		basicsatxml = minidom.parse(self.filename)
 
 		for sat in basicsatxml.firstChild.childNodes:
 			if sat.nodeType == sat.ELEMENT_NODE and sat.localName == "sat":
-				print sat.localName
+				print(sat.localName)
 				satname = str(sat.getAttribute("name"))
 				satpos = str(sat.getAttribute("position"))
 				self.addSat(satname, satpos)
@@ -49,16 +50,16 @@ class satxml(datasource):
 							entry = str(transponder.getAttribute(param))
 							if entry != "":
 								parameters[param] = entry
-						if len(parameters.keys()) > 1:
+						if len(list(parameters.keys())) > 1:
 							self.addTransponder(satpos, parameters)
-		print self.transponderlist
+		print(self.transponderlist)
 
 	def write(self):
 		satxml = Document()
 		satellites = satxml.createElement("satellites")
 		satxml.appendChild(satellites)
-		satlist = self.transponderlist.keys()
-		print self.transponderlist
+		satlist = list(self.transponderlist.keys())
+		print(self.transponderlist)
 		satlist.sort()
 
 		for sat in satlist:
@@ -78,7 +79,7 @@ class satxml(datasource):
 						xmltransponder.setAttribute(param, transponder[param])
 				xmlsat.appendChild(xmltransponder)
 		prettyxml = satxml.toprettyxml()
-		print prettyxml
+		print(prettyxml)
 		file = open(self.filename, "w")
 		file.write(prettyxml)
 		file.close()
