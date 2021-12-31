@@ -1,6 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import os
 import time
-import cPickle
+import pickle
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console
 from Screens.ChoiceBox import ChoiceBox
@@ -32,8 +35,8 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListbox, gFont, getDesktop, ePicLoad, eRCInput, getPrevAsciiCode, eEnv
 from twisted.web import client
-from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
-from SoftwareTools import iSoftwareTools
+from .BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
+from .SoftwareTools import iSoftwareTools
 
 config.plugins.configurationbackup = ConfigSubsection()
 config.plugins.configurationbackup.backuplocation = ConfigText(default='/media/hdd/', visible_width=50, fixed_size=False)
@@ -56,9 +59,9 @@ def write_cache(cache_file, cache_data):
 		path = os.path.dirname(cache_file)
 		if not os.path.isdir(path):
 			os.mkdir(path)
-		cPickle.dump(cache_data, open(cache_file, 'w'), -1)
-	except Exception, ex:
-		print "[SoftwareManager] Failed to write cache data to %s:" % cache_file, ex
+		pickle.dump(cache_data, open(cache_file, 'w'), -1)
+	except Exception as ex:
+		print("[SoftwareManager] Failed to write cache data to %s:" % cache_file, ex)
 
 
 def valid_cache(cache_file, cache_ttl):
@@ -75,7 +78,7 @@ def valid_cache(cache_file, cache_ttl):
 
 
 def load_cache(cache_file):
-	return cPickle.load(open(cache_file))
+	return pickle.load(open(cache_file))
 
 
 class UpdatePluginMenu(Screen):
@@ -119,7 +122,7 @@ class UpdatePluginMenu(Screen):
 		self.text = ""
 		self.backupdirs = ' '.join(config.plugins.configurationbackup.backupdirs.value)
 		if self.menu == 0:
-			print "[SoftwareManager] building menu entries"
+			print("[SoftwareManager] building menu entries")
 			self.list.append(("install-extensions", _("Manage extensions"), _("Manage extensions or plugins for your receiver.") + self.oktext, None))
 			self.list.append(("software-update", _("Software update"), _("Online update of your receiver software.") + self.oktext, None))
 			self.list.append(("system-backup", _("Backup system settings"), _("Backup your receiver settings.") + self.oktext + "\n\n" + self.infotext, None))
@@ -303,7 +306,7 @@ class UpdatePluginMenu(Screen):
 			self.createBackupfolders()
 
 	def createBackupfolders(self):
-		print "[SoftwareManager] Creating backup folder if not already there..."
+		print("[SoftwareManager] Creating backup folder if not already there...")
 		self.backuppath = getBackupPath()
 		try:
 			if (os.path.exists(self.backuppath) == False):
@@ -400,7 +403,7 @@ class SoftwareManagerSetup(Screen, ConfigListScreen):
 
 	def confirm(self, confirmed):
 		if not confirmed:
-			print "[SoftwareManager] not confirmed"
+			print("[SoftwareManager] not confirmed")
 			return
 		else:
 			self.keySave()
@@ -1230,7 +1233,7 @@ class PluginDetails(Screen, PackageInfoHandler):
 
 		if thumbnailUrl is not None:
 			self.thumbnail = "/tmp/" + thumbnailUrl.split('/')[-1]
-			print "[SoftwareManager] downloading screenshot " + thumbnailUrl + " to " + self.thumbnail
+			print("[SoftwareManager] downloading screenshot " + thumbnailUrl + " to " + self.thumbnail)
 			if iSoftwareTools.NetworkConnectionAvailable:
 				client.downloadPage(thumbnailUrl, self.thumbnail).addCallback(self.setThumbnail).addErrback(self.fetchFailed)
 			else:
@@ -1311,7 +1314,7 @@ class PluginDetails(Screen, PackageInfoHandler):
 
 	def fetchFailed(self, string):
 		self.setThumbnail(noScreenshot=True)
-		print "[SoftwareManager] fetch failed " + string.getErrorMessage()
+		print("[SoftwareManager] fetch failed " + string.getErrorMessage())
 
 
 class OPKGMenu(Screen):
@@ -1396,7 +1399,7 @@ class OPKGSource(Screen):
 		text = ""
 		if self.configfile:
 			try:
-				fp = file(configfile, 'r')
+				fp = open(configfile, 'r')
 				sources = fp.readlines()
 				if sources:
 					text = sources[0]
@@ -1448,7 +1451,7 @@ class OPKGSource(Screen):
 	def go(self):
 		text = self["text"].getText()
 		if text:
-			fp = file(self.configfile, 'w')
+			fp = open(self.configfile, 'w')
 			fp.write(text)
 			fp.write("\n")
 			fp.close()
@@ -1504,7 +1507,7 @@ class PacketManager(Screen, NumericalTextInput):
 		self.setTitle(_("Packet manager"))
 		self.skin_path = plugin_path
 
-		self.setUseableChars(u'1234567890abcdefghijklmnopqrstuvwxyz')
+		self.setUseableChars('1234567890abcdefghijklmnopqrstuvwxyz')
 
 		self["shortcuts"] = NumberActionMap(["ShortcutActions", "WizardActions", "NumberActions", "InputActions", "InputAsciiActions", "KeyboardInputActions"],
 		{
@@ -1558,7 +1561,7 @@ class PacketManager(Screen, NumericalTextInput):
 				self.setNextIdx(keyvalue[0])
 
 	def keyGotAscii(self):
-		keyvalue = unichr(getPrevAsciiCode()).encode("utf-8")
+		keyvalue = chr(getPrevAsciiCode()).encode("utf-8")
 		if len(keyvalue) == 1:
 			self.setNextIdx(keyvalue[0])
 
@@ -1764,7 +1767,7 @@ class PacketManager(Screen, NumericalTextInput):
 		self.list = []
 		self.cachelist = []
 		if self.cache_ttl > 0 and self.vc != 0:
-			print '[SoftwareManager] Loading packagelist cache from ', self.cache_file
+			print('[SoftwareManager] Loading packagelist cache from ', self.cache_file)
 			try:
 				self.cachelist = load_cache(self.cache_file)
 				if len(self.cachelist) > 0:
@@ -1775,7 +1778,7 @@ class PacketManager(Screen, NumericalTextInput):
 				self.inv_cache = 1
 
 		if self.cache_ttl == 0 or self.inv_cache == 1 or self.vc == 0:
-			print '[SoftwareManager] rebuilding fresh package list'
+			print('[SoftwareManager] rebuilding fresh package list')
 			for x in self.packetlist:
 				status = ""
 				if x[0] in self.installed_packetlist:

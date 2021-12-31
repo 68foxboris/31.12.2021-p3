@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Tools.Profile import profile
 from enigma import eServiceReference
 from Tools.StbHardware import getBoxProc
@@ -6,7 +9,7 @@ from Tools.Directories import fileExists
 # workaround for required config entry dependencies.
 import Screens.MovieSelection
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 
 profile("LOAD:enigma")
@@ -175,8 +178,8 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		else:
 			zoomval = self.zoomrate
 
-		print 'zoomRate:', self.zoomrate
-		print 'zoomval:', zoomval
+		print('zoomRate:', self.zoomrate)
+		print('zoomval:', zoomval)
 		if fileExists("/proc/stb/vmpeg/0/zoomrate"):
 			open("/proc/stb/vmpeg/0/zoomrate", "w").write(int(zoomval))
 
@@ -207,7 +210,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarMenu, InfoBarSeek, InfoBa
 		}, prio=0, description=_("Movie Player Actions"))
 
 
-		self["DirectionActions"] = HelpableActionMap(self, "DirectionActions", {
+		self["DirectionActions"] = HelpableActionMap(self, ["DirectionActions"], {
 			"left": (self.left, (_("Scan backwards"), _("Pressing this button multiple times will increase the rate of backward scan."))),
 			"right": (self.right, (_("Scan forwards"), _("Pressing this button multiple times will increase the rate of forward scan.")))
 		}, prio=-2, description=_("Movie Player Actions"))
@@ -335,8 +338,8 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarMenu, InfoBarSeek, InfoBa
 						else:
 							self.movielistAgain()
 						return
-					except Exception, e:
-						print "[InfoBar] Failed to move to .Trash folder:", e
+					except Exception as e:
+						print("[InfoBar] Failed to move to .Trash folder:", e)
 						msg = _("Cannot move to trash can") + "\n" + str(e) + "\n"
 				info = serviceHandler.info(ref)
 				name = info and info.getName(ref) or _("this recording")
@@ -564,7 +567,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarMenu, InfoBarSeek, InfoBa
 		self.movieselection_dlg = None
 
 	def getPlaylistServiceInfo(self, service):
-		from MovieSelection import playlist
+		from .MovieSelection import playlist
 		for i, item in enumerate(playlist):
 			if item == service:
 				if config.usage.on_movie_eof.value == "repeatcurrent":

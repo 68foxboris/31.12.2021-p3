@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from os.path import join as pathjoin
 from Components.config import ConfigSubsection, config
 from Tools.LoadPixmap import LoadPixmap
@@ -86,6 +88,9 @@ class PluginDescriptor:
 		self.wakeupfnc = wakeupfnc
 
 		self.__call__ = fnc
+
+	def __call__(self, *args, **kwargs):
+		return
 
 	def updateIcon(self, path):
 		self.path = path

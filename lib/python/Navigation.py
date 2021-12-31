@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayableServiceReference, iPlayableService, setPreferredTuner, eStreamServer, iRecordableServicePtr, eDVBLocalTimeHandler, eTimer
 from Components.ImportChannels import ImportChannels
 from Components.ParentalControl import parentalControl
@@ -77,7 +78,7 @@ class Navigation:
 		now = time()
 		timeHandlerCallbacks =  eDVBLocalTimeHandler.getInstance().m_timeUpdated.get()
 		if self.__nextRecordTimerAfterEventActionAuto and now < eDVBLocalTimeHandler.timeOK:
-			print '[Navigation] RECTIMER: wakeup to standby but system time not set.'
+			print('[Navigation] RECTIMER: wakeup to standby but system time not set.')
 			if self._processTimerWakeup not in timeHandlerCallbacks:
 				timeHandlerCallbacks.append(self._processTimerWakeup)
 			return
@@ -85,7 +86,7 @@ class Navigation:
 			timeHandlerCallbacks.remove(self._processTimerWakeup)
 
 		if self.__nextRecordTimerAfterEventActionAuto and abs(self.RecordTimer.getNextRecordingTime() - now) <= 360:
-			print '[Navigation] RECTIMER: wakeup to standby detected.'
+			print('[Navigation] RECTIMER: wakeup to standby detected.')
 			open("/tmp/was_rectimer_wakeup", "w").write("1")
 			# as we woke the box to record, place the box in standby.
 			self.standbytimer = eTimer()
@@ -93,7 +94,7 @@ class Navigation:
 			self.standbytimer.start(15000, True)
 
 		elif self.__nextPowerManagerAfterEventActionAuto:
-			print '[Navigation] POWERTIMER: wakeup to standby detected.'
+			print('[Navigation] POWERTIMER: wakeup to standby detected.')
 			open("/tmp/was_powertimer_wakeup", "w").write("1")
 			# as a PowerTimer WakeToStandby was actiond to it.
 			self.standbytimer = eTimer()
@@ -134,9 +135,9 @@ class Navigation:
 			adjust = adjust[0]
 		oldref = self.currentlyPlayingServiceOrGroup
 		if ref and oldref and ref == oldref and not forceRestart:
-			print "[Navigation] ignore request to play already running service(1)"
+			print("[Navigation] ignore request to play already running service(1)")
 			return 1
-		print "[Navigation] playing: ", ref and ref.toString()
+		print("[Navigation] playing: ", ref and ref.toString())
 		if path.exists("/proc/stb/lcd/symbol_signal") and config.lcd.mode.value == '1':
 			try:
 				if '0:0:0:0:0:0:0:0:0' not in ref.toString():
@@ -164,9 +165,9 @@ class Navigation:
 					alternative_ci_ref = ResolveCiAlternative(ref, playref)
 					if alternative_ci_ref:
 						playref = alternative_ci_ref
-				print "[Navigation] alternative ref: ", playref and playref.toString()
+				print("[Navigation] alternative ref: ", playref and playref.toString())
 				if playref and oldref and playref == oldref and not forceRestart:
-					print "[Navigation] ignore request to play already running service(2)"
+					print("[Navigation] ignore request to play already running service(2)")
 					return 1
 				if not playref:
 					alternativeref = getBestPlayableServiceReference(ref, eServiceReference(), True)
@@ -175,11 +176,11 @@ class Navigation:
 						self.currentlyPlayingServiceReference = alternativeref
 						self.currentlyPlayingServiceOrGroup = ref
 						if self.pnav.playService(alternativeref):
-							print "[Navigation] Failed to start: ", alternativeref.toString()
+							print("[Navigation] Failed to start: ", alternativeref.toString())
 							self.currentlyPlayingServiceReference = None
 							self.currentlyPlayingServiceOrGroup = None
 						else:
-							print "[Navigation] alternative ref as simulate: ", alternativeref.toString()
+							print("[Navigation] alternative ref as simulate: ", alternativeref.toString())
 					return 0
 				elif checkParentalControl and not parentalControl.isServicePlayable(playref, boundFunction(self.playService, checkParentalControl=False, forceRestart=forceRestart, adjust=(count > 1 and [0, session, ref] or adjust)), session=session):
 					if self.currentlyPlayingServiceOrGroup and InfoBarInstance and InfoBarInstance.servicelist.servicelist.setCurrent(self.currentlyPlayingServiceOrGroup, adjust):
@@ -224,7 +225,7 @@ class Navigation:
 									setPreferredTuner(int(config.usage.frontend_priority_dvbs.value))
 									setPriorityFrontend = True
 				if self.pnav.playService(playref):
-					print "[Navigation] Failed to start: ", playref.toString()
+					print("[Navigation] Failed to start: ", playref.toString())
 					self.currentlyPlayingServiceReference = None
 					self.currentlyPlayingServiceOrGroup = None
 				if setPriorityFrontend:
@@ -243,7 +244,7 @@ class Navigation:
 	def recordService(self, ref, simulate=False):
 		service = None
 		if not simulate:
-			print "[Navigation] recording service: %s" % (str(ref))
+			print("[Navigation] recording service: %s" % (str(ref)))
 		if isinstance(ref, ServiceReference):
 			ref = ref.ref
 		if ref:
@@ -251,7 +252,7 @@ class Navigation:
 				ref = getBestPlayableServiceReference(ref, eServiceReference(), simulate)
 			service = ref and self.pnav and self.pnav.recordService(ref, simulate)
 			if service is None:
-				print "[Navigation] record returned non-zero"
+				print("[Navigation] record returned non-zero")
 		return service
 
 	def stopRecordService(self, service):

@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.WizardLanguage import WizardLanguage
 from Screens.HelpMenu import ShowRemoteControl
 from Screens.MessageBox import MessageBox
@@ -126,7 +129,7 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 	def checkOldInterfaceState(self):
 		# disable up interface if it was originally down and config is unchanged.
 		if self.originalInterfaceStateChanged is False:
-			for interface in self.originalInterfaceState.keys():
+			for interface in list(self.originalInterfaceState.keys()):
 				if interface == self.selectedInterface:
 					if self.originalInterfaceState[interface]["up"] is False:
 						if iNetwork.checkforInterface(interface) is True:
@@ -200,7 +203,7 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 				self.isInterfaceUp = False
 			self.resetRef.close(True)
 		else:
-			print "we should never come here!"
+			print("we should never come here!")
 
 	def AdapterSetupEnd(self, iface):
 		self.originalInterfaceStateChanged = True
@@ -318,7 +321,7 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 			self.w = iWlan.getInterface()
 			aps = iWlan.getNetworkList()
 			if aps is not None:
-				print "[NetworkWizard.py] got Accespoints!"
+				print("[NetworkWizard.py] got Accespoints!")
 				tmplist = []
 				complist = []
 				for ap in aps:

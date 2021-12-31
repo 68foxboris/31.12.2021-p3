@@ -1,7 +1,10 @@
-from GUIComponent import GUIComponent
-from VariableText import VariableText
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from Components.GUIComponent import GUIComponent
+from Components.VariableText import VariableText
 from skin import parseColor
-from ConditionalWidget import ConditionalWidget, BlinkingWidget, BlinkingWidgetConditional
+from Components.ConditionalWidget import ConditionalWidget, BlinkingWidget, BlinkingWidgetConditional
 
 from enigma import eLabel
 
@@ -90,11 +93,11 @@ class MultiColorLabel(Label):
 			if len(self.foreColors) > x:
 				self.instance.setForegroundColor(self.foreColors[x])
 			else:
-				print "setForegroundColorNum(%d) failed! defined colors:" % (x), self.foreColors
+				print("setForegroundColorNum(%d) failed! defined colors:" % (x), self.foreColors)
 
 	def setBackgroundColorNum(self, x):
 		if self.instance:
 			if len(self.backColors) > x:
 				self.instance.setBackgroundColor(self.backColors[x])
 			else:
-				print "setBackgroundColorNum(%d) failed! defined colors:" % (x), self.backColors
+				print("setBackgroundColorNum(%d) failed! defined colors:" % (x), self.backColors)

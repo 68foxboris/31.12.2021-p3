@@ -1,3 +1,4 @@
+from __future__ import print_function
 from bisect import insort
 from os import fsync, makedirs, remove, rename, sys
 from os.path import exists, isdir, realpath
@@ -75,13 +76,13 @@ def findSafeRecordPath(dirname):
 	dirname = realpath(dirname)
 	mountPoint = findMountPoint(dirname)
 	if mountPoint in ("/", "/media"):
-		print("[RecordTimer] Media is not mounted for '%s'." % dirname)
+		print(("[RecordTimer] Media is not mounted for '%s'." % dirname))
 		return None
 	if not isdir(dirname):
 		try:
 			makedirs(dirname)
 		except (IOError, OSError) as err:
-			print("[RecordTimer] Error %d: Failed to create dir '%s'!  (%s)" % (err.errno, dirname, err.strerror))
+			print(("[RecordTimer] Error %d: Failed to create dir '%s'!  (%s)" % (err.errno, dirname, err.strerror)))
 			return None
 	return dirname
 
@@ -181,7 +182,7 @@ class RecordTimer(Timer):
 			try:
 				rename(self.timersFilename, "%s_bad" % self.timersFilename)
 			except (IOError, OSError) as err:
-				print("[RecordTimer] Error %d: Renaming broken timer file failed!  (%s)" % (err.errno, err.strerror))
+				print(("[RecordTimer] Error %d: Renaming broken timer file failed!  (%s)" % (err.errno, err.strerror)))
 			return
 		check = False
 		overlapText = [_("Timer overlaps detected in timers.xml!"), _("Please check all timers.")]
@@ -408,7 +409,7 @@ class RecordTimer(Timer):
 		if not timersanitycheck.check():
 			if not ignoreTSC:
 				print("[RecordTimer] Timer conflict detected!")
-				print(timersanitycheck.getSimulTimerList())
+				print((timersanitycheck.getSimulTimerList()))
 				return timersanitycheck.getSimulTimerList()
 			else:
 				print("[RecordTimer] Ignore timer conflict.")
@@ -428,7 +429,7 @@ class RecordTimer(Timer):
 					entry.begin += 1
 		entry.conflict_detection = real_cd
 		entry.timeChanged()
-		print("[RecordTimer] Record %s." % str(entry))
+		print(("[RecordTimer] Record %s." % str(entry)))
 		entry.Timer = self
 		self.addTimerEntry(entry)
 		if dosave:
@@ -658,15 +659,15 @@ class RecordTimer(Timer):
 		return returnValue
 
 	def removeEntry(self, entry):
-		print("[RecordTimer] Remove entry '%s'." % str(entry))
+		print(("[RecordTimer] Remove entry '%s'." % str(entry)))
 		entry.repeated = False  # Avoid re-enqueuing.
 		entry.autoincrease = False
 		entry.abort()  # Abort timer.  This sets the end time to current time, so timer will be stopped.
 		if entry.state != entry.StateEnded:
 			self.timeChanged(entry)
-		print("[RecordTimer] State: %s." % entry.state)
-		print("[RecordTimer] In processed: %s." % entry in self.processed_timers)
-		print("[RecordTimer] In running: %s." % entry in self.timer_list)
+		print(("[RecordTimer] State: %s." % entry.state))
+		print(("[RecordTimer] In processed: %s." % entry in self.processed_timers))
+		print(("[RecordTimer] In running: %s." % entry in self.timer_list))
 		if not entry.dontSave:  # Auto increase instant timer if possible.
 			for timer in self.timer_list:
 				if timer.setAutoincreaseEnd():
@@ -704,13 +705,13 @@ class RecordTimerEntry(TimerEntry, object):
 	@staticmethod
 	def setWasInDeepStandby():
 		RecordTimerEntry.wasInDeepStandby = True
-		eActionMap.getInstance().bindAction("", -maxsize - 1, RecordTimerEntry.keypress)
+		eActionMap.getInstance().bindAction("", -sys.maxsize - 1, RecordTimerEntry.keypress)
 
 	@staticmethod
 	def setWasInStandby():
 		if not RecordTimerEntry.wasInStandby:
 			if not RecordTimerEntry.wasInDeepStandby:
-				eActionMap.getInstance().bindAction("", -maxsize - 1, RecordTimerEntry.keypress)
+				eActionMap.getInstance().bindAction("", -sys.maxsize - 1, RecordTimerEntry.keypress)
 			RecordTimerEntry.wasInDeepStandby = False
 			RecordTimerEntry.wasInStandby = True
 
@@ -822,7 +823,7 @@ class RecordTimerEntry(TimerEntry, object):
 
 	def log(self, code, msg):
 		self.log_entries.append((int(time()), code, msg))
-		print("[RecordTimer] Log message: '%s'." % msg)
+		print(("[RecordTimer] Log message: '%s'." % msg))
 
 	def calculateFilename(self, name=None):
 		serviceName = self.service_ref.getServiceName()
@@ -1010,7 +1011,7 @@ class RecordTimerEntry(TimerEntry, object):
 						Trashcan.instance.cleanIfIdle(self.Filename)
 					except Exception as e:
 						print("[RecordTimer] Failed to call Trashcan.instance.cleanIfIdle()!")
-						print("[RecordTimer] Error: %s" % str(e))
+						print(("[RecordTimer] Error: %s" % str(e)))
 				# Fine, it worked, resources are allocated.
 				self.next_activation = self.begin
 				self.backoff = 0
@@ -1348,7 +1349,7 @@ class RecordTimerEntry(TimerEntry, object):
 		oldPrepare = self.start_prepare
 		self.start_prepare = self.begin - self.prepare_time
 		self.backoff = 0
-		print("[RecordTimer] DEBUG: In timeChanged. oldPrepare=%d, newPrepare=%d." % (oldPrepare, self.start_prepare))
+		print(("[RecordTimer] DEBUG: In timeChanged. oldPrepare=%d, newPrepare=%d." % (oldPrepare, self.start_prepare)))
 		if int(oldPrepare) and int(oldPrepare) != int(self.start_prepare):
 			self.log(15, "Record time changed, start prepare is now %s." % ctime(self.start_prepare))
 

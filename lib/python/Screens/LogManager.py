@@ -38,11 +38,11 @@ def getSkinFactor(refresh = False):
 		try:
 			skinfactor = getDesktop(0).size().width() / 1280.0
 			if not skinfactor in [1, 1.5, 3]:
-				print('[SKIN] getSkinFactor unknown result (%s) -> set skinfactor to 1' %skinfactor)
+				print(('[SKIN] getSkinFactor unknown result (%s) -> set skinfactor to 1' %skinfactor))
 				skinfactor = 1
-		except Exception, err:
+		except Exception as err:
 			skinfactor = 1
-			print('[SKIN] getSkinFactor failed: ', err)
+			print(('[SKIN] getSkinFactor failed: ', err))
 	return skinfactor
 
 def get_size(start_path=None):
@@ -155,10 +155,10 @@ class LogManagerPoller:
 			#small JobTrash (in selected log file dir only) twice a day
 			matches.append(config.crash.debugPath.value)
 
-		print("[LogManager] found following log's:", matches)
+		print(("[LogManager] found following log's:", matches))
 		if len(matches):
 			for logsfolder in matches:
-				print("[LogManager] looking in:", logsfolder)
+				print(("[LogManager] looking in:", logsfolder))
 				logssize = get_size(logsfolder)
 				bytesToRemove = logssize - allowedBytes
 				candidates = []
@@ -172,14 +172,14 @@ class LogManagerPoller:
 							#print "Last created: %s" % ctime(st.st_ctime)
 							#print "Last modified: %s" % ctime(st.st_mtime)
 							if st.st_mtime < ctimeLimit:
-								print("[LogManager] " + str(fn) + ": Too old:", ctime(st.st_mtime))
+								print(("[LogManager] " + str(fn) + ": Too old:", ctime(st.st_mtime)))
 								eBackgroundFileEraser.getInstance().erase(fn)
 								bytesToRemove -= st.st_size
 							else:
 								candidates.append((st.st_mtime, fn, st.st_size))
 								size += st.st_size
 						except Exception as e:
-							print("[LogManager] Failed to stat %s:" % name, e)
+							print(("[LogManager] Failed to stat %s:" % name, e))
 					# Remove empty directories if possible
 					for name in dirs:
 						try:
@@ -189,7 +189,7 @@ class LogManagerPoller:
 					candidates.sort()
 					# Now we have a list of ctime, candidates, size. Sorted by ctime (=deletion time)
 					for st_ctime, fn, st_size in candidates:
-						print("[LogManager] " + str(logsfolder) + ": bytesToRemove", bytesToRemove)
+						print(("[LogManager] " + str(logsfolder) + ": bytesToRemove", bytesToRemove))
 						if bytesToRemove < 0:
 							break
 						eBackgroundFileEraser.getInstance().erase(fn)

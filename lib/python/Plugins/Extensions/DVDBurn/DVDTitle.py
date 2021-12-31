@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.config import config, ConfigSubsection, ConfigSubList, ConfigInteger, ConfigText, ConfigSelection
 import TitleCutter
 
@@ -81,7 +84,7 @@ class DVDTitle:
 		template = template.replace("$C", self.DVBchannel)
 
 		#if template.find("$A") >= 0:
-		from TitleProperties import languageChoices
+		from .TitleProperties import languageChoices
 		audiolist = []
 		for audiotrack in self.properties.audiotracks:
 			active = audiotrack.active.getValue()

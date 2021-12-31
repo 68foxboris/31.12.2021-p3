@@ -1,4 +1,5 @@
-from config import config, ConfigSlider, ConfigSelection, ConfigYesNo, ConfigEnableDisable, ConfigSubsection, ConfigBoolean, ConfigSelectionNumber, ConfigNothing, NoSave
+from __future__ import print_function
+from Components.config import config, ConfigSlider, ConfigSelection, ConfigYesNo, ConfigEnableDisable, ConfigSubsection, ConfigBoolean, ConfigSelectionNumber, ConfigNothing, NoSave
 from enigma import eAVSwitch, eDVBVolumecontrol, getDesktop
 from Components.SystemInfo import BoxInfo
 import os
@@ -309,7 +310,7 @@ def InitAVSwitch():
 		def setScaler_sharpness(config):
 			myval = int(config.value)
 			try:
-				print("--> setting scaler_sharpness to: %0.8X" % myval)
+				print(("--> setting scaler_sharpness to: %0.8X" % myval))
 				print("[AVSwitch] Write to /proc/stb/vmpeg/0/pep_scaler_sharpness")
 				open("/proc/stb/vmpeg/0/pep_scaler_sharpness", "w").write("%0.8X" % myval)
 				print("[AVSwitch] Write to /proc/stb/vmpeg/0/pep_apply")

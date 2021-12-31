@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import ePixmap, eTimer
 from os.path import isfile
 
@@ -24,7 +25,7 @@ class Pixmap(GUIComponent):
 			attribs = []
 			for (attrib, value) in self.skinAttributes:
 				if attrib == "offset":
-					self.xOffset, self.yOffset = map(int, value.split(","))
+					self.xOffset, self.yOffset = list(map(int, value.split(",")))
 				else:
 					attribs.append((attrib, value))
 			self.skinAttributes = attribs
@@ -181,4 +182,4 @@ class MultiPixmap(Pixmap):
 			if len(self.pixmaps) > index:
 				self.instance.setPixmap(self.pixmaps[index])
 			else:
-				print("[Pixmap] setPixmapNum(%d) failed!  Defined pixmaps: %s." % (index, str(self.pixmaps)))
+				print(("[Pixmap] setPixmapNum(%d) failed!  Defined pixmaps: %s." % (index, str(self.pixmaps))))

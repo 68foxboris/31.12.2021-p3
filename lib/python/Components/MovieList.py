@@ -1,4 +1,7 @@
-from GUIComponent import GUIComponent
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from Components.GUIComponent import GUIComponent
 from Tools.FuzzyDate import FuzzyTime
 from ServiceReference import ServiceReference
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend, MultiContentEntryProgress
@@ -271,28 +274,28 @@ class MovieList(GUIComponent):
 
 	def applySkin(self, desktop, parent):
 		def warningWrongSkinParameter(string):
-			print "[MovieList] wrong '%s' skin parameters" % string
+			print("[MovieList] wrong '%s' skin parameters" % string)
 
 		def fontName(value):
 			self.fontName = value
 
 		def fontSizesOriginal(value):
-			self.fontSizesOriginal = map(parseScale, value.split(","))
+			self.fontSizesOriginal = list(map(parseScale, value.split(",")))
 			if len(self.fontSizesOriginal) != 3:
 				warningWrongSkinParameter(attrib)
 
 		def fontSizesCompact(value):
-			self.fontSizesCompact = map(parseScale, value.split(","))
+			self.fontSizesCompact = list(map(parseScale, value.split(",")))
 			if len(self.fontSizesCompact) != 2:
 				warningWrongSkinParameter(attrib)
 
 		def fontSizesMinimal(value):
-			self.fontSizesMinimal = map(parseScale, value.split(","))
+			self.fontSizesMinimal = list(map(parseScale, value.split(",")))
 			if len(self.fontSizesMinimal) != 2:
 				warningWrongSkinParameter(attrib)
 
 		def itemHeights(value):
-			self.itemHeights = map(parseScale, value.split(","))
+			self.itemHeights = list(map(parseScale, value.split(",")))
 			if len(self.itemHeights) != 3:
 				warningWrongSkinParameter(attrib)
 
@@ -330,12 +333,12 @@ class MovieList(GUIComponent):
 			self.spaceRight = parseScale(value)
 
 		def columnsOriginal(value):
-			self.columnsOriginal = map(parseScale, value.split(","))
+			self.columnsOriginal = list(map(parseScale, value.split(",")))
 			if len(self.columnsOriginal) != 2:
 				warningWrongSkinParameter(attrib)
 
 		def columnsCompactDescription(value):
-			self.columnsCompactDescription = map(parseScale, value.split(","))
+			self.columnsCompactDescription = list(map(parseScale, value.split(",")))
 			if len(self.columnsCompactDescription) != 3:
 				warningWrongSkinParameter(attrib)
 
@@ -647,7 +650,7 @@ class MovieList(GUIComponent):
 
 		reflist = root and serviceHandler.list(root)
 		if reflist is None:
-			print "[MovieList] listing of movies failed"
+			print("[MovieList] listing of movies failed")
 			return
 		realtags = set()
 		autotags = {}
@@ -701,7 +704,7 @@ class MovieList(GUIComponent):
 			if filter_tags is not None:
 				this_tags = set(this_tags)
 				if not this_tags.issuperset(filter_tags):
-					print "Skipping", name, "tags=", this_tags, " filter=", filter_tags
+					print("Skipping", name, "tags=", this_tags, " filter=", filter_tags)
 					continue
 
 			self.list.append((serviceref, info, begin, -1))
@@ -752,7 +755,7 @@ class MovieList(GUIComponent):
 
 		# reverse the dictionary to see which unique movie each tag now references
 		rautotags = {}
-		for tag, movies in autotags.items():
+		for tag, movies in list(autotags.items()):
 			if (len(movies) > 1):
 				movies = tuple(movies) # a tuple can be hashed, but a list not
 				item = rautotags.get(movies, [])
@@ -760,7 +763,7 @@ class MovieList(GUIComponent):
 					rautotags[movies] = item
 				item.append(tag)
 		self.tags = {}
-		for movies, tags in rautotags.items():
+		for movies, tags in list(rautotags.items()):
 			movie = movies[0]
 			# format the tag lists so that they are in 'original' order
 			tags.sort(key=movie.find)

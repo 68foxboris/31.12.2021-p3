@@ -1,4 +1,6 @@
-from MenuList import MenuList
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Components.MenuList import MenuList
 
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename
 from os import path

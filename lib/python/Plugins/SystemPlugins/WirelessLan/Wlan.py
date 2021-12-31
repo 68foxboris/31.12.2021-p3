@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.config import config, ConfigYesNo, NoSave, ConfigSubsection, ConfigText, ConfigSelection, ConfigPassword
 from Components.Console import Console
 from Components.Network import iNetwork
@@ -84,7 +87,7 @@ class Wlan:
 			scanresults = ifobj.scan()
 		except:
 			scanresults = None
-			print "[WirelessLan] No wireless networks could be found"
+			print("[WirelessLan] No wireless networks could be found")
 		aps = {}
 		if scanresults is not None:
 			(num_channels, frequencies) = ifobj.getChannelInfo()
@@ -162,7 +165,7 @@ class wpaSupplicant:
 		contents += "ssid=" + essid + "\n"
 		contents += "method=" + encryption + "\n"
 		contents += "key=" + psk + "\n"
-		print "[WirelessLan] content = \n"+contents
+		print("[WirelessLan] content = \n"+contents)
 
 		fd = open(getWlConfName(iface), "w")
 		fd.write(contents)
@@ -198,7 +201,7 @@ class wpaSupplicant:
 				else:
 					continue
 		except:
-			print "[Wlan.py] Error parsing ", configfile
+			print("[Wlan.py] Error parsing ", configfile)
 			wsconfig = {
 					'hiddenessid': False,
 					'ssid': "",
@@ -207,8 +210,8 @@ class wpaSupplicant:
 					'key': "",
 				}
 
-		for (k, v) in wsconf.items():
-			print "[wsconf][%s] %s" % (k, v)
+		for (k, v) in list(wsconf.items()):
+			print("[wsconf][%s] %s" % (k, v))
 
 		return wsconf
 
@@ -223,7 +226,7 @@ class wpaSupplicant:
 			self.writeBcmWifiConfig(iface, essid, encryption, psk)
 			return
 
-		fp = file(getWlanConfigName(iface), 'w')
+		fp = open(getWlanConfigName(iface), 'w')
 		fp.write('#WPA Supplicant Configuration by enigma2\n')
 		fp.write('ctrl_interface=/var/run/wpa_supplicant\n')
 		fp.write('eapol_version=1\n')
@@ -272,8 +275,8 @@ class wpaSupplicant:
 			configfile = '/etc/wpa_supplicant.conf'
 		try:
 			#parse the wpasupplicant configfile
-			print "[WirelessLan] parsing configfile: ", configfile
-			fp = file(configfile, 'r')
+			print("[WirelessLan] parsing configfile: ", configfile)
+			fp = open(configfile, 'r')
 			supplicant = fp.readlines()
 			fp.close()
 			essid = None
@@ -324,7 +327,7 @@ class wpaSupplicant:
 					'key': config.plugins.wlan.psk.value,
 				}
 
-			for (key, item) in wsconfig.items():
+			for (key, item) in list(wsconfig.items()):
 				if item is "None" or item is "":
 					if key == 'hiddenessid':
 						wsconfig['hiddenessid'] = False
@@ -337,7 +340,7 @@ class wpaSupplicant:
 					if key == 'key':
 						wsconfig['key'] = ""
 		except:
-			print "[WirelessLan] Error parsing ", configfile
+			print("[WirelessLan] Error parsing ", configfile)
 			wsconfig = {
 					'hiddenessid': False,
 					'ssid': "",
@@ -358,7 +361,7 @@ class Status:
 
 	def stopWlanConsole(self):
 		if self.WlanConsole is not None:
-			print "[WirelessLan] iStatus killing self.WlanConsole"
+			print("[WirelessLan] iStatus killing self.WlanConsole")
 			self.WlanConsole.killAll()
 			self.WlanConsole = None
 
@@ -445,7 +448,7 @@ class Status:
 
 		if self.WlanConsole is not None:
 			if not self.WlanConsole.appContainers:
-				print "[WirelessLan] self.wlaniface after loading:", self.wlaniface
+				print("[WirelessLan] self.wlaniface after loading:", self.wlaniface)
 				if self.statusCallback is not None:
 						self.statusCallback(True, self.wlaniface)
 						self.statusCallback = None

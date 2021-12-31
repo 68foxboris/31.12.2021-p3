@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.ChannelSelection import *
 from Screens.ChoiceBox import ChoiceBox
@@ -48,7 +51,7 @@ class CIselectMainMenu(Screen):
 
 		NUM_CI = BoxInfo.getItem("CommonInterface")
 
-		print "[CommonInterfaceAssignment] FOUND %d CI Slots " % NUM_CI
+		print("[CommonInterfaceAssignment] FOUND %d CI Slots " % NUM_CI)
 
 		self.dlg = None
 		self.state = {}
@@ -79,9 +82,9 @@ class CIselectMainMenu(Screen):
 			action = cur[2]
 			slot = cur[3]
 			if action == 1:
-				print "[CommonInterfaceAssignment] there is no CI Slot in your receiver"
+				print("[CommonInterfaceAssignment] there is no CI Slot in your receiver")
 			else:
-				print "[CommonInterfaceAssignment] selected CI Slot : %d" % slot
+				print("[CommonInterfaceAssignment] selected CI Slot : %d" % slot)
 				if config.usage.setup_level.index > 1: # advanced
 					self.session.open(CIconfigMenu, slot)
 				else:
@@ -133,7 +136,7 @@ class CIconfigMenu(Screen):
 				"cancel": self.cancel
 			}, -1)
 
-		print "[CI_Wizzard_Config] Configuring CI Slots : %d  " % self.ci_slot
+		print("[CI_Wizzard_Config] Configuring CI Slots : %d  " % self.ci_slot)
 
 		i = 0
 		self.caidlist = []
@@ -141,7 +144,7 @@ class CIconfigMenu(Screen):
 			i += 1
 			self.caidlist.append((str(hex(int(caid))), str(caid), i))
 
-		print "[CI_Wizzard_Config_CI%d] read following CAIds from CI: %s" % (self.ci_slot, self.caidlist)
+		print("[CI_Wizzard_Config_CI%d] read following CAIds from CI: %s" % (self.ci_slot, self.caidlist))
 
 		self.selectedcaid = []
 		self.servicelist = []
@@ -179,7 +182,7 @@ class CIconfigMenu(Screen):
 			try:
 				os.remove(self.filename)
 			except:
-				print "[CommonInterfaceAssignment] CI_Config_CI%d error remove xml..." % self.ci_slot
+				print("[CommonInterfaceAssignment] CI_Config_CI%d error remove xml..." % self.ci_slot)
 			else:
 				self.session.openWithCallback(self.restartGui, MessageBox, _("Restart GUI now?"), MessageBox.TYPE_YESNO)
 
@@ -273,7 +276,7 @@ class CIconfigMenu(Screen):
 
 	def saveXML(self):
 		try:
-			fp = file(self.filename, 'w')
+			fp = open(self.filename, 'w')
 			fp.write("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n")
 			fp.write("<ci>\n")
 			fp.write("\t<slot>\n")
@@ -296,7 +299,7 @@ class CIconfigMenu(Screen):
 			fp.write("</ci>\n")
 			fp.close()
 		except:
-			print "[CommonInterfaceAssignment] CI_Config_CI%d xml not written" % self.ci_slot
+			print("[CommonInterfaceAssignment] CI_Config_CI%d xml not written" % self.ci_slot)
 			os.unlink(self.filename)
 
 	def loadXML(self):
@@ -319,7 +322,7 @@ class CIconfigMenu(Screen):
 				for caid in slot.findall("caid"):
 					read_caid = caid.get("id").encode("UTF-8")
 					self.selectedcaid.append((str(read_caid), str(read_caid), i))
-					self.usingcaid.append(long(read_caid, 16))
+					self.usingcaid.append(int(read_caid, 16))
 					i += 1
 
 				for service in slot.findall("service"):
@@ -334,11 +337,11 @@ class CIconfigMenu(Screen):
 
 				self.ci_config.append((int(read_slot), (self.read_services, self.read_providers, self.usingcaid)))
 		except:
-			print "[CommonInterfaceAssignment] CI_Config_CI%d error parsing xml..." % self.ci_slot
+			print("[CommonInterfaceAssignment] CI_Config_CI%d error parsing xml..." % self.ci_slot)
 			try:
 				os.remove(self.filename)
 			except:
-				print "[CommonInterfaceAssignment] CI_Activate_Config_CI%d error remove damaged xml..." % self.ci_slot
+				print("[CommonInterfaceAssignment] CI_Activate_Config_CI%d error remove damaged xml..." % self.ci_slot)
 
 		for item in self.read_services:
 			if len(item):
@@ -698,7 +701,7 @@ def sessionstart(reason, session):
 def autostart(reason, **kwargs):
 	global global_session
 	if reason == 0:
-		print "[CI_Assignment] activating ci configs:"
+		print("[CI_Assignment] activating ci configs:")
 		activate_all(global_session)
 	elif reason == 1:
 		global_session = None

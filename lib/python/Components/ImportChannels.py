@@ -1,15 +1,18 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import threading
-import urllib2
+import urllib
 import os
 import shutil
 import tempfile
 from json import loads
 from enigma import eDVBDB, eEPGCache
 from Screens.MessageBox import MessageBox
-from config import config, ConfigText
+from Components.config import config, ConfigText
 from Tools import Notifications
-from base64 import encodestring
-from urllib import quote
+from base64 import encodebytes
+from urllib.parse import quote
 import xml.etree.ElementTree as et
 
 settingfiles = ('lamedb', 'bouquets.', 'userbouquet.', 'blacklist', 'whitelist', 'alternatives.')
@@ -27,16 +30,16 @@ class ImportChannels():
 			if config.usage.remote_fallback_openwebif_customize.value:
 				self.url = "%s:%s" % (self.url, config.usage.remote_fallback_openwebif_port.value)
 				if config.usage.remote_fallback_openwebif_userid.value and config.usage.remote_fallback_openwebif_password.value:
-					self.header = "Basic %s" % encodestring("%s:%s" % (config.usage.remote_fallback_openwebif_userid.value, config.usage.remote_fallback_openwebif_password.value)).strip()
+					self.header = "Basic %s" % encodebytes("%s:%s" % (config.usage.remote_fallback_openwebif_userid.value, config.usage.remote_fallback_openwebif_password.value)).strip()
 			self.remote_fallback_import = config.usage.remote_fallback_import.value
 			self.thread = threading.Thread(target=self.threaded_function, name="ChannelsImport")
 			self.thread.start()
 
 	def getUrl(self, url, timeout=5):
-		request = urllib2.Request(url)
+		request = urllib.request.Request(url)
 		if self.header:
 			request.add_header("Authorization", self.header)
-		return urllib2.urlopen(request, timeout=timeout)
+		return urllib.request.urlopen(request, timeout=timeout)
 
 	def getTerrestrialUrl(self):
 		url = config.usage.remote_fallback_dvb_t.value
@@ -66,13 +69,13 @@ class ImportChannels():
 		self.getTerrestrialRegion(settings)
 		self.tmp_dir = tempfile.mkdtemp(prefix="ImportChannels")
 		if "epg" in self.remote_fallback_import:
-			print "[ImportChannels] Writing epg.dat file on sever box"
+			print("[ImportChannels] Writing epg.dat file on sever box")
 			try:
 				self.getUrl("%s/web/saveepg" % self.url, timeout=30).read()
 			except:
 				self.ImportChannelsDone(False, _("Error when writing epg.dat on server"))
 				return
-			print "[ImportChannels] Get EPG Location"
+			print("[ImportChannels] Get EPG Location")
 			try:
 				epgdatfile = self.getFallbackSettingsValue(settings, "config.misc.epgcache_filename") or "/hdd/epg.dat"
 				try:
@@ -84,7 +87,7 @@ class ImportChannels():
 				self.ImportChannelsDone(False, _("Error while retreiving location of epg.dat on server"))
 				return
 			if epg_location:
-				print "[Import Channels] Copy EPG file..."
+				print("[Import Channels] Copy EPG file...")
 				try:
 					open(os.path.join(self.tmp_dir, "epg.dat"), "wb").write(self.getUrl("%s/file?file=%s" % (self.url, epg_location)).read())
 					shutil.move(os.path.join(self.tmp_dir, "epg.dat"), config.misc.epgcache_filename.value)
@@ -94,26 +97,26 @@ class ImportChannels():
 			else:
 				self.ImportChannelsDone(False, _("No epg.dat file found server"))
 		if "channels" in self.remote_fallback_import:
-			print "[Import Channels] reading dir"
+			print("[Import Channels] reading dir")
 			try:
 				files = [file for file in loads(self.getUrl("%s/file?dir=/etc/enigma2" % self.url).read())["files"] if os.path.basename(file).startswith(settingfiles)]
 				for file in files:
 					file = file.encode("UTF-8")
-					print "[Import Channels] Downloading %s" % file
+					print("[Import Channels] Downloading %s" % file)
 					try:
 						open(os.path.join(self.tmp_dir, os.path.basename(file)), "wb").write(self.getUrl("%s/file?file=%s" % (self.url, quote(file))).read())
-					except Exception, e:
-						print "[Import Channels] Exception: %s" % str(e)
+					except Exception as e:
+						print("[Import Channels] Exception: %s" % str(e))
 						self.ImportChannelsDone(False, _("ERROR downloading file %s") % file)
 						return
 			except:
 				self.ImportChannelsDone(False, _("Error %s") % self.url)
 				return
-			print "[Import Channels] Removing files..."
+			print("[Import Channels] Removing files...")
 			files = [file for file in os.listdir("/etc/enigma2") if file.startswith(settingfiles)]
 			for file in files:
 				os.remove(os.path.join("/etc/enigma2", file))
-			print "[Import Channels] copying files..."
+			print("[Import Channels] copying files...")
 			files = [x for x in os.listdir(self.tmp_dir) if x.startswith(settingfiles)]
 			for file in files:
 				shutil.move(os.path.join(self.tmp_dir, file), os.path.join("/etc/enigma2", file))

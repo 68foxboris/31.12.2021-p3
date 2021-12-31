@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.SystemInfo import BoxInfo
 from Components.Console import Console
 import os
@@ -18,7 +19,7 @@ def getMultibootStartupDevice():
 			else:
 				Console().ePopen('mount %s %s' % (device, tmp.dir))
 			if os.path.isfile(os.path.join(tmp.dir, "STARTUP")):
-				print '[Multiboot] Startupdevice found:', device
+				print('[Multiboot] Startupdevice found:', device)
 				return device
 			Console().ePopen('umount %s' % tmp.dir)
 	if not os.path.ismount(tmp.dir):
@@ -59,7 +60,7 @@ def getMultibootslots():
 			#the boot device has ancient content and does not contain the correct STARTUP files
 			for slot in range(1, 5):
 				bootslots[slot] = {'device': '/dev/mmcblk0p%s' % (slot * 2 + 1), 'startupfile': None}
-	print '[Multiboot] Bootslots found:', bootslots
+	print('[Multiboot] Bootslots found:', bootslots)
 	return bootslots
 
 
@@ -70,7 +71,7 @@ def getCurrentImage():
 			return int(slot[0])
 		else:
 			device = getparam(open('/sys/firmware/devicetree/base/chosen/bootargs', 'r').read(), 'root')
-			for slot in BoxInfo.getItem("canMultiBoot").keys():
+			for slot in list(BoxInfo.getItem("canMultiBoot").keys()):
 				if BoxInfo.getItem("canMultiBoot")[slot]['device'] == device:
 					return slot
 
@@ -82,7 +83,7 @@ def getCurrentImageMode():
 def deleteImage(slot):
 	tmp.dir = tempfile.mkdtemp(prefix="Multiboot")
 	Console().ePopen('mount %s %s' % (BoxInfo.getItem("canMultiBoot")[slot]['device'], tmp.dir))
-	enigma2binaryfile = os.path.join(os.sep.join(filter(None, [tmp.dir, BoxInfo.getItem("canMultiBoot")[slot].get('rootsubdir', '')])), 'usr/bin/enigma2')
+	enigma2binaryfile = os.path.join(os.sep.join([_f for _f in [tmp.dir, BoxInfo.getItem("canMultiBoot")[slot].get('rootsubdir', '')] if _f]), 'usr/bin/enigma2')
 	if os.path.exists(enigma2binaryfile):
 		os.rename(enigma2binaryfile, '%s.bak' % enigma2binaryfile)
 	Console().ePopen('umount %s' % tmp.dir)
@@ -94,7 +95,7 @@ def restoreImages():
 	for slot in BoxInfo.getItem("canMultiBoot"):
 		tmp.dir = tempfile.mkdtemp(prefix="Multiboot")
 		Console().ePopen('mount %s %s' % (BoxInfo.getItem("canMultiBoot")[slot]['device'], tmp.dir))
-		enigma2binaryfile = os.path.join(os.sep.join(filter(None, [tmp.dir, BoxInfo.getItem("canMultiBoot")[slot].get('rootsubdir', '')])), 'usr/bin/enigma2')
+		enigma2binaryfile = os.path.join(os.sep.join([_f for _f in [tmp.dir, BoxInfo.getItem("canMultiBoot")[slot].get('rootsubdir', '')] if _f]), 'usr/bin/enigma2')
 		if os.path.exists('%s.bak' % enigma2binaryfile):
 			os.rename('%s.bak' % enigma2binaryfile, enigma2binaryfile)
 		Console().ePopen('umount %s' % tmp.dir)
@@ -108,7 +109,7 @@ def getImagelist():
 		tmp.dir = tempfile.mkdtemp(prefix="Multiboot")
 		for slot in sorted(BoxInfo.getItem("canMultiBoot").keys()):
 			Console().ePopen('mount %s %s' % (BoxInfo.getItem("canMultiBoot")[slot]['device'], tmp.dir))
-			imagedir = os.sep.join(filter(None, [tmp.dir, BoxInfo.getItem("canMultiBoot")[slot].get('rootsubdir', '')]))
+			imagedir = os.sep.join([_f for _f in [tmp.dir, BoxInfo.getItem("canMultiBoot")[slot].get('rootsubdir', '')] if _f])
 			if os.path.isfile(os.path.join(imagedir, 'usr/bin/enigma2')):
 				try:
 					from datetime import datetime

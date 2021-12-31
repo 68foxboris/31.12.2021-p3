@@ -1,4 +1,7 @@
-import Netlink
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from Components import Netlink
 import enigma
 import os
 
@@ -20,13 +23,13 @@ class NetlinkReader():
 					devname = event['DEVNAME']
 					action = event['ACTION']
 					if action == 'add':
-						print "New input device detected:", devname
+						print("New input device detected:", devname)
 						enigma.addInputDevice(os.path.join('/dev', devname))
 					elif action == 'remove':
-						print "Removed input device:", devname
+						print("Removed input device:", devname)
 						enigma.removeInputDevice(os.path.join('/dev', devname))
 				elif subsystem == 'net':
-					from Network import iNetwork
+					from .Network import iNetwork
 					iNetwork.hotplug(event)
 			except KeyError:
 				# Ignore "not found"
@@ -34,7 +37,7 @@ class NetlinkReader():
 
 	def connectionLost(self, failure):
 		# Ignore...
-		print "connectionLost?", failure
+		print("connectionLost?", failure)
 		self.nls.close()
 
 	def logPrefix(self):

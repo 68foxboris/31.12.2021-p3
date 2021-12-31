@@ -1,3 +1,4 @@
+from __future__ import print_function
 from fcntl import ioctl
 from os import O_NONBLOCK, O_RDWR, close as osclose, listdir, open as osopen, write as oswrite
 from os.path import isdir, isfile
@@ -36,15 +37,15 @@ class InputDevices:
 			try:
 				buffer = b"\0" * 512
 				self.fd = osopen("/dev/input/%s" % device, O_RDWR | O_NONBLOCK)
-				self.name = ioctl(self.fd, self.EVIOCGNAME(256), buffer)
+				self.name = ioctl(self.fd, EVIOCGNAME(256), buffer).decode()
 				osclose(self.fd)
 				self.name = str(self.name[:self.name.find(b"\0")])
 			except (IOError, OSError) as err:
-				print("[InputDevice] Error: device='%s' getInputDevices <ERROR: ioctl(EVIOCGNAME): '%s'>" % (device, str(err)))
+				print(("[InputDevice] Error: device='%s' getInputDevices <ERROR: ioctl(EVIOCGNAME): '%s'>" % (device, str(err))))
 				self.name = None
 			if self.name:
 				devType = self.getInputDeviceType(self.name.lower())
-				print("[InputDevice] Found device '%s' with name '%s' of type '%s'." % (device, self.name, "Unknown" if devType is None else devType.capitalize()))
+				print(("[InputDevice] Found device '%s' with name '%s' of type '%s'." % (device, self.name, "Unknown" if devType is None else devType.capitalize())))
 				# What was this for?
 				# if self.name == "aml_keypad":
 				# 	print("[InputDevice] ALERT: Old code flag for 'aml_keypad'.")
@@ -65,17 +66,17 @@ class InputDevices:
 
 	def EVIOCGNAME(self, length):
 		# From include/uapi/asm-generic/ioctl.h and asm-generic/ioctl.h for HAVE_OLDE2_API
-		IOC_NRBITS = 8L
-		IOC_TYPEBITS = 8L
+		IOC_NRBITS = 8
+		IOC_TYPEBITS = 8
 		if BoxInfo.getItem("OLDE2API"):
-			IOC_SIZEBITS = 13L
+			IOC_SIZEBITS = 13
 		else:
-			IOC_SIZEBITS = 13L if "mips" in machine() else 14L
-		IOC_NRSHIFT = 0L
+			IOC_SIZEBITS = 13 if "mips" in machine() else 14
+		IOC_NRSHIFT = 0
 		IOC_TYPESHIFT = IOC_NRSHIFT + IOC_NRBITS
 		IOC_SIZESHIFT = IOC_TYPESHIFT + IOC_TYPEBITS
 		IOC_DIRSHIFT = IOC_SIZESHIFT + IOC_SIZEBITS
-		IOC_READ = 2L
+		IOC_READ = 2
 		return (IOC_READ << IOC_DIRSHIFT) | (length << IOC_SIZESHIFT) | (0x45 << IOC_TYPESHIFT) | (0x06 << IOC_NRSHIFT)
 
 	def getInputDeviceType(self, name):
@@ -92,7 +93,7 @@ class InputDevices:
 			return None
 
 	def getDeviceList(self):
-		return sorted(list(self.devices.keys()))
+		return sorted(iter(self.Devices.keys()))
 
 	# struct input_event {
 	# 	struct timeval time;    -> ignored
@@ -102,7 +103,7 @@ class InputDevices:
 	# }; -> size = 16
 	#
 	def setDeviceDefaults(self, device):
-		print("[InputDevice] setDeviceDefaults DEBUG: Device '%s'." % device)
+		print(("[InputDevice] setDeviceDefaults DEBUG: Device '%s'." % device))
 		self.setDeviceAttribute(device, "configuredName", None)
 		eventRepeat = pack("LLHHi", 0, 0, 0x14, 0x01, 100)
 		eventDelay = pack("LLHHi", 0, 0, 0x14, 0x00, 700)
@@ -172,12 +173,12 @@ class Keyboard:
 				if keyboardMapFile and keyboardMapName:
 					keyboardMapPath = resolveFilename(SCOPE_KEYMAPS, keyboardMapFile)
 					if isfile(keyboardMapPath):
-						print("[InputDevice] Adding keyboard keymap '%s' in '%s'." % (keyboardMapName, keyboardMapFile))
+						print(("[InputDevice] Adding keyboard keymap '%s' in '%s'." % (keyboardMapName, keyboardMapFile)))
 						self.keyboardMaps.append((keyboardMapFile, keyboardMapName))
 					else:
-						print("[InputDevice] Error: Keyboard keymap file '%s' doesn't exist!" % keyboardMapPath)
+						print(("[InputDevice] Error: Keyboard keymap file '%s' doesn't exist!" % keyboardMapPath))
 				else:
-					print("[InputDevice] Error: Invalid keyboard keymap information file '%s'!" % keyboardMapInfo)
+					print(("[InputDevice] Error: Invalid keyboard keymap information file '%s'!" % keyboardMapInfo))
 		config.inputDevices.keyboardMap = ConfigSelection(choices=self.keyboardMaps, default=self.getDefaultKeyboardMap())
 
 	def getDefaultKeyboardMap(self):
@@ -217,7 +218,7 @@ class RemoteControl:
 				codeName = remote.attrib.get("codeName")
 				displayName = remote.attrib.get("displayName")
 				if codeName and displayName:
-					print("[InputDevice] Adding remote control for '%s'." % displayName)
+					print(("[InputDevice] Adding remote control for '%s'." % displayName))
 					self.remotes.append((model, rcType, codeName, displayName))
 		self.remotes.insert(0, ("", "", "", _("Default")))
 		if BoxInfo.getItem("RemoteTypeZeroAllowed", False):
@@ -228,13 +229,13 @@ class RemoteControl:
 			index = str(index)
 			rcChoices.append((index, remote[REMOTE_DISPLAY_NAME]))
 			if self.model == remote[REMOTE_MODEL] and self.rcType == remote[REMOTE_RCTYPE] and self.rcName in [x.strip() for x in remote[REMOTE_NAME].split(",")]:
-				print("[InputDevice] Default remote control identified as '%s'.  (model='%s', rcName='%s', rcType='%s')" % (remote[REMOTE_DISPLAY_NAME], self.model, self.rcName, self.rcType))
+				print(("[InputDevice] Default remote control identified as '%s'.  (model='%s', rcName='%s', rcType='%s')" % (remote[REMOTE_DISPLAY_NAME], self.model, self.rcName, self.rcType)))
 				default = index
 		config.inputDevices.remotesIndex = ConfigSelection(choices=rcChoices, default=default)
 		self.remote = self.loadRemoteControl(BoxInfo.getItem("RCMapping"))
 
 	def loadRemoteControl(self, filename):
-		print("[InputDevice] Loading remote control '%s'." % filename)
+		print(("[InputDevice] Loading remote control '%s'." % filename))
 		rcs = fileReadXML(filename, source=MODULE_NAME)
 		rcButtons = {}
 		if rcs:
@@ -245,7 +246,7 @@ class RemoteControl:
 				placeHolder = 0
 				rcButtons["keyIds"] = []
 				rcButtons["image"] = rc.attrib.get("image")
-				print("[InputDevice] Remote control image file '%s'." % rcButtons["image"])
+				print(("[InputDevice] Remote control image file '%s'." % rcButtons["image"]))
 				for button in rc.findall("button"):
 					id = button.attrib.get("id", button.attrib.get("keyid"))
 					remap = button.attrib.get("remap")
@@ -257,12 +258,12 @@ class RemoteControl:
 						keyId = remapId
 					name = button.attrib.get("name")  # The name attribute is deprecated and will be removed.
 					if name:
-						for key, names in keyDescriptions[index].items():
+						for key, names in list(keyDescriptions[index].items()):
 							if (name,) == names and keyId != key:
 								if keyId is None:
 									keyId = key
 								else:
-									print("[InputDevice] Warning: The keyId %d derived from name '%s' does not match defined keyId of %d!" % (key, name, keyId))
+									print(("[InputDevice] Warning: The keyId %d derived from name '%s' does not match defined keyId of %d!" % (key, name, keyId)))
 								break
 					rcButtons["keyIds"].append(keyId)
 					rcButtons[keyId] = {}
@@ -271,10 +272,10 @@ class RemoteControl:
 					rcButtons[keyId]["title"] = button.attrib.get("title")
 					rcButtons[keyId]["shape"] = button.attrib.get("shape")
 					rcButtons[keyId]["coords"] = [int(x.strip()) for x in button.attrib.get("coords", "0").split(",")]
-					print("[InputDevice] loadRemoteControl DEBUG: keyId='%s', label='%s', pos='%s', title='%s', shape='%s', coords='%s'." % (keyId, rcButtons[keyId]["label"], rcButtons[keyId]["pos"], rcButtons[keyId]["title"], rcButtons[keyId]["shape"], rcButtons[keyId]["coords"]))
+					print(("[InputDevice] loadRemoteControl DEBUG: keyId='%s', label='%s', pos='%s', title='%s', shape='%s', coords='%s'." % (keyId, rcButtons[keyId]["label"], rcButtons[keyId]["pos"], rcButtons[keyId]["title"], rcButtons[keyId]["shape"], rcButtons[keyId]["coords"])))
 				if logRemaps:
 					for remap in logRemaps:
-						print("[InputDevice] Remapping '%s' to '%s'." % (remap[0], remap[1]))
+						print(("[InputDevice] Remapping '%s' to '%s'." % (remap[0], remap[1])))
 					for evdev, evdevinfo in sorted(inputDevices.devices.items()):
 						if evdevinfo["type"] == "remote":
 							result = eRCInput.getInstance().setKeyMapping(evdevinfo["name"], remapButtons)
@@ -284,7 +285,7 @@ class RemoteControl:
 								eRCInput.remapFormatErr: "Error: Remap map in incorrect format!",
 								eRCInput.remapNoSuchDevice: "Error: Unknown device!",
 							}.get(result, "Error: Unknown error!")
-							print("[InputDevice] Remote remap evdev='%s', name='%s': %s" % (evdev, evdevinfo["name"], resStr))
+							print(("[InputDevice] Remote remap evdev='%s', name='%s': %s" % (evdev, evdevinfo["name"], resStr)))
 		return rcButtons
 
 	def getRemoteControlKeyList(self):
@@ -293,13 +294,13 @@ class RemoteControl:
 	def getRemoteControlKeyLabel(self, keyId):
 		if keyId in self.remote:
 			return self.remote[keyId]["label"]
-		print("[InputDevice] Button '%s' (%d) is not available on the current remote control." % (KEYIDNAMES.get(keyId), keyId))
+		print(("[InputDevice] Button '%s' (%d) is not available on the current remote control." % (KEYIDNAMES.get(keyId), keyId)))
 		return None
 
 	def getRemoteControlKeyPos(self, keyId):
 		if keyId in self.remote:
 			return self.remote[keyId]["pos"]
-		print("[InputDevice] Button '%s' (%d) is not available on the current remote control." % (KEYIDNAMES.get(keyId), keyId))
+		print(("[InputDevice] Button '%s' (%d) is not available on the current remote control." % (KEYIDNAMES.get(keyId), keyId)))
 		return None
 
 	def readRemoteControlType(self):
@@ -345,8 +346,8 @@ class RemoteControl:
 class InitInputDevices:
 	def __init__(self):
 		self.currentDevice = ""
-		for device in sorted(list(inputDevices.devices.keys())):
-			print("[InputDevice] InitInputDevices DEBUG: Creating config entry for device: '%s' -> '%s'." % (device, inputDevices.devices[device]["name"]))
+		for device in sorted(iter(iInputDevices.Devices.keys())):
+			print(("[InputDevice] InitInputDevices DEBUG: Creating config entry for device: '%s' -> '%s'." % (device, inputDevices.devices[device]["name"])))
 			self.currentDevice = device
 			self.setupConfigEntries(self.currentDevice)
 			self.currentDevice = ""

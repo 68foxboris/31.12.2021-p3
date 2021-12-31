@@ -1,4 +1,4 @@
-from Source import Source
+from Components.Sources.Source import Source
 from Components.Element import cached
 
 
@@ -73,12 +73,13 @@ to generate HTML."""
 	index = property(getIndex, setIndex)
 
 	def selectNext(self):
-		if self.getIndex() + 1 >= self.count():
-			if self.enableWrapAround:
-				self.index = 0
-		else:
-			self.index += 1
-		self.setIndex(self.index)
+		if self.getIndex() is not None:
+			if self.getIndex() + 1 >= self.count():
+				if self.enableWrapAround:
+					self.index = 0
+			else:
+				self.index += 1
+			self.setIndex(self.index)
 
 	def selectPrevious(self):
 		if self.getIndex() - 1 < 0:

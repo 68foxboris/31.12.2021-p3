@@ -1,7 +1,8 @@
+from __future__ import print_function
 try:
-	import urllib2
+	import urllib.request, urllib.error, urllib.parse
 except ImportError:
-	import urllib
+	import urllib.request, urllib.parse, urllib.error
 
 from enigma import eConsoleAppContainer, eDVBResourceManager, eGetEnigmaDebugLvl, eLabel, eTimer, getDesktop
 from os import listdir, popen, remove
@@ -777,7 +778,7 @@ class TranslationInfo(Screen):
 				continue
 			(type, value) = data
 			infomap[type] = value
-		print("[About] DEBUG: infomap=%s" % str(infomap))
+		print(("[About] DEBUG: infomap=%s" % str(infomap)))
 
 		self["key_red"] = Button(_("Cancel"))
 		self["TranslationInfo"] = StaticText(info)
@@ -849,12 +850,12 @@ class CommitInfo(Screen):
 				# For python 2.7.11 we need to bypass the certificate check
 				from ssl import _create_unverified_context
 				if PY2:
-					log = loads(urllib2.urlopen(url, timeout=5, context=_create_unverified_context()).read())
+					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
 				else:
 					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
 			except Exception as err:
 				if PY2:
-					log = loads(urllib2.urlopen(url, timeout=5).read())
+					log = loads(urllib.request.urlopen(url, timeout=5).read())
 				else:
 					log = loads(urllib.request.urlopen(url, timeout=5).read())
 			for c in log:
@@ -950,7 +951,7 @@ class MemoryInfo(Screen):
 			self['pfree'].setText("%.1f %s" % (100.0 * free / mem, '%'))
 			self['pused'].setText("%.1f %s" % (100.0 * (mem - free) / mem, '%'))
 		except Exception as err:
-			print("[About] getMemoryInfo FAIL: '%s'." % str(err))
+			print(("[About] getMemoryInfo FAIL: '%s'." % str(err)))
 
 	def clearMemory(self):
 		eConsoleAppContainer().execute("sync")
@@ -1056,8 +1057,8 @@ class Troubleshoot(Screen):
 		else:
 			try:
 				if self.container.execute(command):
-					raise Exception, "failed to execute: ", command
-			except Exception, e:
+					raise Exception("failed to execute: ").with_traceback(command)
+			except Exception as e:
 				self["AboutScrollLabel"].setText("%s\n%s" % (_("An error occurred - Please try again later"), e))
 
 	def cancel(self):

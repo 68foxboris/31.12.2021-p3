@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+
 import boxbranding
 print("getDeveloperName=%s<" % boxbranding.getDeveloperName())
 print("getBoxBrand=%s<" % boxbranding.getBoxBrand())

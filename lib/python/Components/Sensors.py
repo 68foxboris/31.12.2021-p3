@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.FanControl import fancontrol
 
 
@@ -24,7 +27,7 @@ class Sensors:
 	# returns a list of sensorids of type "type"
 	def getSensorsList(self, type=None):
 		if type is None:
-			return range(len(self.sensors_list))
+			return list(range(len(self.sensors_list)))
 		list = []
 		for sensorid in range(len(self.sensors_list)):
 			if self.sensors_list[sensorid][0] == type:

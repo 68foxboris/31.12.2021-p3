@@ -1,3 +1,4 @@
+from __future__ import print_function
 from xml.etree.cElementTree import parse
 from enigma import eDVBCIInterfaces, eDVBCI_UI, eEnv, eServiceCenter, eServiceReference, getBestPlayableServiceReference, iRecordableService
 from Components.SystemInfo import BoxInfo
@@ -42,7 +43,7 @@ class CIHelper:
 
 						for caid in slot.findall("caid"):
 							read_caid = caid.get("id").encode("UTF-8")
-							usingcaid.append(long(read_caid, 16))
+							usingcaid.append(int(read_caid, 16))
 
 						for service in slot.findall("service"):
 							read_service_ref = service.get("ref").encode("UTF-8")
@@ -53,7 +54,7 @@ class CIHelper:
 						for provider in slot.findall("provider"):
 							read_provider_name = provider.get("name").encode("UTF-8")
 							read_provider_dvbname = provider.get("dvbnamespace").encode("UTF-8")
-							read_providers.append((read_provider_name, long(read_provider_dvbname, 16)))
+							read_providers.append((read_provider_name, int(read_provider_dvbname, 16)))
 							if read_slot is not False:
 								provider_services_refs = self.getProivderServices([read_provider_name])
 								if provider_services_refs:
@@ -64,18 +65,18 @@ class CIHelper:
 						if read_slot is not False:
 							self.CI_ASSIGNMENT_LIST.append((int(read_slot), (read_services, read_providers, usingcaid)))
 				except:
-					print "[CI_ASSIGNMENT %d] ERROR parsing xml..." % ci
+					print("[CI_ASSIGNMENT %d] ERROR parsing xml..." % ci)
 					try:
 						os.remove(filename)
 					except:
-						print "[CI_ASSIGNMENT %d] ERROR remove damaged xml..." % ci
+						print("[CI_ASSIGNMENT %d] ERROR remove damaged xml..." % ci)
 			if self.CI_ASSIGNMENT_LIST:
 				for item in self.CI_ASSIGNMENT_LIST:
 					try:
 						eDVBCIInterfaces.getInstance().setDescrambleRules(item[0], item[1])
-						print "[CI_ASSIGNMENT %d] activate with following settings" % item[0]
+						print("[CI_ASSIGNMENT %d] activate with following settings" % item[0])
 					except:
-						print "[CI_ASSIGNMENT %d] ERROR setting DescrambleRules" % item[0]
+						print("[CI_ASSIGNMENT %d] ERROR setting DescrambleRules" % item[0])
 
 	def ciRecordEvent(self, service, event):
 		if event in (iRecordableService.evEnd, iRecordableService.evStart, None):

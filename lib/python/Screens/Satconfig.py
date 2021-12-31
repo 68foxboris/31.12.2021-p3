@@ -1,5 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from enigma import eDVBDB, getLinkedSlotID, eDVBResourceManager
-from Screen import Screen
+from Screens.Screen import Screen
 from Components.SystemInfo import BoxInfo
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
@@ -186,7 +188,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 						self.fillListWithAdvancedSatEntrys(self.nimConfig.advanced.sat[int(current_config_sats)])
 					else:
 						cur_orb_pos = self.nimConfig.advanced.sats.orbital_position
-						satlist = self.nimConfig.advanced.sat.keys()
+						satlist = list(self.nimConfig.advanced.sat.keys())
 						if cur_orb_pos is not None:
 							if cur_orb_pos not in satlist:
 								cur_orb_pos = satlist[0]
@@ -531,7 +533,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.list.append(self.configMode)
 		self.advancedSatsEntry = getConfigListEntry(self.indent % _("Satellite"), self.nimConfig.advanced.sats)
 		self.list.append(self.advancedSatsEntry)
-		for x in self.nimConfig.advanced.sat.keys():
+		for x in list(self.nimConfig.advanced.sat.keys()):
 			Sat = self.nimConfig.advanced.sat[x]
 			self.fillListWithAdvancedSatEntrys(Sat)
 		self["config"].list = self.list

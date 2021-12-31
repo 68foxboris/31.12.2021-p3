@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import os
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -38,20 +41,26 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 		self["key_blue"] = StaticText("")
 		self["introduction"] = StaticText(self.edittext)
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.close, _("Exit network interface list")),
 			"ok": (self.okbuttonClick, _("Select interface")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["updown_actions"] = HelpableActionMap(self, ["WizardActions"],
+			{
+			"up": self.up,
+			"down": self.down,
+			})
+
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.close, _("Exit network interface list")),
 			"green": (self.okbuttonClick, _("Select interface")),
 			"blue": (self.openNetworkWizard, _("Use the network wizard to configure selected network adapter")),
 			})
 
-		self["DefaultInterfaceAction"] = HelpableActionMap(self, "ColorActions",
+		self["DefaultInterfaceAction"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"yellow": (self.setDefaultInterface, [_("Set interface as default Interface"), _("* Only available if more than one interface is active.")]),
 			})
@@ -127,7 +136,7 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 			os.unlink("/etc/default_gw")
 
 		if os.path.exists("/etc/default_gw"):
-			fp = file('/etc/default_gw', 'r')
+			fp = open('/etc/default_gw', 'r')
 			result = fp.read()
 			fp.close()
 			default_gw = result
@@ -209,6 +218,12 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 				if selection is not None:
 					self.session.openWithCallback(self.AdapterSetupClosed, NetworkWizard, selection[0])
 
+	def up(self):
+		self["list"].up()
+
+	def down(self):
+		self["list"].down()
+
 
 class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 	def __init__(self, session):
@@ -216,7 +231,7 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 		HelpableScreen.__init__(self)
 		self.setTitle(_("Configure nameservers"))
 		self.backupNameserverList = iNetwork.getNameserverList()[:]
-		print "backup-list:", self.backupNameserverList
+		print("backup-list:", self.backupNameserverList)
 
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Add"))
@@ -225,21 +240,23 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 		self["introduction"] = StaticText(_("Press OK to activate the settings."))
 		self.createConfig()
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.cancel, _("Exit nameserver configuration")),
 			"ok": (self.ok, _("Activate current configuration")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.cancel, _("Exit nameserver configuration")),
 			"green": (self.add, _("Add a nameserver entry")),
 			"yellow": (self.remove, _("Remove a nameserver entry")),
 			})
 
-		self["actions"] = NumberActionMap(["SetupActions"],
+		self["actions"] = HelpableActionMap(self, ["SetupActions"],
 		{
+			"keyup": self.keyUp,
+			"keydown": self.keyDown,
 			"ok": self.ok,
 		}, -2)
 
@@ -297,7 +314,7 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 		self.createSetup()
 
 	def remove(self):
-		print "currentIndex:", self["config"].getCurrentIndex()
+		print("currentIndex:", self["config"].getCurrentIndex())
 		index = self["config"].getCurrentIndex()
 		if index < len(self.nameservers):
 			iNetwork.removeNameserver(self.nameservers[index])
@@ -305,11 +322,17 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 			self.createSetup()
 
 	def RefreshNameServerUsed(self):
-		print("[NetworkSetup] currentIndex:", self["config"].getCurrentIndex())
+		print(("[NetworkSetup] currentIndex:", self["config"].getCurrentIndex()))
 		index = self["config"].getCurrentIndex()
 		if index < len(self.nameservers):
 			self.createConfig()
 			self.createSetup()
+
+	def keyUp(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveUp)
+
+	def keyDown(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveDown)
 
 
 class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
@@ -332,13 +355,13 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 
 		self.createConfig()
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.keyCancel, _("exit network adapter configuration")),
 			"ok": (self.keySave, _("activate network adapter configuration")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.keyCancel, _("exit network adapter configuration")),
 			"green": (self.keySave, _("activate network adapter configuration")),
@@ -348,6 +371,8 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 		self["actions"] = NumberActionMap(["SetupActions"],
 		{
 			"ok": self.keySave,
+			"keyup": self.keyUp,
+			"keydown": self.keyDown,
 		}, -2)
 
 		self.list = []
@@ -633,6 +658,12 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 		else:
 			self.close('cancel')
 
+	def keyUp(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveUp)
+
+	def keyDown(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveDown)
+
 	def keyCancel(self):
 		self.hideInputHelp()
 		if self["config"].isChanged():
@@ -701,13 +732,13 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 			"right": (self.right, _("move down to last entry")),
 			})
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.close, _("exit networkadapter setup menu")),
 			"ok": (self.ok, _("select menu entry")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.close, _("exit networkadapter setup menu")),
 			})
@@ -737,11 +768,12 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 			try:
 				ifobj = Wireless(iface) # a Wireless NIC Object
 				wlanresponse = ifobj.getAPaddr()
-			except IOError, (error_no, error_str):
+			except IOError as xxx_todo_changeme:
+				(error_no, error_str) = xxx_todo_changeme.args
 				if error_no in (errno.EOPNOTSUPP, errno.ENODEV, errno.EPERM):
 					return False
 				else:
-					print "error: ", error_no, error_str
+					print("error: ", error_no, error_str)
 					return True
 			else:
 				return True

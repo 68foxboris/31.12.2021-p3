@@ -1,3 +1,4 @@
+from __future__ import print_function
 from errno import ENOENT, EXDEV
 from inspect import stack
 from os import F_OK, R_OK, W_OK, access, chmod, link, listdir, makedirs, mkdir, readlink, remove, rename, rmdir, sep, stat, statvfs, symlink, utime, walk
@@ -92,18 +93,18 @@ def resolveFilename(scope, base="", path_prefix=None):
 		if path_prefix:
 			base = pathjoin(path_prefix, base[2:])
 		else:
-			print("[Directories] Warning: resolveFilename called with base starting with '~%s' but 'path_prefix' is None!" % sep)
+			print(("[Directories] Warning: resolveFilename called with base starting with '~%s' but 'path_prefix' is None!" % sep))
 	if str(base).startswith(sep):  # Don't further resolve absolute paths.
 		return normpath(base)
 	if scope not in defaultPaths:  # If an invalid scope is specified log an error and return None.
-		print("[Directories] Error: Invalid scope=%s provided to resolveFilename!" % scope)
+		print(("[Directories] Error: Invalid scope=%s provided to resolveFilename!" % scope))
 		return None
 	path, flag = defaultPaths[scope]  # Ensure that the defaultPath directory that should exist for this scope does exist.
 	if flag == PATH_CREATE and not pathExists(path):
 		try:
 			makedirs(path)
 		except (IOError, OSError) as err:
-			print("[Directories] Error %d: Couldn't create directory '%s'!  (%s)" % (err.errno, path, err.strerror))
+			print(("[Directories] Error %d: Couldn't create directory '%s'!  (%s)" % (err.errno, path, err.strerror)))
 			return None
 	suffix = None  # Remove any suffix data and restore it at the end.
 	data = base.split(":", 1)
@@ -227,11 +228,11 @@ def fileReadLine(filename, default=None, source=DEFAULT_MODULE_NAME, debug=False
 		msg = "Read"
 	except (IOError, OSError) as err:
 		if err.errno != ENOENT:  # ENOENT - No such file or directory.
-			print("[%s] Error %d: Unable to read a line from file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
+			print(("[%s] Error %d: Unable to read a line from file '%s'!  (%s)" % (source, err.errno, filename, err.strerror)))
 		line = default
 		msg = "Default"
 	if debug or forceDebug:
-		print("[%s] %s '%s' from file '%s'." % (source, msg, line, filename))
+		print(("[%s] %s '%s' from file '%s'." % (source, msg, line, filename)))
 	return line
 
 
@@ -242,11 +243,11 @@ def fileWriteLine(filename, line, source=DEFAULT_MODULE_NAME, debug=False):
 		msg = "Wrote"
 		result = 1
 	except (IOError, OSError) as err:
-		print("[%s] Error %d: Unable to write a line to file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
+		print(("[%s] Error %d: Unable to write a line to file '%s'!  (%s)" % (source, err.errno, filename, err.strerror)))
 		msg = "Failed to write"
 		result = 0
 	if debug or forceDebug:
-		print("[%s] %s '%s' to file '%s'." % (source, msg, line, filename))
+		print(("[%s] %s '%s' to file '%s'." % (source, msg, line, filename)))
 	return result
 
 
@@ -258,12 +259,12 @@ def fileReadLines(filename, default=None, source=DEFAULT_MODULE_NAME, debug=Fals
 		msg = "Read"
 	except (IOError, OSError) as err:
 		if err.errno != ENOENT:  # ENOENT - No such file or directory.
-			print("[%s] Error %d: Unable to read lines from file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
+			print(("[%s] Error %d: Unable to read lines from file '%s'!  (%s)" % (source, err.errno, filename, err.strerror)))
 		lines = default
 		msg = "Default"
 	if debug or forceDebug:
 		length = len(lines) if lines else 0
-		print("[%s] %s %d lines from file '%s'." % (source, msg, length, filename))
+		print(("[%s] %s %d lines from file '%s'." % (source, msg, length, filename)))
 	return lines
 
 
@@ -277,11 +278,11 @@ def fileWriteLines(filename, lines, source=DEFAULT_MODULE_NAME, debug=False):
 		msg = "Wrote"
 		result = 1
 	except (IOError, OSError) as err:
-		print("[%s] Error %d: Unable to write %d lines to file '%s'!  (%s)" % (source, err.errno, len(lines), filename, err.strerror))
+		print(("[%s] Error %d: Unable to write %d lines to file '%s'!  (%s)" % (source, err.errno, len(lines), filename, err.strerror)))
 		msg = "Failed to write"
 		result = 0
 	if debug or forceDebug:
-		print("[%s] %s %d lines to file '%s'." % (source, msg, len(lines), filename))
+		print(("[%s] %s %d lines to file '%s'." % (source, msg, len(lines), filename)))
 	return result
 
 
@@ -296,19 +297,19 @@ def fileReadXML(filename, default=None, source=DEFAULT_MODULE_NAME, debug=False)
 				fd.seek(0)
 				content = fd.readlines()
 				line, column = err.position
-				print("[%s] XML Parse Error: '%s' in '%s'!" % (source, err, filename))
+				print(("[%s] XML Parse Error: '%s' in '%s'!" % (source, err, filename)))
 				data = content[line - 1].replace("\t", " ").rstrip()
-				print("[%s] XML Parse Error: '%s'" % (source, data))
-				print("[%s] XML Parse Error: '%s^%s'" % (source, "-" * column, " " * (len(data) - column - 1)))
+				print(("[%s] XML Parse Error: '%s'" % (source, data)))
+				print(("[%s] XML Parse Error: '%s^%s'" % (source, "-" * column, " " * (len(data) - column - 1))))
 			except Exception as err:
-				print("[%s] Error: Unable to parse data in '%s' - '%s'!" % (source, filename, err))
+				print(("[%s] Error: Unable to parse data in '%s' - '%s'!" % (source, filename, err)))
 	except (IOError, OSError) as err:
 		if err.errno == ENOENT:  # ENOENT - No such file or directory.
-			print("[%s] Warning: File '%s' does not exist!" % (source, filename))
+			print(("[%s] Warning: File '%s' does not exist!" % (source, filename)))
 		else:
-			print("[%s] Error %d: Opening file '%s'!  (%s)" % (source, err.errno, filename, err.strerror))
+			print(("[%s] Error %d: Opening file '%s'!  (%s)" % (source, err.errno, filename, err.strerror)))
 	except Exception as err:
-		print("[%s] Error: Unexpected error opening/parsing file '%s'!  (%s)" % (source, filename, err))
+		print(("[%s] Error: Unexpected error opening/parsing file '%s'!  (%s)" % (source, filename, err)))
 		print_exc()
 	if dom is None:
 		if default and isinstance(default, str):
@@ -321,7 +322,7 @@ def fileReadXML(filename, default=None, source=DEFAULT_MODULE_NAME, debug=False)
 			msg = "Failed to read"
 	if debug or forceDebug:
 		length = len(dom) if dom else 0
-		print("[%s] %s Lines=%d from XML '%s'." % (source, msg, length, filename))
+		print(("[%s] %s Lines=%d from XML '%s'." % (source, msg, length, filename)))
 	return dom
 
 
@@ -357,7 +358,7 @@ def bestRecordingLocation(candidates):
 					biggest = size
 					path = candidate[1]
 		except (IOError, OSError) as err:
-			print("[Directories] Error %d: Couldn't get free space for '%s'!  (%s)" % (err.errno, candidate[1], err.strerror))
+			print(("[Directories] Error %d: Couldn't get free space for '%s'!  (%s)" % (err.errno, candidate[1], err.strerror)))
 	return path
 
 
@@ -373,7 +374,7 @@ def getRecordingFilename(basename, dirname=None):
 	# but must not truncate in the middle of a multi-byte utf8 character!
 	# So convert the truncation to unicode and back, ignoring errors, the
 	# result will be valid utf8 and so xml parsing will be OK.
-	filename = unicode(filename[:247], "UTF8", "ignore").encode("UTF8", "ignore") if PY2 else filename[:247]
+	filename = str(filename[:247], "UTF8", "ignore").encode("UTF8", "ignore") if PY2 else filename[:247]
 	if dirname is None:
 		dirname = defaultRecordingLocation()
 	else:
@@ -392,7 +393,7 @@ def copyFile(src, dst):
 	try:
 		copy2(src, dst)
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Copying file '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
+		print(("[Directories] Error %d: Copying file '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror)))
 		return -1
 	return 0
 	# if isdir(dst):
@@ -447,19 +448,19 @@ def copyTree(src, dst, symlinks=False):
 			else:
 				copyfile(srcName, dstName)
 		except (IOError, OSError) as err:
-			print("[Directories] Error %d: Copying tree '%s' to '%s'!  (%s)" % (err.errno, srcName, dstName, err.strerror))
+			print(("[Directories] Error %d: Copying tree '%s' to '%s'!  (%s)" % (err.errno, srcName, dstName, err.strerror)))
 	try:
 		status = stat(src)
 		try:
 			chmod(dst, S_IMODE(status.st_mode))
 		except (IOError, OSError) as err:
-			print("[Directories] Error %d: Setting modes from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
+			print(("[Directories] Error %d: Setting modes from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror)))
 		try:
 			utime(dst, (status.st_atime, status.st_mtime))
 		except (IOError, OSError) as err:
-			print("[Directories] Error %d: Setting times from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
+			print(("[Directories] Error %d: Setting times from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror)))
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Obtaining stats from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror))
+		print(("[Directories] Error %d: Obtaining stats from '%s' to '%s'!  (%s)" % (err.errno, src, dst, err.strerror)))
 
 
 def copytree(src, dst, symlinks=False):
@@ -483,7 +484,7 @@ def moveFiles(fileList):
 			extMoveFiles(fileList, item[0])
 			print("[Directories] Moving files in background.")
 		else:
-			print("[Directories] Error %d: Moving file '%s' to '%s'!  (%s)" % (err.errno, item[0], item[1], err.strerror))
+			print(("[Directories] Error %d: Moving file '%s' to '%s'!  (%s)" % (err.errno, item[0], item[1], err.strerror)))
 			errorFlag = True
 	if errorFlag:
 		print("[Directories] Reversing renamed files due to error.")
@@ -491,12 +492,12 @@ def moveFiles(fileList):
 			try:
 				rename(item[1], item[0])
 			except (IOError, OSError) as err:
-				print("[Directories] Error %d: Renaming '%s' to '%s'!  (%s)" % (err.errno, item[1], item[0], err.strerror))
-				print("[Directories] Note: Failed to undo move of '%s' to '%s'!" % (item[0], item[1]))
+				print(("[Directories] Error %d: Renaming '%s' to '%s'!  (%s)" % (err.errno, item[1], item[0], err.strerror)))
+				print(("[Directories] Note: Failed to undo move of '%s' to '%s'!" % (item[0], item[1])))
 
 
 def comparePaths(leftPath, rightPath):
-	print("[Directories] comparePaths DEBUG: left='%s', right='%s'." % (leftPath, rightPath))
+	print(("[Directories] comparePaths DEBUG: left='%s', right='%s'." % (leftPath, rightPath)))
 	if leftPath.endswith(sep):
 		leftPath = leftPath[:-1]
 	left = leftPath.split(sep)
@@ -529,7 +530,7 @@ def createDir(path, makeParents=False):
 			mkdir(path)
 		return 1
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Couldn't create directory '%s'!  (%s)" % (err.errno, path, err.strerror))
+		print(("[Directories] Error %d: Couldn't create directory '%s'!  (%s)" % (err.errno, path, err.strerror)))
 	return 0
 
 
@@ -538,7 +539,7 @@ def renameDir(oldPath, newPath):
 		rename(oldPath, newPath)
 		return 1
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Couldn't rename directory '%s' to '%s'!  (%s)" % (err.errno, oldPath, newPath, err.strerror))
+		print(("[Directories] Error %d: Couldn't rename directory '%s' to '%s'!  (%s)" % (err.errno, oldPath, newPath, err.strerror)))
 	return 0
 
 
@@ -547,7 +548,7 @@ def removeDir(path):
 		rmdir(path)
 		return 1
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Couldn't remove directory '%s'!  (%s)" % (err.errno, path, err.strerror))
+		print(("[Directories] Error %d: Couldn't remove directory '%s'!  (%s)" % (err.errno, path, err.strerror)))
 	return 0
 
 
@@ -561,7 +562,7 @@ def fileAccess(file, mode="r"):
 	try:
 		result = access(file, accMode)
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Couldn't determine file '%s' access mode!  (%s)" % (err.errno, file, err.strerror))
+		print(("[Directories] Error %d: Couldn't determine file '%s' access mode!  (%s)" % (err.errno, file, err.strerror)))
 	return result
 
 
@@ -591,23 +592,23 @@ def hasHardLinks(path):  # Test if the volume containing path supports hard link
 	try:
 		fd, srcName = mkstemp(prefix="HardLink_", suffix=".test", dir=path, text=False)
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Creating temp file!  (%s)" % (err.errno, err.strerror))
+		print(("[Directories] Error %d: Creating temp file!  (%s)" % (err.errno, err.strerror)))
 		return False
 	dstName = "%s.link" % splitext(srcName)[0]
 	try:
 		link(srcName, dstName)
 		result = True
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Creating hard link!  (%s)" % (err.errno, err.strerror))
+		print(("[Directories] Error %d: Creating hard link!  (%s)" % (err.errno, err.strerror)))
 		result = False
 	try:
 		remove(srcName)
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Removing source file!  (%s)" % (err.errno, err.strerror))
+		print(("[Directories] Error %d: Removing source file!  (%s)" % (err.errno, err.strerror)))
 	try:
 		remove(dstName)
 	except (IOError, OSError) as err:
-		print("[Directories] Error %d: Removing destination file!  (%s)" % (err.errno, err.strerror))
+		print(("[Directories] Error %d: Removing destination file!  (%s)" % (err.errno, err.strerror)))
 	return result
 
 

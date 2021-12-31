@@ -29,14 +29,14 @@ class TagManager():
 		while "" in tags:
 			tags.remove("")
 		tags.sort()
-		print("[TagEditor] %d tags read from '%s'." % (len(tags), filename))
+		print(("[TagEditor] %d tags read from '%s'." % (len(tags), filename)))
 		return tags
 
 	def saveTags(self):
 		if self.tags != self.fileTags:
 			filename = resolveFilename(SCOPE_CONFIG, "movietags")
 			if fileWriteLines(filename, self.tags, source=MODULE_NAME):
-				print("[TagEditor] %d tags written to '%s'." % (len(self.tags), filename))
+				print(("[TagEditor] %d tags written to '%s'." % (len(self.tags), filename)))
 
 	def getTags(self):
 		return self.tags

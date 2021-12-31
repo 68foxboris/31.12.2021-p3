@@ -1,3 +1,4 @@
+from __future__ import print_function
 from errno import ENOENT
 from os import environ, path, symlink, unlink, walk
 from os.path import exists, isfile, join as pathjoin, realpath
@@ -68,9 +69,9 @@ def InitTimeZones():
 			if config.timezone.val.value != tzVal:
 				msgs.append("zone '%s' != '%s'" % (config.timezone.val.value, tzVal))
 		if len(msgs):
-			print("[Timezones] Warning: Enigma2 time zone does not match system time zone (%s), setting system to Enigma2 time zone!" % ",".join(msgs))
+			print(("[Timezones] Warning: Enigma2 time zone does not match system time zone (%s), setting system to Enigma2 time zone!" % ",".join(msgs)))
 	except (IOError, OSError) as err:
-		print("[Timezones] Error %d: Unable to resolve current time zone from '/etc/localtime'!  (%s)" % (err.errno, err.strerror))
+		print(("[Timezones] Error %d: Unable to resolve current time zone from '/etc/localtime'!  (%s)" % (err.errno, err.strerror)))
 
 	def timezoneAreaChoices(configElement):
 		choices = timezones.getTimezoneList(area=configElement.value)
@@ -130,16 +131,13 @@ class Timezones:
 				name = commonTimezoneNames.get(tz, zone)  # Use the more common name if one is defined.
 				if name is None:
 					continue
-				name = name.encode(encoding="UTF-8", errors="ignore") if PY2 else name
-				area = area.encode(encoding="UTF-8", errors="ignore") if PY2 else area
-				zone = zone.encode(encoding="UTF-8", errors="ignore") if PY2 else zone
 				zones.append((zone, name.replace("_", " ")))
 			if area:
 				if area in self.timezones:
 					zones = self.timezones[area] + zones
 				self.timezones[area] = self.gmtSort(zones)
 		if len(self.timezones) == 0:
-			print("[Timezones] Warning: No areas or zones found in '%s'!" % TIMEZONE_DATA)
+			print(("[Timezones] Warning: No areas or zones found in '%s'!" % TIMEZONE_DATA))
 			self.timezones["Generic"] = [("UTC", "UTC")]
 
 	def gmtSort(self, zones):  # If the Zone starts with "GMT" then those Zones will be sorted in GMT order with GMT-14 first and GMT+12 last.
@@ -169,7 +167,7 @@ class Timezones:
 				if exists(pathjoin(TIMEZONE_DATA, zonePath)):
 					zones.append((zonePath, name))
 				else:
-					print("[Timezones] Warning: Classic time zone '%s' (%s) is not available in '%s'!" % (name, zonePath, TIMEZONE_DATA))
+					print(("[Timezones] Warning: Classic time zone '%s' (%s) is not available in '%s'!" % (name, zonePath, TIMEZONE_DATA)))
 			self.timezones["Classic"] = zones
 		if len(zones) == 0:
 			self.timezones["Classic"] = [("UTC", "UTC")]
@@ -201,19 +199,19 @@ class Timezones:
 		tz = zone if area in ("Classic", "Generic") else pathjoin(area, zone)
 		file = pathjoin(TIMEZONE_DATA, tz)
 		if not isfile(file):
-			print("[Timezones] Error: The time zone '%s' is not available!  Using 'UTC' instead." % tz)
+			print(("[Timezones] Error: The time zone '%s' is not available!  Using 'UTC' instead." % tz))
 			tz = "UTC"
 			file = pathjoin(TIMEZONE_DATA, tz)
-		print("[Timezones] Setting time zone to '%s'." % tz)
+		print(("[Timezones] Setting time zone to '%s'." % tz))
 		try:
 			unlink("/etc/localtime")
 		except (IOError, OSError) as err:
 			if err.errno != ENOENT:  # No such file or directory.
-				print("[Timezones] Error %d: Unlinking '/etc/localtime'!  (%s)" % (err.errno, err.strerror))
+				print(("[Timezones] Error %d: Unlinking '/etc/localtime'!  (%s)" % (err.errno, err.strerror)))
 		try:
 			symlink(file, "/etc/localtime")
 		except (IOError, OSError) as err:
-			print("[Timezones] Error %d: Linking '%s' to '/etc/localtime'!  (%s)" % (err.errno, file, err.strerror))
+			print(("[Timezones] Error %d: Linking '%s' to '/etc/localtime'!  (%s)" % (err.errno, file, err.strerror)))
 		fileWriteLine("/etc/timezone", "%s\n" % tz, source=MODULE_NAME)
 		environ["TZ"] = ":%s" % tz
 		try:
@@ -224,7 +222,7 @@ class Timezones:
 		if exists("/proc/stb/fp/rtc_offset"):
 			setRTCoffset()
 		timeFormat = "%a %d-%b-%Y %H:%M:%S"
-		print("[Timezones] Local time is '%s'  -  UTC time is '%s'." % (strftime(timeFormat, localtime(None)), strftime(timeFormat, gmtime(None))))
+		print(("[Timezones] Local time is '%s'  -  UTC time is '%s'." % (strftime(timeFormat, localtime(None)), strftime(timeFormat, gmtime(None)))))
 		if runCallbacks:
 			for callback in self.callbacks:
 				callback()

@@ -556,7 +556,7 @@ class HelpMenuList(List):
 	#
 	def _getMinPos(self, a):
 		# return min(map(lambda x: tuple(reversed(self.rcPos.getRcKeyPos(x[0]))), a))
-		return min(map(lambda x: tuple(reversed(remoteControl.getRemoteControlKeyPos(x[0]))), a))
+		return min([tuple(reversed(remoteControl.getRemoteControlKeyPos(x[0]))) for x in a])
 
 	def _sortCmpInd(self, a, b):
 		return self._cmp(self._getMinInd(a[0][3]), self._getMinInd(b[0][3]))
@@ -567,7 +567,7 @@ class HelpMenuList(List):
 	# this to work properly.
 	#
 	def _getMinInd(self, a):
-		return min(map(lambda x: self.rcKeyIndex[x[0]], a))
+		return min([self.rcKeyIndex[x[0]] for x in a])
 
 	def _filterHelpList(self, ent, seen):
 		hlp = tuple(ent[1]) if isinstance(ent[1], (tuple, list)) else (ent[1],)

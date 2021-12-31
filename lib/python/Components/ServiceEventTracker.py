@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+
 InfoBarCount = 0
 
 
@@ -89,7 +93,7 @@ class ServiceEventTracker:
 		assert infobar not in set.InfoBarStack, "FATAL: Infobar '" + str(infobar) + "' is already active!"
 		set.InfoBarStack.append(infobar)
 		set.InfoBarStackSize += 1
-#		print "ServiceEventTracker set active '" + str(infobar) + "'"
+#		print("ServiceEventTracker set active '" + str(infobar) + "'")
 
 	@staticmethod
 	def popActiveInfoBar():
@@ -103,7 +107,7 @@ class ServiceEventTracker:
 			set.oldServiceStr = old_service and old_service.getPtrString()
 			set.oldRef = nav.getCurrentlyPlayingServiceOrGroup()
 #			if set.InfoBarStackSize:
-#				print "ServiceEventTracker reset active '" + str(stack[set.InfoBarStackSize-1]) + "'"
+#				print("ServiceEventTracker reset active '" + str(stack[set.InfoBarStackSize-1]) + "'")
 
 	def __init__(self, screen, eventmap):
 		self.__screen = screen
@@ -114,11 +118,11 @@ class ServiceEventTracker:
 			screen.session.nav.event.append(ServiceEventTracker.event)
 			ServiceEventTracker.navcore = screen.session.nav
 		EventMap = EventMap.setdefault
-		for x in eventmap.iteritems():
+		for x in iter(eventmap.items()):
 			EventMap(x[0], []).append((self.__passall, screen, x[1]))
 		screen.onClose.append(self.__del_event)
 
 	def __del_event(self):
 		EventMap = ServiceEventTracker.EventMap.setdefault
-		for x in self.__eventmap.iteritems():
+		for x in iter(self.__eventmap.items()):
 			EventMap(x[0], []).remove((self.__passall, self.__screen, x[1]))

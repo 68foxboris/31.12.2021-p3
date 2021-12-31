@@ -1,5 +1,7 @@
-from GUIComponent import GUIComponent
-from VariableValue import VariableValue
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Components.GUIComponent import GUIComponent
+from Components.VariableValue import VariableValue
 
 from enigma import eSlider
 

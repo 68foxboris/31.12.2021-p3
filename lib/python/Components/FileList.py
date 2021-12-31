@@ -1,6 +1,7 @@
+from __future__ import print_function
 import os
 import re
-from MenuList import MenuList
+from Components.MenuList import MenuList
 from Components.Harddisk import harddiskmanager
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename, fileExists
 from enigma import RT_HALIGN_LEFT, eListboxPythonMultiContent, eServiceReference, eServiceCenter, gFont
@@ -365,7 +366,7 @@ class MultiFileSelectList(FileList):
 						try:
 							self.selectedFiles.remove(os.path.normpath(realPathname))
 						except (IOError, OSError) as err:
-							print "[FileList] Error %d: Can't remove '%s'!  (%s)" % (err.errno, realPathname, err.strerror)
+							print("[FileList] Error %d: Can't remove '%s'!  (%s)" % (err.errno, realPathname, err.strerror))
 				else:
 					SelectState = True
 					if (realPathname not in self.selectedFiles) and (os.path.normpath(realPathname) not in self.selectedFiles):

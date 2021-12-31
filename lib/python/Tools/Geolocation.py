@@ -1,6 +1,8 @@
+from __future__ import print_function
 from json import loads
 try:
-	from urllib2 import URLError, urlopen
+	from urllib.error import URLError
+	from urllib.request import urlopen
 except ImportError:
 	from urllib.request import URLError, urlopen
 
@@ -90,16 +92,16 @@ class Geolocation:
 			status = geolocation.get("status", "unknown/undefined")
 			if status and status == "success":
 				print("[Geolocation] Geolocation data retreived.")
-				for key in geolocation.keys():
+				for key in list(geolocation.keys()):
 					self.geolocation[key] = geolocation[key]
 				return self.geolocation
 			else:
-				print("[Geolocation] Error: Geolocation lookup returned '%s' status!  Message '%s' returned." % (status, geolocation.get("message", None)))
+				print(("[Geolocation] Error: Geolocation lookup returned '%s' status!  Message '%s' returned." % (status, geolocation.get("message", None))))
 		except URLError as err:
 			if hasattr(err, "code"):
-				print("[Geolocation] Error: Geolocation data not available! (Code: %s)" % err.code)
+				print(("[Geolocation] Error: Geolocation data not available! (Code: %s)" % err.code))
 			if hasattr(err, "reason"):
-				print("[Geolocation] Error: Geolocation data not available! (Reason: %s)" % err.reason)
+				print(("[Geolocation] Error: Geolocation data not available! (Reason: %s)" % err.reason))
 		except ValueError:
 			print("[Geolocation] Error: Geolocation data returned can not be processed!")
 		except Exception:
@@ -108,7 +110,7 @@ class Geolocation:
 
 	def fieldsToNumber(self, fields):
 		if fields is None:
-			fields = [x for x in geolocationFields.keys() if x not in ("message", "reverse", "status")]  # Don't include "reverse" by default as there is a performance hit!
+			fields = [x for x in list(geolocationFields.keys()) if x not in ("message", "reverse", "status")]  # Don't include "reverse" by default as there is a performance hit!
 		elif isinstance(fields, str):
 			fields = [x.strip() for x in fields.split(",")]
 		if isinstance(fields, int):
@@ -120,13 +122,13 @@ class Geolocation:
 				if value:
 					number |= value
 				else:
-					print("[Geolocation] Warning: Ignoring invalid geolocation field '%s'!" % field)
+					print(("[Geolocation] Warning: Ignoring invalid geolocation field '%s'!" % field))
 		# print("[Geolocation] DEBUG: fields='%s' -> number=%d." % (sorted(fields), number))
 		return number | 0x0000C000  # Always get "status" and "message".
 
 	def checkGeolocationData(self, fields):
 		keys = list(self.geolocation.keys())
-		for field in [x for x in geolocationFields.keys() if x != "message"]:
+		for field in [x for x in list(geolocationFields.keys()) if x != "message"]:
 			value = geolocationFields[field]
 			# print("[Geolocation] DEBUG: field '%s', value=%d, fields=%d, match=%d." % (field, value, fields, fields & value))
 			if fields & value and field not in keys:

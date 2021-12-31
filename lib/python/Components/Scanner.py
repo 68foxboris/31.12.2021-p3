@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
 
@@ -151,7 +154,7 @@ class ScanFile:
 
 
 def execute(option):
-	print "[Scanner] execute", option
+	print("[Scanner] execute", option)
 	if option is None:
 		return
 
@@ -163,12 +166,12 @@ def scanDevice(mountpoint):
 	scanner = []
 
 	for p in plugins.getPlugins(PluginDescriptor.WHERE_FILESCAN):
-		l = p()
+		l = p.__call__()
 		if not isinstance(l, list):
 			l = [l]
 		scanner += l
 
-	print "[Scanner] ", scanner
+	print("[Scanner] ", scanner)
 
 	res = {}
 
@@ -220,13 +223,13 @@ def openList(session, files):
 	scanner = []
 
 	for p in plugins.getPlugins(PluginDescriptor.WHERE_FILESCAN):
-		l = p()
+		l = p.__call__()
 		if not isinstance(l, list):
 			scanner.append(l)
 		else:
 			scanner += l
 
-	print "[Scanner] ", scanner
+	print("[Scanner] ", scanner)
 
 	res = {}
 

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from Screens.Screen import Screen
 from Components.ConfigList import ConfigListScreen, ConfigList
 from Components.ActionMap import ActionMap
@@ -129,7 +131,7 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.doNextStep = True
 		elif self.index == self.INSTALL_PLUGINS:
 			if self["config"].getCurrent()[1] == self.doplugins:
-				from PluginBrowser import PluginDownloadBrowser
+				from .PluginBrowser import PluginDownloadBrowser
 				self.session.open(PluginDownloadBrowser, 0)
 			self.doNextStep = True
 		elif self.index == self.SCAN:

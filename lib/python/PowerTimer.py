@@ -63,7 +63,7 @@ class PowerTimer(Timer):
 			try:
 				rename(self.timersFilename, "%s_bad" % self.timersFilename)
 			except (IOError, OSError) as err:
-				print("[PowerTimer] Error %d: Renaming broken timer file failed!  (%s)" % (err.errno, err.strerror))
+				print(("[PowerTimer] Error %d: Renaming broken timer file failed!  (%s)" % (err.errno, err.strerror)))
 			return
 		check = True
 		overlapText = [_("Timer overlaps detected in pm_timers.xml!"), _("Please check all timers!")]
@@ -239,7 +239,7 @@ class PowerTimer(Timer):
 
 	def record(self, entry, ignoreTSC=False, dosave=True):
 		entry.timeChanged()
-		print("[PowerTimer] Entry '%s'." % str(entry))
+		print(("[PowerTimer] Entry '%s'." % str(entry)))
 		entry.Timer = self
 		self.addTimerEntry(entry)
 		if dosave:
@@ -247,7 +247,7 @@ class PowerTimer(Timer):
 		return None
 
 	def removeEntry(self, entry):
-		print("[PowerTimer] Remove entry '%s'." % str(entry))
+		print(("[PowerTimer] Remove entry '%s'." % str(entry)))
 		entry.repeated = False  # Avoid re-enqueuing.
 		entry.autoincrease = False
 		entry.abort()  # Abort timer.  This sets the end time to current time, so timer will be stopped.

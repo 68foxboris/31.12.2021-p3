@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.config import config, ConfigSubsection, ConfigInteger
 
@@ -27,7 +30,7 @@ def setConfiguredPosition():
 
 
 def main(session, **kwargs):
-	from overscanwizard import OverscanWizard
+	from Plugins.SystemPlugins.OSDPositionSetup.overscanwizard import OverscanWizard
 	session.open(OverscanWizard, timeOut=False)
 
 

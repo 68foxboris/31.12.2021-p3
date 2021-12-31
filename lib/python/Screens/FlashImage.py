@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import struct
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import zipfile
 
 from enigma import eEPGCache
@@ -82,9 +82,9 @@ class SelectImage(Screen):
 		if not self.imagesList:
 			if not self.jsonlist:
 				try:
-					self.jsonlist = dict(json.load(urllib2.urlopen('http://downloads.openpli.org/json/%s' % model)))
+					self.jsonlist = dict(json.load(urllib.request.urlopen('http://downloads.openpli.org/json/%s' % model)))
 					if config.usage.alternative_imagefeed.value:
-						self.jsonlist.update(dict(json.load(urllib2.urlopen('%s%s' % (config.usage.alternative_imagefeed.value, model)))))
+						self.jsonlist.update(dict(json.load(urllib.request.urlopen('%s%s' % (config.usage.alternative_imagefeed.value, model)))))
 				except:
 					pass
 			self.imagesList = dict(self.jsonlist)
@@ -109,7 +109,7 @@ class SelectImage(Screen):
 				for image in reversed(sorted(self.imagesList[catagorie].keys())):
 					list.append(ChoiceEntryComponent('verticalline', ((str(self.imagesList[catagorie][image]['name'])), str(self.imagesList[catagorie][image]['link']))))
 			else:
-				for image in self.imagesList[catagorie].keys():
+				for image in list(self.imagesList[catagorie].keys()):
 					list.append(ChoiceEntryComponent('expandable', ((str(catagorie)), "Expander")))
 					break
 		if list:
@@ -227,7 +227,7 @@ class FlashImage(Screen):
 			imagesList = getImagelist()
 			currentimageslot = getCurrentImage()
 			choices = []
-			slotdict = {k: v for k, v in BoxInfo.getItem("canMultiBoot").items() if not v['device'].startswith('/dev/sda')}
+			slotdict = {k: v for k, v in list(BoxInfo.getItem("canMultiBoot").items()) if not v['device'].startswith('/dev/sda')}
 			for x in range(1, len(slotdict) + 1):
 				choices.append(((_("slot%s - %s (current image) with, backup") if x == currentimageslot else _("slot%s - %s, with backup")) % (x, imagesList[x]['imagename']), (x, "with backup")))
 			for x in range(1, len(slotdict) + 1):

@@ -1,5 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from enigma import eTimer
-from Converter import Converter
+from Components.Converter.Converter import Converter
 
 
 class ConditionalShowHide(Converter):

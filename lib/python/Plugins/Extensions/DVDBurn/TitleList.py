@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import DVDProject
 import TitleList
 import TitleCutter
@@ -65,7 +68,7 @@ class TitleList(Screen, HelpableScreen):
 
 		self.setTitle(_("DVD titlelist"))
 
-		self["titleactions"] = HelpableActionMap(self, "DVDTitleList",
+		self["titleactions"] = HelpableActionMap(self, ["DVDTitleList"],
 			{
 				"addTitle": (self.addTitle, _("Add a new title"), _("Add title")),
 				"titleProperties": (self.titleProperties, _("Properties of current title"), _("Title properties")),
@@ -74,7 +77,7 @@ class TitleList(Screen, HelpableScreen):
 				"burnProject": (self.askBurnProject, _("Burn DVD"), _("Burn DVD")),
 			})
 
-		self["MovieSelectionActions"] = HelpableActionMap(self, "MovieSelectionActions",
+		self["MovieSelectionActions"] = HelpableActionMap(self, ["MovieSelectionActions"],
 			{
 				"contextMenu": (self.showMenu, _("menu")),
 			})
@@ -107,8 +110,8 @@ class TitleList(Screen, HelpableScreen):
 
 	def checkBackgroundJobs(self):
 		for job in job_manager.getPendingJobs():
-			print "[DVDBurn] type(job):", type(job)
-			print "[DVDBurn] Process.DVDJob:", Process.DVDJob
+			print("[DVDBurn] type(job):", type(job))
+			print("[DVDBurn] Process.DVDJob:", Process.DVDJob)
 			if type(job) == Process.DVDJob:
 				self.backgroundJob = job
 				return
@@ -192,7 +195,7 @@ class TitleList(Screen, HelpableScreen):
 				self["key_red"] = StaticText(_("Close"))
 				self["key_green"] = StaticText(_("Add"))
 				self["key_yellow"] = StaticText(_("Edit title"))
-				self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+				self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 				{
 					"red": (self.close, _("Close title selection")),
 					"green": (self.insertWithoutEdit, ("insert without cutlist editor")),
@@ -203,7 +206,7 @@ class TitleList(Screen, HelpableScreen):
 				pass
 
 			def doContext(self):
-				print "context menu forbidden inside DVDBurn to prevent calling multiple instances"
+				print("context menu forbidden inside DVDBurn to prevent calling multiple instances")
 
 			def updateButtons(self):
 				# the original will hide red/green, and crash...
@@ -316,7 +319,7 @@ class TitleList(Screen, HelpableScreen):
 		size = self.project.size / (1024 * 1024)
 		MAX_DL = self.project.MAX_DL - 100
 		MAX_SL = self.project.MAX_SL - 100
-		print "updateSize:", size, "MAX_DL:", MAX_DL, "MAX_SL:", MAX_SL
+		print("updateSize:", size, "MAX_DL:", MAX_DL, "MAX_SL:", MAX_SL)
 		if size > MAX_DL:
 			percent = 100 * size / float(MAX_DL)
 			self["space_label_dual"].text = "%d MB (%.2f%%)" % (size, percent)
@@ -390,6 +393,6 @@ class TitleList(Screen, HelpableScreen):
 			self.session.openWithCallback(self.exitCB, MessageBox, text=_("Your current collection will get lost!") + "\n" + _("Do you really want to exit?"), type=MessageBox.TYPE_YESNO)
 
 	def exitCB(self, answer):
-		print "[DVDBurn] exitCB", answer
+		print("[DVDBurn] exitCB", answer)
 		if answer is not None and answer:
 			self.close()

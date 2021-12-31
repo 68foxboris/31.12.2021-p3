@@ -1,4 +1,6 @@
-from Converter import Converter
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Components.Converter.Converter import Converter
 from Components.Element import cached, ElementError
 from enigma import iServiceInformation
 from os import lstat, path

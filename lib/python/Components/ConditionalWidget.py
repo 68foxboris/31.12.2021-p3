@@ -1,4 +1,6 @@
-from GUIComponent import GUIComponent
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Components.GUIComponent import GUIComponent
 from enigma import eTimer
 
 

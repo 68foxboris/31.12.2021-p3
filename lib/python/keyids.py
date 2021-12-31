@@ -1,3 +1,4 @@
+from __future__ import print_function
 # The following KEYID numbers are currently unused:
 #
 # 199, 204, 228-237, 239, 241-255, 258-303, 316-350,
@@ -345,14 +346,14 @@ knownAlisaes = {
 
 def invertKeyIds():
 	invKeyIds = {}
-	for key, value in KEYIDS.items():
+	for key, value in list(KEYIDS.items()):
 		if value not in invKeyIds:
 			invKeyIds[value] = key
 		else:
 			if value in knownAlisaes and key in knownAlisaes[value]:
 				invKeyIds[value] = knownAlisaes[value][0]
 			else:
-				print("[keyids] Error: Key code %d is mapped to both '%s' and '%s'!" % (value, invKeyIds[value], key))
+				print(("[keyids] Error: Key code %d is mapped to both '%s' and '%s'!" % (value, invKeyIds[value], key)))
 	return invKeyIds
 
 KEYIDNAMES = invertKeyIds()

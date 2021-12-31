@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.ActionMap import ActionMap
 from Components.config import config, ConfigSubsection, ConfigSelection, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
@@ -5,9 +8,9 @@ from Components.Sources.Progress import Progress
 from Components.Sources.StaticText import StaticText
 from Components.SystemInfo import BoxInfo
 from Components.Task import job_manager
-from InfoBarGenerics import InfoBarNotifications
+from Screens.InfoBarGenerics import InfoBarNotifications
 from Tools import Notifications
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 import Screens.Standby
 

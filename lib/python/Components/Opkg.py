@@ -1,7 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import os
 from enigma import eConsoleAppContainer
+from Components.config import config
 from Components.Harddisk import harddiskmanager
 from Tools.Directories import resolveFilename, SCOPE_LIBDIR
+from six import PY3
 
 opkgDestinations = []
 opkgStatusPath = ''
@@ -16,7 +21,7 @@ def opkgAddDestination(mountpoint):
 	global opkgDestinations
 	if mountpoint not in opkgDestinations:
 		opkgDestinations.append(mountpoint)
-		print "[Opkg] Added to OPKG destinations:", mountpoint
+		print("[Opkg] Added to OPKG destinations:", mountpoint)
 
 
 def onPartitionChange(why, part):
@@ -36,7 +41,7 @@ def onPartitionChange(why, part):
 		elif why == 'remove':
 			try:
 				opkgDestinations.remove(mountpoint)
-				print "[Opkg] Removed from OPKG destinations:", mountpoint
+				print("[Opkg] Removed from OPKG destinations:", mountpoint)
 			except:
 				pass
 
@@ -95,14 +100,14 @@ def listsDirPath():
 				line = line.split(' ', 2)
 				if len(line) > 2 and line[1] == ('lists_dir'):
 					return line[2].strip()
-	except Exception, ex:
-		print "[opkg]", ex
+	except Exception as ex:
+		print("[opkg]", ex)
 	return '/var/lib/opkg/lists'
 
 
 if __name__ == '__main__':
 	for p in enumPlugins('enigma'):
-		print p
+		print(p)
 
 harddiskmanager.on_partition_list_change.append(onPartitionChange)
 for part in harddiskmanager.getMountedPartitions():
@@ -142,7 +147,7 @@ class OpkgComponent:
 		self.runCmd("%s %s" % (opkgExtraDestinations(), cmd))
 
 	def runCmd(self, cmd):
-		print "executing", self.opkg, cmd
+		print("executing", self.opkg, cmd)
 		self.cmd.appClosed.append(self.cmdFinished)
 		self.cmd.dataAvail.append(self.cmdData)
 		if self.cmd.execute("%s %s" % (self.opkg, cmd)):
@@ -184,7 +189,9 @@ class OpkgComponent:
 		self.cmd.dataAvail.remove(self.cmdData)
 
 	def cmdData(self, data):
-		print "data:", data
+		if PY3:
+			data = data.decode()
+		print("[Opkg] data:", data)
 		if self.cache is None:
 			self.cache = data
 		else:
@@ -232,9 +239,9 @@ class OpkgComponent:
 				# if we get multiple config file update questions, the next ones
 				# don't necessarily start at the beginning of a line
 				self.callCallbacks(self.EVENT_MODIFIED, data.split(' \'', 3)[1][:-1])
-		except Exception, ex:
-			print "[Opkg] Failed to parse: '%s'" % data
-			print "[Opkg]", ex
+		except Exception as ex:
+			print("[Opkg] Failed to parse: '%s'" % data)
+			print("[Opkg]", ex)
 
 	def callCallbacks(self, event, param=None):
 		for callback in self.callbackList:

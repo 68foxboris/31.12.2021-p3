@@ -1,4 +1,6 @@
-from Converter import Converter
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Components.Converter.Converter import Converter
 from Components.Element import cached
 from pprint import pprint
 

@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import os
 from bisect import insort
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
@@ -27,7 +30,7 @@ class PluginComponent:
 			for x in plugin.where:
 				insort(self.plugins.setdefault(x, []), plugin)
 				if x == PluginDescriptor.WHERE_AUTOSTART:
-					plugin(reason=0)
+					plugin.__call__(reason=0)
 		else:
 			self.restartRequired = True
 
@@ -46,6 +49,8 @@ class PluginComponent:
 			if not os.path.isdir(directory_category):
 				continue
 			for pluginname in os.listdir(directory_category):
+				if pluginname == "__pycache__":
+					continue
 				#path = os.path.join(directory_category, pluginname)
 				path = directory_category + '/' + pluginname
 				if os.path.isdir(path):
@@ -54,11 +59,11 @@ class PluginComponent:
 						try:
 							plugin = my_import('.'.join(["Plugins", c, pluginname, "plugin"]))
 							if "Plugins" not in plugin.__dict__:
-                                                               print("Plugin %s doesn't have 'Plugin'-call." % pluginname)
+                                                               print(("Plugin %s doesn't have 'Plugin'-call." % pluginname))
                                                                continue
 							plugins = plugin.Plugins(path=path)
-						except Exception, exc:
-							print "Plugin ", c + "/" + pluginname, "failed to load:", exc
+						except Exception as exc:
+							print("Plugin ", c + "/" + pluginname, "failed to load:", exc)
 							# supress errors due to missing plugin.py* files (badly removed plugin)
 							for fn in ('plugin.py', 'plugin.pyo'):
 								if os.path.exists(os.path.join(path, fn)):
@@ -67,7 +72,7 @@ class PluginComponent:
 									print_exc()
 									break
 							else:
-								print "Plugin probably removed, but not cleanly in", path
+								print("Plugin probably removed, but not cleanly in", path)
 								try:
 									os.rmdir(path)
 								except:
@@ -87,8 +92,8 @@ class PluginComponent:
 						if fileExists(keymap):
 							try:
 								keymapparser.readKeymap(keymap)
-							except Exception, exc:
-								print "keymap for plugin %s/%s failed to load: " % (c, pluginname), exc
+							except Exception as exc:
+								print("keymap for plugin %s/%s failed to load: " % (c, pluginname), exc)
 								self.warnings.append((c + "/" + pluginname, str(exc)))
 
 		# build a diff between the old list of plugins and the new one
@@ -136,7 +141,7 @@ class PluginComponent:
 	def getPluginsForMenu(self, menuid):
 		res = []
 		for p in self.getPlugins(PluginDescriptor.WHERE_MENU):
-			res += p(menuid)
+			res += p.__call__(menuid)
 		return res
 
 	def clearPluginList(self):

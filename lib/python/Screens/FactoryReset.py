@@ -3,7 +3,7 @@ from os import _exit, listdir, remove, system
 from os.path import isdir, join as pathjoin
 from shutil import rmtree
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.Setup import Setup
 from Components.ActionMap import ActionMap
 from Components.config import ConfigYesNo, config, ConfigSubsection, getConfigListEntry
@@ -166,7 +166,7 @@ class FactoryReset(Screen, ConfigListScreen, ProtectedScreen):
 			self.wipeFiles(configDir, [""])
 			defaultFiles = pathjoin(resolveFilename(SCOPE_SKINS), "defaults", ".")
 			if isdir(defaultFiles):
-				print("[FactoryReset] Copying default configuration from '%s'." % defaultFiles)
+				print(("[FactoryReset] Copying default configuration from '%s'." % defaultFiles))
 				system("cp -a %s %s" % (defaultFiles, configDir))
 			else:
 				print("[FactoryReset] Warning: No default configuration is available!")
@@ -217,7 +217,7 @@ class FactoryReset(Screen, ConfigListScreen, ProtectedScreen):
 					remove(target)
 			except (IOError, OSError) as err:
 				if err.errno != ENOENT:
-					print("[FactoryReset] Error: Unable to delete '%s'!  (%s)" % (target, str(err)))
+					print(("[FactoryReset] Error: Unable to delete '%s'!  (%s)" % (target, str(err))))
 
 	def closeConfigList(self, closeParameters=()):  # Suppress the save settings pop up on exit.
 		self.close(*closeParameters)

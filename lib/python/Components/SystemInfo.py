@@ -61,7 +61,7 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 						self.enigmaList.append(item)
 						self.enigmaInfo[item] = self.processValue(value)
 						if item in self.boxInfo:
-							print("[SystemInfo] Note: Enigma information value '%s' with value '%s' being overridden to '%s'." % (item, self.boxInfo[item], value))
+							print(("[SystemInfo] Note: Enigma information value '%s' with value '%s' being overridden to '%s'." % (item, self.boxInfo[item], value)))
 			self.enigmaList = sorted(self.enigmaList)
 		else:
 			self.boxInfo["overrideactive"] = False
@@ -146,7 +146,7 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 
 	def setItem(self, item, value, immutable=False):
 		if item in self.immutableList or item in self.procList:
-			print("[BoxInfo] Error: Item '%s' is immutable and can not be %s!" % (item, "changed" if item in self.boxInfo else "added"))
+			print(("[BoxInfo] Error: Item '%s' is immutable and can not be %s!" % (item, "changed" if item in self.boxInfo else "added")))
 			return False
 		if immutable:
 			self.immutableList.append(item)
@@ -156,7 +156,7 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 
 	def deleteItem(self, item):
 		if item in self.immutableListor or item in self.procList:
-			print("[BoxInfo] Error: Item '%s' is immutable and can not be deleted!" % item)
+			print(("[BoxInfo] Error: Item '%s' is immutable and can not be deleted!" % item))
 		elif item in self.boxInfo:
 			del self.boxInfo[item]
 			return True

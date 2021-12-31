@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.HelpMenu import HelpableScreen
@@ -169,9 +172,9 @@ class ProjectSettings(Screen, ConfigListScreen):
 
 		self["config"].setList(self.list)
 		self.keydict = {}
-		for key, val in self.settings.dict().iteritems():
+		for key, val in iter(self.settings.dict().items()):
 			self.keydict[val] = key
-		for key, val in self.project.menutemplate.settings.dict().iteritems():
+		for key, val in iter(self.project.menutemplate.settings.dict().items()):
 			self.keydict[val] = key
 
 	def keyLeft(self):
@@ -196,7 +199,7 @@ class ProjectSettings(Screen, ConfigListScreen):
 
 	def ok(self):
 		key = self.keydict[self["config"].getCurrent()[1]]
-		from DVDProject import ConfigFilename
+		from .DVDProject import ConfigFilename
 		if type(self["config"].getCurrent()[1]) == ConfigFilename:
 			self.session.openWithCallback(self.FileBrowserClosed, FileBrowser, key, self["config"].getCurrent()[1])
 
@@ -220,14 +223,14 @@ class ProjectSettings(Screen, ConfigListScreen):
 	def FileBrowserClosed(self, path, scope, configRef):
 		if scope == "menutemplate":
 			if self.project.menutemplate.loadTemplate(path):
-				print "[DVDBurn] ProjectSettings menu template loaded"
+				print("[DVDBurn] ProjectSettings menu template loaded")
 				configRef.setValue(path)
 				self.initConfigList()
 			else:
 				self.session.open(MessageBox, self.project.error, MessageBox.TYPE_ERROR)
 		elif scope == "project":
 			self.path = path
-			print "[DVDBurn] len(self.titles)", len(self.project.titles)
+			print("[DVDBurn] len(self.titles)", len(self.project.titles))
 			if len(self.project.titles):
 				self.session.openWithCallback(self.askLoadCB, MessageBox, text=_("Your current collection will get lost!") + "\n" + _("Do you want to restore your settings?"), type=MessageBox.TYPE_YESNO)
 			else:

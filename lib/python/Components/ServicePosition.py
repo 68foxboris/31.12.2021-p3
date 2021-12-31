@@ -1,4 +1,7 @@
-from PerServiceDisplay import PerServiceDisplay, PerServiceBase
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from Components.PerServiceDisplay import PerServiceDisplay, PerServiceBase
 from Components.GUIComponent import GUIComponent
 from enigma import eTimer, iPlayableService, ePositionGauge
 import time
@@ -158,10 +161,10 @@ class ServicePositionGauge(PerServiceBase, GUIComponent):
 		return self.__seek_position
 
 	def setSeekPosition(self, pos):
-		print "[ServicePosition] set seek position:", pos
+		print("[ServicePosition] set seek position:", pos)
 		self.__seek_position = pos
 		if self.instance is not None:
-			print "[ServicePosition] set instance."
+			print("[ServicePosition] set instance.")
 			self.instance.setSeekPosition(pos)
 
 	seek_pointer_position = property(getSeekPosition, setSeekPosition)

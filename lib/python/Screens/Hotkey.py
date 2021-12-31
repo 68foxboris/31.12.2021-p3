@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Components.ActionMap import ActionMap, HelpableActionMap, NumberActionMap
 from Components.Sources.StaticText import StaticText
 from Components.ChoiceList import ChoiceList, ChoiceEntryComponent
@@ -124,7 +127,7 @@ def getHotkeyFunctions():
 	pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_EVENTINFO)
 	pluginlist.sort(key=lambda p: p.name)
 	for plugin in pluginlist:
-		if plugin.name not in twinPlugins and plugin.path and 'selectedevent' not in plugin.__call__.func_code.co_varnames:
+		if plugin.name not in twinPlugins and plugin.path and 'selectedevent' not in plugin.__call__.__code__.co_varnames:
 			if plugin.path[24:] in twinPaths:
 				twinPaths[plugin.path[24:]] += 1
 			else:
@@ -252,7 +255,7 @@ def getHotkeyFunctions():
 config.misc.hotkey = ConfigSubsection()
 config.misc.hotkey.additional_keys = ConfigYesNo(default=False)
 for x in hotkey.hotkeys:
-	exec "config.misc.hotkey.%s = ConfigText(default='%s')" % x[1:]
+	exec("config.misc.hotkey.%s = ConfigText(default='%s')" % x[1:])
 
 
 class HotkeySetup(Screen):
@@ -577,7 +580,7 @@ class InfoBarHotkey():
 	def __init__(self):
 		if not hotkey.functions:
 			getHotkeyFunctions()
-		self["HotkeyButtonActions"] = helpableHotkeyActionMap(self, "HotkeyActions",
+		self["HotkeyButtonActions"] = helpableHotkeyActionMap(self, ["HotkeyActions"],
 			dict((x[1], (self.hotkeyGlobal, boundFunction(self.getHelpText, x[1]))) for x in hotkey.hotkeys), -10)
 
 	def getKeyFunctions(self, key):
@@ -628,7 +631,7 @@ class InfoBarHotkey():
 				pluginlist = plugins.getPlugins(PluginDescriptor.WHERE_EVENTINFO)
 				pluginlist.sort(key=lambda p: p.name)
 				for plugin in pluginlist:
-					if plugin.name not in twinPlugins and plugin.path and 'selectedevent' not in plugin.__call__.func_code.co_varnames:
+					if plugin.name not in twinPlugins and plugin.path and 'selectedevent' not in plugin.__call__.__code__.co_varnames:
 						if plugin.path[24:] in twinPaths:
 							twinPaths[plugin.path[24:]] += 1
 						else:
@@ -656,15 +659,15 @@ class InfoBarHotkey():
 						return
 			elif selected[0] == "Infobar":
 				if hasattr(self, selected[1]):
-					exec "self." + ".".join(selected[1:]) + "()"
+					exec("self." + ".".join(selected[1:]) + "()")
 				else:
 					return 0
 			elif selected[0] == "Module":
 				try:
-					exec "from %s import %s" % (selected[1], selected[2])
-					exec "self.session.open(%s)" % ",".join(selected[2:])
+					exec("from %s import %s" % (selected[1], selected[2]))
+					exec("self.session.open(%s)" % ",".join(selected[2:]))
 				except Exception as e:
-					print "[Hotkey] error during executing module %s, screen %s, %s" % (selected[1], selected[2], e)
+					print("[Hotkey] error during executing module %s, screen %s, %s" % (selected[1], selected[2], e))
 					import traceback
 					traceback.print_exc()
 			elif selected[0] == "SoftcamSetup" and BoxInfo.getItem("HasSoftcamInstalled"):
@@ -672,7 +675,7 @@ class InfoBarHotkey():
 				self.session.open(SoftcamSetup)
 			elif selected[0] == "Setup":
 				from Screens.Setup import Setup
-				exec "self.session.open(Setup, \"%s\")" % selected[1]
+				exec("self.session.open(Setup, \"%s\")" % selected[1])
 			elif selected[0].startswith("Zap"):
 				if selected[0] == "ZapPanic":
 					self.servicelist.history = []

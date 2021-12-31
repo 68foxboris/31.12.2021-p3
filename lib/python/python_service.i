@@ -8,10 +8,6 @@ PyObject *getInfoObject(int w)
 {
 	switch (w)
 	{
-		case iServiceInformation::sHBBTVUrl:
-		{
-			return self->getHbbTVApplications();
-		}
 		case iServiceInformation::sTransponderData:
 		{
 			ePyObject ret = PyDict_New();
@@ -25,6 +21,8 @@ PyObject *getInfoObject(int w)
 			}
 			return ret;
 		}
+		case iServiceInformation::sFileSize:
+			return PyLong_FromLongLong(self->getFileSize());
 		case iServiceInformation::sCAIDs:
 		{
 			ePyObject ret;
@@ -114,7 +112,11 @@ PyObject *getInfoObject(int w)
 				data = info->getBuffer(size);
 				if (data && size)
 				{
+%#if PY_MAJOR_VERSION >= 3
+					return PyMemoryView_FromMemory((char*)data, size, PyBUF_READ);
+%#else
 					return PyBuffer_FromMemory(data, size);
+%#endif
 				}
 				else
 				{
@@ -126,11 +128,6 @@ PyObject *getInfoObject(int w)
 	}
 	Py_INCREF(Py_None);
 	return Py_None;
-}
-
-PyObject *getHbbTVApplications()
-{
-	return self->getHbbTVApplications();
 }
 
 PyObject *getAITApplications()
@@ -175,6 +172,8 @@ PyObject *getInfoObject(const eServiceReference &ref, int w)
 			}
 			return ret;
 		}
+		case iServiceInformation::sFileSize:
+			return PyLong_FromLongLong(self->getFileSize(ref));
 	}
 	Py_INCREF(Py_None);
 	return Py_None;

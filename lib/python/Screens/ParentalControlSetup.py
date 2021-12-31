@@ -1,4 +1,6 @@
-from Screen import Screen
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Screens.Screen import Screen
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import NumberActionMap
 from Components.config import config, getConfigListEntry, ConfigNothing, NoSave, configfile

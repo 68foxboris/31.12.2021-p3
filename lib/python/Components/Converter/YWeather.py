@@ -10,7 +10,7 @@ import os
 try:
 	import urllib2
 except ImportError:
-	import urllib
+	import urllib.request, urllib.parse, urllib.error
 import socket
 from six import PY2
 

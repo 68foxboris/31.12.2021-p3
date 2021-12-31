@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.SystemInfo import BoxInfo
@@ -6,7 +9,7 @@ from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigN
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 
-from VideoHardware import video_hw
+from Plugins.SystemPlugins.Videomode.VideoHardware import video_hw
 
 config.misc.videowizardenabled = ConfigBoolean(default=True)
 
@@ -234,20 +237,20 @@ class VideomodeHotplug:
 		self.hw.on_hotplug.remove(self.hotplug)
 
 	def hotplug(self, what):
-		print "[Videomode] hotplug detected on port '%s'" % (what)
+		print("[Videomode] hotplug detected on port '%s'" % (what))
 		port = config.av.videoport.value
 		mode = config.av.videomode[port].value
 		rate = config.av.videorate[mode].value
 
 		if not self.hw.isModeAvailable(port, mode, rate):
-			print "[Videomode] mode %s/%s/%s went away!" % (port, mode, rate)
+			print("[Videomode] mode %s/%s/%s went away!" % (port, mode, rate))
 			modelist = self.hw.getModeList(port)
 			if not len(modelist):
-				print "[Videomode] sorry, no other mode is available (unplug?). Doing nothing."
+				print("[Videomode] sorry, no other mode is available (unplug?). Doing nothing.")
 				return
 			mode = modelist[0][0]
 			rate = modelist[0][1]
-			print "[Videomode] setting %s/%s/%s" % (port, mode, rate)
+			print("[Videomode] setting %s/%s/%s" % (port, mode, rate))
 			self.hw.setMode(port, mode, rate)
 
 
@@ -289,7 +292,7 @@ def startSetup(menuid):
 
 
 def VideoWizard(*args, **kwargs):
-	from VideoWizard import VideoWizard
+	from .VideoWizard import VideoWizard
 	return VideoWizard(*args, **kwargs)
 
 

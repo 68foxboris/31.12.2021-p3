@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Console import Console
@@ -258,7 +261,7 @@ class RestoreMenu(Screen):
 	def startDelete(self, ret=False):
 		if (ret == True):
 			self.exe = True
-			print "[SoftwareManager] removing:", self.val
+			print("[SoftwareManager] removing:", self.val)
 			if (path.exists(self.val) == True):
 				remove(self.val)
 			self.exe = False

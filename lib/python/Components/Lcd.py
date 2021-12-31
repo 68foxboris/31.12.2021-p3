@@ -149,7 +149,7 @@ class LCD:
 
 	def setBright(self, value):
 		value *= 255
-		value /= 10
+		value //= 10
 		if value > 255:
 			value = 255
 		self.autoDimDownLCDTimer.stop()
@@ -207,7 +207,7 @@ class LCD:
 
 	def setMode(self, value):
 		if exists("/proc/stb/lcd/show_symbols"):
-			print("[Lcd] setLCDMode='%s'." % value)
+			print(("[Lcd] setLCDMode='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/show_symbols", value)
 		if config.lcd.mode.value == "0":
 			BoxInfo.setItem("SeekStatePlay", False)
@@ -229,30 +229,30 @@ class LCD:
 
 	def setPower(self, value):
 		if exists("/proc/stb/power/vfd"):
-			print("[Lcd] setLCDPower='%s'." % value)
+			print(("[Lcd] setLCDPower='%s'." % value))
 			fileWriteLine("/proc/stb/power/vfd", value)
 		elif exists("/proc/stb/lcd/vfd"):
-			print("[Lcd] setLCDPower='%s'." % value)
+			print(("[Lcd] setLCDPower='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/vfd", value)
 
 	def setShowoutputresolution(self, value):
 		if exists("/proc/stb/lcd/show_outputresolution"):
-			print("[Lcd] setLCDShowoutputresolution='%s'." % value)
+			print(("[Lcd] setLCDShowoutputresolution='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/show_outputresolution", value)
 
 	def setfblcddisplay(self, value):
 		if exists("/proc/stb/fb/sd_detach"):
-			print("[Lcd] setfblcddisplay='%s'." % value)
+			print(("[Lcd] setfblcddisplay='%s'." % value))
 			fileWriteLine("/proc/stb/fb/sd_detach", value)
 
 	def setRepeat(self, value):
 		if exists("/proc/stb/lcd/scroll_repeats"):
-			print("[Lcd] setLCDRepeat='%s'." % value)
+			print(("[Lcd] setLCDRepeat='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/scroll_repeats", value)
 
 	def setScrollspeed(self, value):
 		if exists("/proc/stb/lcd/scroll_delay"):
-			print("[Lcd] setLCDScrollspeed='%s'." % value)
+			print(("[Lcd] setLCDScrollspeed='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/scroll_delay", value)
 
 	def setLEDNormalState(self, value):
@@ -266,16 +266,16 @@ class LCD:
 
 	def setLCDMiniTVMode(self, value):
 		if exists("/proc/stb/lcd/mode"):
-			print("[Lcd] setLCDMiniTVMode='%s'." % value)
+			print(("[Lcd] setLCDMiniTVMode='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/mode", value)
 
 	def setLCDMiniTVPIPMode(self, value):
-		print("[Lcd] setLCDMiniTVPIPMode='%s'." % value)
+		print(("[Lcd] setLCDMiniTVPIPMode='%s'." % value))
 		# DEBUG: Should this be doing something?
 
 	def setLCDMiniTVFPS(self, value):
 		if exists("/proc/stb/lcd/fps"):
-			print("[Lcd] setLCDMiniTVFPS='%s'." % value)
+			print(("[Lcd] setLCDMiniTVFPS='%s'." % value))
 			fileWriteLine("/proc/stb/lcd/fps", value)
 
 
@@ -307,11 +307,11 @@ def InitLcd():
 		ilcd = LCD()
 		if can_lcdmodechecking:
 			def setLCDModeMinitTV(configElement):
-				print("[Lcd] setLCDModeMinitTV='%s'." % configElement.value)
+				print(("[Lcd] setLCDModeMinitTV='%s'." % configElement.value))
 				fileWriteLine("/proc/stb/lcd/mode", configElement.value)
 
 			def setMiniTVFPS(configElement):
-				print("[Lcd] setMiniTVFPS='%s'." % configElement.value)
+				print(("[Lcd] setMiniTVFPS='%s'." % configElement.value))
 				fileWriteLine("/proc/stb/lcd/fps", configElement.value)
 
 			def setLCDModePiP(configElement):

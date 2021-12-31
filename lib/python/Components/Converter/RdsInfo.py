@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from enigma import iRdsDecoder, iPlayableService
 from Components.Converter.Converter import Converter
 from Components.Element import cached
@@ -26,7 +29,7 @@ class RdsInfo(Converter):
 			elif self.type == self.RTP_TEXT_CHANGED:
 				text = decoder.getText(iRdsDecoder.RtpText)
 			else:
-				print "[RdsInfo] unknown RdsInfo Converter type", self.type
+				print("[RdsInfo] unknown RdsInfo Converter type", self.type)
 		return text
 
 	text = property(getText)

@@ -1,4 +1,7 @@
-from Converter import Converter
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from Components.Converter.Converter import Converter
 from enigma import eListboxPythonStringContent
 from Components.Element import cached
 
@@ -23,11 +26,11 @@ class StringList(Converter):
 
 	def setIndex(self, index):
 		# update all non-master targets
-		print "[StringList] changed selection in listbox!"
+		print("[StringList] changed selection in listbox!")
 		for x in self.downstream_elements:
-			print "[StringList] downstream element", x
+			print("[StringList] downstream element", x)
 			if x is not self.master:
-				print "[StringList] is not master, so update to index", index
+				print("[StringList] is not master, so update to index", index)
 				x.index = index
 
 	def getIndex(self, index):

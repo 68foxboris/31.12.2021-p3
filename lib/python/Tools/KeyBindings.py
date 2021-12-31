@@ -346,7 +346,7 @@ def addKeyBinding(domain, key, context, action, flags):
 
 def removeKeyBinding(key, context, action, wild=True):
 	if wild and action == "*":
-		for ctx, action in keyBindings.keys():
+		for ctx, action in list(keyBindings.keys()):
 			if ctx == context:
 				removeKeyBinding(key, context, action, False)
 		return
@@ -385,7 +385,7 @@ def getKeyDescription(key):
 
 
 def getKeyBindingKeys(filterfn=lambda key: True):
-	return filter(filterfn, keyBindings)
+	return list(filter(filterfn, keyBindings))
 
 # Remove all entries of domain "domain".
 #
@@ -393,4 +393,4 @@ def getKeyBindingKeys(filterfn=lambda key: True):
 
 def removeKeyBindings(domain):
 	for x in keyBindings:
-		keyBindings[x] = filter(lambda e: e[1] != domain, keyBindings[x])
+		keyBindings[x] = [e for e in keyBindings[x] if e[1] != domain]

@@ -1,4 +1,6 @@
-from Renderer import Renderer
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Components.Renderer.Renderer import Renderer
 from enigma import eDVBCI_UI, eLabel, iPlayableService
 from skin import parameters
 from Components.SystemInfo import BoxInfo

@@ -1,4 +1,6 @@
-from Screen import Screen
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from Screens.Screen import Screen
 from Components.Label import Label
 import enigma
 

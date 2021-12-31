@@ -1,5 +1,6 @@
-from urllib2 import urlopen, URLError
-from urllib import urlencode
+from urllib.request import urlopen
+from urllib.error import URLError
+from urllib.parse import urlencode
 import sys
 import re
 import json
@@ -37,7 +38,7 @@ def get_woeid_from_yahoo(search_string):
 
 	woeid_data = {}
 	woeid_data['count'] = yahoo_woeid_result['query']['count']
-	for i in xrange(yahoo_woeid_result['query']['count']):
+	for i in range(yahoo_woeid_result['query']['count']):
 		try:
 			place_data = result[i]
 		except KeyError:

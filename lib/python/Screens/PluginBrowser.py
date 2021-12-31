@@ -1,5 +1,7 @@
-# -*- coding: UTF-8 -*-
-from Screen import Screen
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+from Screens.Screen import Screen
 from Screens.ParentalControlSetup import ProtectedScreen
 from enigma import eConsoleAppContainer, eDVBDB, eTimer, eSize, ePoint, getDesktop
 
@@ -87,8 +89,8 @@ class PluginBrowser(Screen, ProtectedScreen):
 		})
 		self["DirectionActions"] = ActionMap(["DirectionActions"],
 		{
-			"moveUp": self.moveUp,
-			"moveDown": self.moveDown
+			"up": self.moveUp,
+			"down": self.moveDown
 		})
 		self["NumberActions"] = NumberActionMap(["NumberActions"],
 		{
@@ -158,7 +160,7 @@ class PluginBrowser(Screen, ProtectedScreen):
 
 	def run(self):
 		plugin = self["list"].l.getCurrentSelection()[0]
-		plugin(session=self.session)
+		plugin.__call__(session=self.session)
 		self.help = False
 
 	def setDefaultList(self, answer):
@@ -427,8 +429,8 @@ class PluginDownloadBrowser(Screen):
 		if hasattr(self, 'postInstallCall'):
 			try:
 				self.postInstallCall()
-			except Exception, ex:
-				print "[PluginBrowser] postInstallCall failed:", ex
+			except Exception as ex:
+				print("[PluginBrowser] postInstallCall failed:", ex)
 			self.resetPostInstall()
 		try:
 			os.unlink('/tmp/opkg.conf')
@@ -527,7 +529,7 @@ class PluginDownloadBrowser(Screen):
 
 			self.plugins[split[0]].append((PluginDescriptor(name=x[3], description=x[2], icon=verticallineIcon), split[1], x[1]))
 
-		for x in self.plugins.keys():
+		for x in list(self.plugins.keys()):
 			if x in self.expanded:
 				list.append(PluginCategoryComponent(x, expandedIcon, self.listWidth))
 				list.extend([PluginDownloadComponent(plugin[0], plugin[1], plugin[2], self.listWidth) for plugin in self.plugins[x]])

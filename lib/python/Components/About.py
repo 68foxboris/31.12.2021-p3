@@ -40,7 +40,7 @@ def getIfConfig(ifname):
 	infos["hwaddr"] = 0x8927  # SIOCSIFHWADDR
 	infos["netmask"] = 0x891b  # SIOCGIFNETMASK
 	try:
-		for k, v in infos.items():
+		for k, v in list(infos.items()):
 			ifreq[k] = _ifinfo(sock, v, ifname)
 	except:
 		pass
@@ -198,7 +198,7 @@ def getCPUInfoString():
 					if "temperature = " in line:
 						temperature = line.split("temperature = ")[1].split()[0]
 		if temperature:
-			degree = u"\u00B0"
+			degree = "\u00B0"
 			if not isinstance(degree, str):
 				degree = degree.encode("UTF-8", errors="ignore")
 			return "%s %s MHz (%s) %s%sC" % (processor, cpuSpeed, ngettext("%d core", "%d cores", cpuCount) % cpuCount, temperature, degree)
@@ -282,10 +282,10 @@ def GetIPsFromNetworkInterfaces():
 			maxPossible *= 2
 		else:
 			break
-	nameStr = names.tostring() if PY2 else names
+	namestr = names.tobytes()
 	ifaces = []
 	for index in range(0, outbytes, structSize):
-		ifaceName = bytes.decode(nameStr[index:index + 16]).split("\0", 1)[0].encode("ascii") if PY2 else str(nameStr[index:index + 16]).split("\0", 1)[0]
+		iface_name = bytes.decode(namestr[i:i + 16]).split('\0', 1)[0]
 		if ifaceName != "lo":
 			ifaces.append((ifaceName, inet_ntoa(nameStr[index + 20:index + 24])))
 	return ifaces

@@ -77,7 +77,7 @@ def resolveAlternate(ref):
 
 
 def makeServiceQueryStr(serviceTypes):
-	return ' || '.join(map(lambda x: '(type == %d)' % x, serviceTypes))
+	return ' || '.join(['(type == %d)' % x for x in serviceTypes])
 
 
 def serviceRefAppendPath(sref, path):

@@ -1,5 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from Plugins.Plugin import PluginDescriptor
-from GraphMultiEpg import GraphMultiEPG
+from Plugins.Extensions.GraphMultiEPG.GraphMultiEpg import GraphMultiEPG
 from Screens.ChannelSelection import SimpleChannelSelection
 import Screens.InfoBar
 from enigma import eServiceCenter, eServiceReference

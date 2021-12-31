@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
@@ -202,7 +205,7 @@ class CableScanScreen(ConfigListScreen, Screen):
 
 class CableScanAutoScreen(CableScanScreen):
 	def __init__(self, session, nimlist):
-		print "[CableScan] start"
+		print("[CableScan] start")
 		Screen.__init__(self, session)
 		self.skinName = "Standby"
 
@@ -228,14 +231,14 @@ class CableScanAutoScreen(CableScanScreen):
 			del self.scan
 
 	def scanCompleted(self, result):
-		print "[AutoCableScan] completed result = ", result
+		print("[AutoCableScan] completed result = ", result)
 		refreshServiceList()
 		self.close(result > 0)
 
 	def Power(self):
 		from Screens.Standby import inStandby
 		inStandby.Power()
-		print "[AutoCableScan] aborted due to power button pressed"
+		print("[AutoCableScan] aborted due to power button pressed")
 		self.close(True)
 
 	def createSummary(self):
@@ -255,7 +258,7 @@ def restartScanAutoStartTimer(reply=False):
 	if reply:
 		CableScanAutoStartTimer.startLongTimer(86400)
 	else:
-		print "[CableScan] Scan was not successful retry in one hour"
+		print("[CableScan] Scan was not successful retry in one hour")
 		CableScanAutoStartTimer.startLongTimer(3600)
 
 

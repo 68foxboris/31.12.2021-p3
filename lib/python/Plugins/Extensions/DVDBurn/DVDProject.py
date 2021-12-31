@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from Tools.Directories import fileExists
 from Components.config import config, ConfigSubsection, ConfigInteger, ConfigText, ConfigSelection, ConfigSequence, ConfigSubList
 import DVDTitle
@@ -20,7 +23,7 @@ class ConfigFilename(ConfigText):
 		cut_len = min(len(self.text), 40)
 		filename = (self.text.rstrip("/").rsplit("/", 1))[1].encode("utf-8")[:cut_len] + " "
 		if self.allmarked:
-			mark = range(0, len(filename))
+			mark = list(range(0, len(filename)))
 		else:
 			mark = [filename]
 		return ("mtext"[1 - selected:], filename, mark)
@@ -59,7 +62,7 @@ class DVDProject:
 		list.append('<?xml version="1.0" encoding="utf-8" ?>\n')
 		list.append('<DreamDVDBurnerProject>\n')
 		list.append('\t<settings ')
-		for key, val in self.settings.dict().iteritems():
+		for key, val in iter(self.settings.dict().items()):
 			list.append(key + '="' + str(val.getValue()) + '" ')
 		list.append('/>\n')
 		list.append('\t<titles>\n')
@@ -70,12 +73,12 @@ class DVDProject:
 			list.append('</path>\n')
 			list.append('\t\t\t<properties ')
 			audiotracks = []
-			for key, val in title.properties.dict().iteritems():
+			for key, val in iter(title.properties.dict().items()):
 				if type(val) is ConfigSubList:
 					audiotracks.append('\t\t\t<audiotracks>\n')
 					for audiotrack in val:
 						audiotracks.append('\t\t\t\t<audiotrack ')
-						for subkey, subval in audiotrack.dict().iteritems():
+						for subkey, subval in iter(audiotrack.dict().items()):
 							audiotracks.append(subkey + '="' + str(subval.getValue()) + '" ')
 						audiotracks.append(' />\n')
 					audiotracks.append('\t\t\t</audiotracks>\n')
@@ -120,7 +123,7 @@ class DVDProject:
 			file.close()
 			projectfiledom = xml.dom.minidom.parseString(data)
 			for node in projectfiledom.childNodes[0].childNodes:
-				print "[DVDBurn] node:", node
+				print("[DVDBurn] node:", node)
 				if node.nodeType == xml.dom.minidom.Element.nodeType:
 					if node.tagName == 'settings':
 						self.xmlAttributesToConfig(node, self.settings)
@@ -159,11 +162,11 @@ class DVDProject:
 				except (NameError, SyntaxError):
 					val = item.nodeValue.encode("utf-8")
 				try:
-					print "[DVDBurn] config[%s].setValue(%s)" % (key, val)
+					print("[DVDBurn] config[%s].setValue(%s)" % (key, val))
 					config.dict()[key].setValue(val)
 				except (KeyError):
 					self.error = "unknown attribute '%s'" % (key)
-					print "[DVDBurn] KeyError", self.error
+					print("[DVDBurn] KeyError", self.error)
 					raise AttributeError
 				i += 1
 		except AttributeError:
@@ -171,10 +174,10 @@ class DVDProject:
 			return False
 
 	def xmlGetTitleNodeRecursive(self, node, title_idx=-1):
-		print "[DVDBurn] xmlGetTitleNodeRecursive", title_idx, node
-		print node.childNodes
+		print("[DVDBurn] xmlGetTitleNodeRecursive", title_idx, node)
+		print(node.childNodes)
 		for subnode in node.childNodes:
-			print "[DVDBurn] xmlGetTitleNodeRecursive subnode:", subnode
+			print("[DVDBurn] xmlGetTitleNodeRecursive subnode:", subnode)
 			if subnode.nodeType == xml.dom.minidom.Element.nodeType:
 				if subnode.tagName == 'title':
 					title_idx += 1
@@ -182,7 +185,7 @@ class DVDProject:
 					self.titles.append(title)
 					self.xmlGetTitleNodeRecursive(subnode, title_idx)
 				if subnode.tagName == 'path':
-					print "[DVDBurn] path:", subnode.firstChild.data
+					print("[DVDBurn] path:", subnode.firstChild.data)
 					filename = subnode.firstChild.data
 					self.titles[title_idx].addFile(filename.encode("utf-8"))
 				if subnode.tagName == 'properties':
@@ -190,7 +193,7 @@ class DVDProject:
 				if subnode.tagName == 'audiotracks':
 					self.xmlGetTitleNodeRecursive(subnode, title_idx)
 				if subnode.tagName == 'audiotrack':
-					print "[DVDBurn] audiotrack...", subnode.toxml()
+					print("[DVDBurn] audiotrack...", subnode.toxml())
 
 	def getSize(self):
 		totalsize = 0
@@ -236,7 +239,7 @@ class MenuTemplate(DVDProject):
 		self.settings.thumb_size = ConfigSequence(seperator=',', default=[200, 158], limits=[(0, 576), (-1, 720)])
 		self.settings.thumb_border = ConfigInteger(default=2, limits=(0, 20))
 		self.filekeys = ["menubg", "menuaudio", "fontface_headline", "fontface_title", "fontface_subtitle"]
-		from TitleProperties import languageChoices
+		from .TitleProperties import languageChoices
 		self.settings.menulang = ConfigSelection(choices=languageChoices.choices, default=languageChoices.choices[1][0])
 		self.error = ""
 
