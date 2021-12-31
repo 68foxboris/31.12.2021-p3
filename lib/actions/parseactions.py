@@ -1,4 +1,6 @@
-
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 # takes a header file, outputs action ids
 
 import tokenize
@@ -6,8 +8,8 @@ import sys
 
 
 def filter(g):
-	while 1:
-		t = next(g)
+	while True:
+		t = g.next()
 		if t[1] == "/*":
 			while g.next()[1] != "*/":
 				pass
@@ -18,12 +20,12 @@ def filter(g):
 			continue
 
 		if t[1] != "\n":
-#			print t
+#			print(t)
 			yield t[1]
 
 
 def do_file(f, mode):
-	tokens = list(filter(tokenize.generate_tokens(open(f, 'r').readline)))
+	tokens = filter(tokenize.generate_tokens(open(f, 'r').readline))
 
 	sys.stderr.write("parsing %s\n" % f)
 
@@ -33,14 +35,14 @@ def do_file(f, mode):
 
 	firsthit = 1
 
-	while 1:
+	while True:
 		try:
-			t = next(tokens)
+			t = tokens.next()
 		except:
 			break
 
 		if t == "class":
-			classname = next(tokens)
+			classname = tokens.next()
 			classstate = state
 
 		if t == "{":
@@ -50,15 +52,15 @@ def do_file(f, mode):
 			state -= 1
 
 		if t == "enum" and state == classstate + 1:
-			actionname = next(tokens)
+			actionname = tokens.next()
 
 			if actionname == "{":
-				while next(tokens) != "}":
+				while tokens.next() != "}":
 					pass
 				continue
 
 			if actionname[-7:] == "Actions":
-				if next(tokens) != "{":
+				if tokens.next() != "{":
 					try:
 						print(classname)
 					except:
@@ -69,25 +71,25 @@ def do_file(f, mode):
 					except:
 						pass
 
-					raise Exception("action enum must be simple.")
+					raise Exception(_("action enum must be simple."))
 
 				counter = 0
 
-				while 1:
+				while True:
 
-					t = next(tokens)
+					t = tokens.next()
 
 					if t == "=":
-						next(tokens)
-						t = next(tokens)
+						tokens.next()
+						t = tokens.next()
 
 					if t == "}":
 						break
 
 					if counter:
 						if t != ",":
-							raise Exception("no comma")
-						t = next(tokens)
+							raise Exception(_("no comma"))
+						t = tokens.next()
 
 					if firsthit:
 
