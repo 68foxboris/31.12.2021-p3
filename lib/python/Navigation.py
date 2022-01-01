@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayableServiceReference, iPlayableService, setPreferredTuner, eStreamServer, iRecordableServicePtr, eDVBLocalTimeHandler, eTimer
 from Components.ImportChannels import ImportChannels
@@ -68,17 +70,15 @@ class Navigation:
 		else:
 			if config.usage.remote_fallback_import.value and not config.usage.remote_fallback_import_restart.value:
 				ImportChannels()
-			if startup_to_standby == "yes" or self.__wasTimerWakeup and config.misc.prev_wakeup_time.value and (wakeup_time_type == 0 or wakeup_time_type == 1 or (wakeup_time_type == 3 and startup_to_standby == "except")):
+			if startup_to_standby == "yes" or self.__wasTimerWakeup and (wakeup_time_type == 0 or wakeup_time_type == 1 or (wakeup_time_type == 3 and startup_to_standby == "except")):
 				if not Screens.Standby.inTryQuitMainloop:
 					Notifications.AddNotification(Screens.Standby.Standby, wakeup_timer_enabled and 1 or True)
-		if config.misc.prev_wakeup_time.value:
-			config.misc.prev_wakeup_time.value = 0
-			config.misc.prev_wakeup_time.save()
+		if config.usage.wakeup_enabled.value:
 			configfile.save()
 
 	def _processTimerWakeup(self):
 		now = time()
-		timeHandlerCallbacks =  eDVBLocalTimeHandler.getInstance().m_timeUpdated.get()
+		timeHandlerCallbacks = eDVBLocalTimeHandler.getInstance().m_timeUpdated.get()
 		if self.__nextRecordTimerAfterEventActionAuto and now < eDVBLocalTimeHandler.timeOK:
 			print('[Navigation] RECTIMER: wakeup to standby but system time not set.')
 			if self._processTimerWakeup not in timeHandlerCallbacks:
@@ -101,7 +101,7 @@ class Navigation:
 			# as a PowerTimer WakeToStandby was actiond to it.
 			self.standbytimer = eTimer()
 			self.standbytimer.callback.append(self.gotostandby)
-			self.standbytimer.start(15000, True)			
+			self.standbytimer.start(15000, True)
 
 	def wasTimerWakeup(self):
 		return self.__wasTimerWakeup
@@ -122,7 +122,7 @@ class Navigation:
 			self.currentlyPlayingService = None
 
 	def dispatchRecordEvent(self, rec_service, event):
-#		print "[Navigation] record_event", rec_service, event
+#		print("[Navigation] record_event", rec_service, event)
 		for x in self.record_event:
 			x(rec_service, event)
 
@@ -139,7 +139,7 @@ class Navigation:
 		if ref and oldref and ref == oldref and not forceRestart:
 			print("[Navigation] ignore request to play already running service(1)")
 			return 1
-		print("[Navigation] playing: ", ref and ref.toString())
+		print("[Navigation] playing", ref and ref.toString())
 		if path.exists("/proc/stb/lcd/symbol_signal") and config.lcd.mode.value == '1':
 			try:
 				if '0:0:0:0:0:0:0:0:0' not in ref.toString():
@@ -246,7 +246,7 @@ class Navigation:
 	def recordService(self, ref, simulate=False):
 		service = None
 		if not simulate:
-			print("[Navigation] recording service: %s" % (str(ref)))
+			print("[Navigation] recording service:", (ref and ref.toString()))
 		if isinstance(ref, ServiceReference):
 			ref = ref.ref
 		if ref:

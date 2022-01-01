@@ -8,7 +8,6 @@ from Components.Network import iNetwork
 import enigma
 
 import os
-from string import maketrans, strip
 from pythonwifi.iwlibs import Wireless, getWNICnames
 from pythonwifi import flags as wififlags
 
@@ -57,7 +56,7 @@ class Wlan:
 			else:
 				b = b + chr(i)
 
-		self.asciitrans = maketrans(a, b)
+		self.asciitrans = str.maketrans(a, b)
 
 	def asciify(self, str):
 		return str.translate(self.asciitrans)

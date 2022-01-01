@@ -9,6 +9,7 @@ from enigma import eHdmiCEC, eActionMap
 from Tools.StbHardware import getFPWasTimerWakeup
 import NavigationInstance
 from enigma import eTimer
+from os import sys
 from sys import maxsize
 
 LOGPATH = "/hdd/"
