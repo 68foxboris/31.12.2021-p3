@@ -1,4 +1,4 @@
-
+from __future__ import print_function
 # fake-enigma
 
 
@@ -310,7 +310,7 @@ print("done")
 
 chroot = "."
 
-for (x, (y, z)) in list(Tools.Directories.defaultPaths.items()):
+for (x, (y, z)) in Tools.Directories.defaultPaths.items():
 	Tools.Directories.defaultPaths[x] = (chroot + y, z)
 
 Tools.Directories.defaultPaths[Tools.Directories.SCOPE_SKIN] = ("../data/", Tools.Directories.PATH_DONTCREATE)

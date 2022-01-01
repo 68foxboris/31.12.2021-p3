@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # enigma2 reactor: based on pollreactor, which is
 # Copyright (c) 2001-2004 Twisted Matrix Laboratories.
 # See LICENSE for details.
@@ -18,6 +19,7 @@ from twisted.internet import main, posixbase, error
 #from twisted.internet.pollreactor import PollReactor, poller
 
 from enigma import getApplication
+import six
 
 # globals
 reads = {}
@@ -138,13 +140,13 @@ class PollReactor(posixbase.PosixReactorBase):
 		return result
 
 	def doPoll(self, timeout,
-			reads=reads,
-			writes=writes,
-			selectables=selectables,
-			select=select,
-			log=log,
-			POLLIN=select.POLLIN,
-			POLLOUT=select.POLLOUT):
+			   reads=reads,
+			   writes=writes,
+			   selectables=selectables,
+			   select=select,
+			   log=log,
+			   POLLIN=select.POLLIN,
+			   POLLOUT=select.POLLOUT):
 		"""Poll the poller for new events."""
 
 		if timeout is not None:
@@ -173,11 +175,12 @@ class PollReactor(posixbase.PosixReactorBase):
 
 	doIteration = doPoll
 
-	def _doReadOrWrite(self, selectable, fd, event, POLLIN, POLLOUT, log,
-		faildict={
-			error.ConnectionDone: failure.Failure(error.ConnectionDone()),
-			error.ConnectionLost: failure.Failure(error.ConnectionLost())
-		}):
+	def _doReadOrWrite(self, selectable, fd, event, POLLIN, POLLOUT, log, faildict=None):
+		if not faildict:
+			faildict = {
+		error.ConnectionDone: failure.Failure(error.ConnectionDone()),
+		error.ConnectionLost: failure.Failure(error.ConnectionLost())
+		}
 		why = None
 		inRead = False
 		if event & POLL_DISCONNECTED and not (event & POLLIN):
@@ -193,6 +196,12 @@ class PollReactor(posixbase.PosixReactorBase):
 				if not selectable.fileno() == fd:
 					why = error.ConnectionFdescWentAway('Filedescriptor went away')
 					inRead = False
+			except AttributeError as ae:
+				if "'NoneType' object has no attribute 'writeHeaders'" not in six.text_type(ae):
+					log.deferr()
+					why = sys.exc_info()[1]
+				else:
+					why = None
 			except:
 				log.deferr()
 				why = sys.exc_info()[1]

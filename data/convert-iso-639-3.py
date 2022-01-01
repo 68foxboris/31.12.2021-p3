@@ -21,4 +21,4 @@ with open(infilename, 'r') as f:
 				l[item[i]] = name
 
 with open(outfilename, 'wb') as f:
-	pickle.dump(l, f, cPickle.HIGHEST_PROTOCOL)
+	pickle.dump(l, f, pickle.HIGHEST_PROTOCOL)

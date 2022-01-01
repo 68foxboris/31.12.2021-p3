@@ -1,4 +1,4 @@
-
+from __future__ import print_function
 import time
 import tests
 
@@ -7,7 +7,7 @@ recorded_events = []
 
 def event(self, name, args, kwargs):
 	global recorded_events
-	print(("*EVENT*", time.time(), self, name, args, kwargs))
+	print("*EVENT*", time.time(), self, name, args, kwargs)
 	recorded_events.append((time.time(), self, name, args, kwargs))
 
 
