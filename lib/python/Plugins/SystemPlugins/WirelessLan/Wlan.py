@@ -110,8 +110,8 @@ class Wlan:
 
 				extra = []
 				for element in result.custom:
-					element = element.encode()
-					extra.append(strip(self.asciify(element)))
+					element = element.decode()
+					extra.append(str.strip(self.asciify(element)))
 				for element in extra:
 					if 'SignalStrength' in element:
 						signal = element[element.index('SignalStrength') + 15:element.index(',L')]
@@ -129,7 +129,7 @@ class Wlan:
 					'bssid': result.bssid,
 					'channel': channel,
 					'encrypted': encryption,
-					'essid': strip(self.asciify(result.essid)),
+					'essid': str.strip(self.asciify(result.essid)),
 					'iface': self.iface,
 					'maxrate': ifobj._formatBitrate(result.rate[-1][-1]),
 					'noise': '',#result.quality.nlevel-0x100,

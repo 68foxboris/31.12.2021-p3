@@ -614,6 +614,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self["actions"] = ActionMap(["SetupActions", "SatlistShortcutAction"],
 		{
 			"ok": self.keyOk,
+			"keyup": self.keyUp,
+			"keydown": self.keyDown,
 			"save": self.keySave,
 			"cancel": self.keyCancel,
 			"changetype": self.changeConfigurationMode,
@@ -757,6 +759,12 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			return self.countrycodes[cc.upper()]
 		return cc
 
+	def keyUp(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveUp)
+
+	def keyDown(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveDown)
+
 
 class NimSelection(Screen):
 	def __init__(self, session):
@@ -771,12 +779,20 @@ class NimSelection(Screen):
 		self["actions"] = ActionMap(["OkCancelActions", "MenuActions", "ChannelSelectEPGActions"],
 		{
 			"ok": self.okbuttonClick,
+			"moveUp": self.keyUp,
+			"moveDown": self.keyDown,
 			"info": self.extraInfo,
 			"epg": self.extraInfo,
 			"cancel": self.close,
 			"menu": self.exit,
 		}, -2)
 		self.setTitle(_("Choose Tuner"))
+
+	def keyUp(self):
+		self["nimlist"].up()
+
+	def keyDown(self):
+		self["nimlist"].down()
 
 	def exit(self):
 		self.close(True)
