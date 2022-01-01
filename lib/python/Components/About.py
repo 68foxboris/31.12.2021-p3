@@ -282,10 +282,10 @@ def GetIPsFromNetworkInterfaces():
 			maxPossible *= 2
 		else:
 			break
-	namestr = names.tobytes()
+	nameStr = names.tostring() if PY2 else names
 	ifaces = []
 	for index in range(0, outbytes, structSize):
-		iface_name = bytes.decode(namestr[i:i + 16]).split('\0', 1)[0]
+		ifaceName = bytes.decode(nameStr[index:index + 16]).split("\0", 1)[0].encode("ascii") if PY2 else str(nameStr[index:index + 16]).split("\0", 1)[0]
 		if ifaceName != "lo":
 			ifaces.append((ifaceName, inet_ntoa(nameStr[index + 20:index + 24])))
 	return ifaces

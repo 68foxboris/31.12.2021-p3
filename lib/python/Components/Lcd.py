@@ -6,12 +6,14 @@ from usb import busses
 
 from enigma import eActionMap, eDBoxLCD, eTimer
 
-from Components.config import ConfigNothing, ConfigSelection, ConfigSlider, ConfigSubsection, ConfigYesNo, config
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigSlider, ConfigYesNo, ConfigNothing
 from Components.SystemInfo import BoxInfo
 from Screens.InfoBar import InfoBar
 from Screens.Screen import Screen
 from Screens.Standby import inTryQuitMainloop
 from Tools.Directories import fileReadLine, fileWriteLine
+
+from boxbranding import getBoxType, getDisplayType
 
 model = BoxInfo.getItem("model")
 platform = BoxInfo.getItem("platform")
@@ -56,47 +58,29 @@ class IconCheckPoller:
 			pass
 		self.timer.startLongTimer(30)
 
-	def JobTask(self):
-		LinkState = 0
-		if exists('/sys/class/net/wlan0/operstate'):
-			LinkState = open('/sys/class/net/wlan0/operstate').read()
-			if LinkState != 'down':
-				LinkState = open('/sys/class/net/wlan0/operstate').read()
-		elif exists('/sys/class/net/eth0/operstate'):
-			LinkState = open('/sys/class/net/eth0/operstate').read()
-			if LinkState != 'down':
-				LinkState = open('/sys/class/net/eth0/carrier').read()
-		LinkState = LinkState[:1]
-		if exists("/proc/stb/lcd/symbol_network") and config.lcd.mode.value == '1':
-			f = open("/proc/stb/lcd/symbol_network", "w")
-			f.write(str(LinkState))
-			f.close()
-		elif exists("/proc/stb/lcd/symbol_network") and config.lcd.mode.value == '0':
-			f = open("/proc/stb/lcd/symbol_network", "w")
-			f.write('0')
-			f.close()
-
+	def jobTask(self):
+		linkState = 0
+		if exists("/sys/class/net/wlan0/operstate"):
+			linkState = fileReadLine("/sys/class/net/wlan0/operstate")
+			if linkState != "down":
+				linkState = fileReadLine("/sys/class/net/wlan0/carrier")
+		elif exists("/sys/class/net/eth0/operstate"):
+			linkState = fileReadLine("/sys/class/net/eth0/operstate")
+			if linkState != "down":
+				linkState = fileReadLine("/sys/class/net/eth0/carrier")
+		linkState = linkState[:1]
+		if exists("/proc/stb/lcd/symbol_network") and config.lcd.mode.value == "1":
+			fileWriteLine("/proc/stb/lcd/symbol_network", linkState)
+		elif exists("/proc/stb/lcd/symbol_network") and config.lcd.mode.value == "0":
+			fileWriteLine("/proc/stb/lcd/symbol_network", "0")
 		USBState = 0
-		busses = usb.busses()
-		for bus in busses:
+		for bus in busses():
 			devices = bus.devices
 			for dev in devices:
-				if dev.deviceClass != 9 and dev.deviceClass != 2 and dev.idVendor > 0:
-					# print ' '
-					# print "Device:", dev.filename
-					# print "  Number:", dev.deviceClass
-					# print "  idVendor: %d (0x%04x)" % (dev.idVendor, dev.idVendor)
-					# print "  idProduct: %d (0x%04x)" % (dev.idProduct, dev.idProduct)
+				if dev.deviceClass != 9 and dev.deviceClass != 2 and dev.idVendor != 3034 and dev.idVendor > 0:
 					USBState = 1
-		if exists("/proc/stb/lcd/symbol_usb") and config.lcd.mode.value == '1':
-			f = open("/proc/stb/lcd/symbol_usb", "w")
-			f.write(str(USBState))
-			f.close()
-		elif exists("/proc/stb/lcd/symbol_usb") and config.lcd.mode.value == '0':
-			f = open("/proc/stb/lcd/symbol_usb", "w")
-			f.write('0')
-			f.close()
-
+		if exists("/proc/stb/lcd/symbol_usb"):
+			fileWriteLine("/proc/stb/lcd/symbol_usb", USBState)
 		self.timer.startLongTimer(30)
 
 
@@ -162,7 +146,7 @@ class LCD:
 
 	def setStandbyBright(self, value):
 		value *= 255
-		value /= 10
+		value //= 10
 		if value > 255:
 			value = 255
 		self.autoDimDownLCDTimer.stop()
@@ -176,7 +160,7 @@ class LCD:
 
 	def setDimBright(self, value):
 		value *= 255
-		value /= 10
+		value //= 10
 		if value > 255:
 			value = 255
 		self.dimBrightness = value
@@ -186,7 +170,7 @@ class LCD:
 
 	def setContrast(self, value):
 		value *= 63
-		value /= 20
+		value //= 20
 		if value > 63:
 			value = 63
 		eDBoxLCD.getInstance().setLCDContrast(value)

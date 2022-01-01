@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.GUIComponent import GUIComponent
 from Components.VariableText import VariableText
@@ -27,7 +28,10 @@ import base64
 # Here are the email package modules we'll need
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.Utils import formatdate
+if sys.version_info[0] >= 3:
+	from email.utils import formatdate
+else:
+	from email.Utils import formatdate
 
 _session = None
 
