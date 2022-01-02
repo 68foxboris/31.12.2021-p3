@@ -37,15 +37,15 @@ class InputDevices:
 			try:
 				buffer = b"\0" * 512
 				self.fd = osopen("/dev/input/%s" % device, O_RDWR | O_NONBLOCK)
-				self.name = ioctl(self.fd, EVIOCGNAME(256), buffer).decode()
+				self.name = ioctl(self.fd, self.EVIOCGNAME(256), buffer)
 				osclose(self.fd)
 				self.name = str(self.name[:self.name.find(b"\0")])
 			except (IOError, OSError) as err:
-				print(("[InputDevice] Error: device='%s' getInputDevices <ERROR: ioctl(EVIOCGNAME): '%s'>" % (device, str(err))))
+				print("[InputDevice] Error: device='%s' getInputDevices <ERROR: ioctl(EVIOCGNAME): '%s'>" % (device, str(err)))
 				self.name = None
 			if self.name:
 				devType = self.getInputDeviceType(self.name.lower())
-				print(("[InputDevice] Found device '%s' with name '%s' of type '%s'." % (device, self.name, "Unknown" if devType is None else devType.capitalize())))
+				print("[InputDevice] Found device '%s' with name '%s' of type '%s'." % (device, self.name, "Unknown" if devType is None else devType.capitalize()))
 				# What was this for?
 				# if self.name == "aml_keypad":
 				# 	print("[InputDevice] ALERT: Old code flag for 'aml_keypad'.")
@@ -89,11 +89,11 @@ class InputDevices:
 		elif "front panel" in name:
 			return "panel"
 		else:
-			# print("[InputDevice] Warning: Unknown device type: '%s'!" % name)
+			print("[InputDevice] Warning: Unknown device type: '%s'!" % name)
 			return None
 
 	def getDeviceList(self):
-		return sorted(iter(self.Devices.keys()))
+		return sorted(iter(self.devices.keys()))
 
 	# struct input_event {
 	# 	struct timeval time;    -> ignored
@@ -103,7 +103,7 @@ class InputDevices:
 	# }; -> size = 16
 	#
 	def setDeviceDefaults(self, device):
-		print(("[InputDevice] setDeviceDefaults DEBUG: Device '%s'." % device))
+		print("[InputDevice] setDeviceDefaults DEBUG: Device '%s'." % device)
 		self.setDeviceAttribute(device, "configuredName", None)
 		eventRepeat = pack("LLHHi", 0, 0, 0x14, 0x01, 100)
 		eventDelay = pack("LLHHi", 0, 0, 0x14, 0x00, 700)
@@ -114,7 +114,7 @@ class InputDevices:
 
 	def setDeviceEnabled(self, device, value):
 		oldVal = self.getDeviceAttribute(device, "enabled")
-		# print("[InputDevice] setDeviceEnabled DEBUG: Set device '%s' to '%s' from '%s'." % (device, value, oldVal))
+		# print("[InputDevice] setDeviceEnabled for device '%s' to '%s' from '%s'." % (device,value,oldVal))
 		self.setDeviceAttribute(device, "enabled", value)
 		if oldVal is True and value is False:
 			self.setDeviceDefaults(device)
@@ -125,12 +125,12 @@ class InputDevices:
 		return "Unknown device name"
 
 	def setDeviceName(self, device, value):
-		# print("[InputDevice] setDeviceName DEBUG: Set device name from '%s' to '%s'." % (device, value))
+		# print("[InputDevice] setDeviceName for device name from '%s' to '%s'." % (device,value))
 		self.setDeviceAttribute(device, "configuredName", value)
 
 	def setDeviceDelay(self, device, value):  # REP_DELAY
 		if self.getDeviceAttribute(device, "enabled"):
-			# print("[InputDevice] setDeviceDelay DEBUG: Set device '%s' to %s ms." % (device, value))
+			# print("[InputDevice] setDeviceDelay for device '%s' to %d ms." % (device, value))
 			event = pack("LLHHi", 0, 0, 0x14, 0x00, int(value))
 			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
@@ -138,7 +138,7 @@ class InputDevices:
 
 	def setDeviceRepeat(self, device, value):  # REP_PERIOD
 		if self.getDeviceAttribute(device, "enabled"):
-			# print("[InputDevice] setDeviceRepeat DEBUG: Set device '%s' to %s ms." % (device, value))
+			# print("[InputDevice] setDeviceRepeat DEBUG: Set device '%s' to %d ms." % (device, value))
 			event = pack("LLHHi", 0, 0, 0x14, 0x01, int(value))
 			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
@@ -150,7 +150,7 @@ class InputDevices:
 		return None
 
 	def setDeviceAttribute(self, device, attribute, value):
-		# print("[InputDevice] setDeviceAttribute DEBUG: Set attribute '%s' for device '%s' to value '%s'." % (attribute, device, value))
+		# print "[InputDevices] setting for device", device, "attribute", attribute, " to value", value
 		if device in self.devices:
 			self.devices[device][attribute] = value
 
@@ -258,7 +258,7 @@ class RemoteControl:
 						keyId = remapId
 					name = button.attrib.get("name")  # The name attribute is deprecated and will be removed.
 					if name:
-						for key, names in list(keyDescriptions[index].items()):
+						for key, names in keyDescriptions[index].items():
 							if (name,) == names and keyId != key:
 								if keyId is None:
 									keyId = key
@@ -346,7 +346,7 @@ class RemoteControl:
 class InitInputDevices:
 	def __init__(self):
 		self.currentDevice = ""
-		for device in sorted(iter(iInputDevices.Devices.keys())):
+		for device in sorted(iter(inputDevices.devices.keys())):
 			print("[InputDevice] InitInputDevices DEBUG: Creating config entry for device: '%s' -> '%s'." % (device, inputDevices.devices[device]["name"]))
 			self.currentDevice = device
 			self.setupConfigEntries(self.currentDevice)

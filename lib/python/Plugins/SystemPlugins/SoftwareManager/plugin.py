@@ -84,9 +84,9 @@ def load_cache(cache_file):
 class UpdatePluginMenu(Screen):
 	skin = """
 		<screen name="UpdatePluginMenu" position="center,center" size="610,410" title="Software management" >
-			<ePixmap pixmap="buttons/red.png" position="0,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<ePixmap pixmap="border_menu_350.png" position="5,50" zPosition="1" size="350,300" transparent="1" alphatest="on" />
+			<ePixmap pixmap="skin_default/border_menu_350.png" position="5,50" zPosition="1" size="350,300" transparent="1" alphatest="on" />
 			<widget source="menu" render="Listbox" position="15,60" size="330,290" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
 					{"template": [
@@ -216,7 +216,7 @@ class UpdatePluginMenu(Screen):
 
 	def getUpdateInfos(self):
 		if iSoftwareTools.NetworkConnectionAvailable is True:
-			if iSoftwareTools.available_updates is not 0:
+			if iSoftwareTools.available_updates != 0:
 				self.text = _("There are at least %d updates available.") % iSoftwareTools.available_updates
 			else:
 				self.text = "" #_("There are no updates available.")
@@ -633,7 +633,7 @@ class PluginManager(Screen, PackageInfoHandler):
 	def getUpdateInfosCB(self, retval=None):
 		if retval is not None:
 			if retval is True:
-				if iSoftwareTools.available_updates is not 0:
+				if iSoftwareTools.available_updates != 0:
 					self["status"].setText(_("There are at least %d updates available.") % iSoftwareTools.available_updates)
 				else:
 					self["status"].setText(_("There are no updates available."))
@@ -677,9 +677,9 @@ class PluginManager(Screen, PackageInfoHandler):
 						self["key_green"].setText("")
 				self["key_yellow"].setText(_("View details"))
 				self["key_blue"].setText("")
-				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates is not 0:
+				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates != 0:
 					self["status"].setText(_("There are at least %d updates available.") % iSoftwareTools.available_updates)
-				elif len(self.selectedFiles) is not 0:
+				elif len(self.selectedFiles) != 0:
 					self["status"].setText(ngettext("%d package selected.", "%d packages selected.", len(self.selectedFiles)) % len(self.selectedFiles))
 				else:
 					self["status"].setText(_("There are currently no outstanding actions."))
@@ -688,10 +688,10 @@ class PluginManager(Screen, PackageInfoHandler):
 				self["key_green"].setText("")
 				self["key_yellow"].setText("")
 				self["key_blue"].setText("")
-				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates is not 0:
+				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates != 0:
 					self["status"].setText(_("There are at least %d updates available.") % iSoftwareTools.available_updates)
 					self["key_yellow"].setText(_("Update"))
-				elif len(self.selectedFiles) is not 0:
+				elif len(self.selectedFiles) != 0:
 					self["status"].setText(ngettext("%d package selected.", "%d packages selected.", len(self.selectedFiles)) % len(self.selectedFiles))
 					self["key_yellow"].setText(_("Process"))
 				else:
@@ -711,7 +711,7 @@ class PluginManager(Screen, PackageInfoHandler):
 				selectedTag = current[2]
 				self.buildPacketList(selectedTag)
 			elif self.currList == "packages":
-				if current[7] is not '':
+				if current[7] != '':
 					idx = self["list"].getIndex()
 					detailsFile = self.list[idx][1]
 					if self.list[idx][7] == True:
@@ -753,7 +753,7 @@ class PluginManager(Screen, PackageInfoHandler):
 		current = self["list"].getCurrent()
 		if current:
 			if self.currList == "packages":
-				if current[7] is not '':
+				if current[7] != '':
 					detailsfile = iSoftwareTools.directory[0] + "/" + current[1]
 					if (os.path.exists(detailsfile) == True):
 						self.saved_currentSelectedPackage = self.currentSelectedPackage

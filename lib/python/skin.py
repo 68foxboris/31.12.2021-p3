@@ -467,20 +467,20 @@ class AttributeParser:
 	def animationPaused(self, value):
 		pass
 
- 	def animationMode(self, value):
- 		try:
- 			self.guiObject.setAnimationMode({
- 				"disable": 0x00,
- 				"off": 0x00,
- 				"offshow": 0x10,
- 				"offhide": 0x01,
- 				"onshow": 0x01,
- 				"onhide": 0x10,
- 				"disable_onshow": 0x10,
- 				"disable_onhide": 0x01
- 			}[value])
- 		except KeyError:
- 			print("[Skin] Error: Invalid animationMode '%s'!  Must be one of 'disable', 'off', 'offshow', 'offhide', 'onshow' or 'onhide'." % value)
+	def animationMode(self, value):
+		try:
+			self.guiObject.setAnimationMode({
+				"disable": 0x00,
+				"off": 0x00,
+				"offshow": 0x10,
+				"offhide": 0x01,
+				"onshow": 0x01,
+				"onhide": 0x10,
+				"disable_onshow": 0x10,
+				"disable_onhide": 0x01
+			}[value])
+		except KeyError:
+			print("[Skin] Error: Invalid animationMode '%s'!  Must be one of 'disable', 'off', 'offshow', 'offhide', 'onshow' or 'onhide'." % value)
 
 	def title(self, value):
 		self.guiObject.setTitle(_(value))
