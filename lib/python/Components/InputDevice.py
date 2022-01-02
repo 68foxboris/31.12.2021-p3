@@ -93,7 +93,7 @@ class InputDevices:
 			return None
 
 	def getDeviceList(self):
-		return sorted(list(self.devices.keys()))
+		return sorted(iter(self.devices.keys()))
 
 	# struct input_event {
 	# 	struct timeval time;    -> ignored
@@ -114,7 +114,7 @@ class InputDevices:
 
 	def setDeviceEnabled(self, device, value):
 		oldVal = self.getDeviceAttribute(device, "enabled")
-		# print("[InputDevice] setDeviceEnabled for device '%s' to '%s' from '%s'." % (device,value,oldVal)
+		# print("[InputDevice] setDeviceEnabled for device '%s' to '%s' from '%s'." % (device,value,oldVal))
 		self.setDeviceAttribute(device, "enabled", value)
 		if oldVal is True and value is False:
 			self.setDeviceDefaults(device)
@@ -130,7 +130,7 @@ class InputDevices:
 
 	def setDeviceDelay(self, device, value):  # REP_DELAY
 		if self.getDeviceAttribute(device, "enabled"):
-			# print("[InputDevice] setDeviceDelay DEBUG: Set device '%s' to %s ms." % (device, value))
+			# print("[InputDevice] setDeviceDelay for device '%s' to %d ms." % (device, value))
 			event = pack("LLHHi", 0, 0, 0x14, 0x00, int(value))
 			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
@@ -138,7 +138,7 @@ class InputDevices:
 
 	def setDeviceRepeat(self, device, value):  # REP_PERIOD
 		if self.getDeviceAttribute(device, "enabled"):
-			# print("[InputDevice] setDeviceRepeat for device '%s' to %s ms." % (device, value))
+			# print("[InputDevice] setDeviceRepeat DEBUG: Set device '%s' to %d ms." % (device, value))
 			event = pack("LLHHi", 0, 0, 0x14, 0x01, int(value))
 			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
@@ -218,7 +218,7 @@ class RemoteControl:
 				codeName = remote.attrib.get("codeName")
 				displayName = remote.attrib.get("displayName")
 				if codeName and displayName:
-					print("[InputDevice] Adding remote control identifier for '%s'." % displayName)
+					print("[InputDevice] Adding remote control for '%s'." % displayName)
 					self.remotes.append((model, rcType, codeName, displayName))
 		self.remotes.insert(0, ("", "", "", _("Default")))
 		if BoxInfo.getItem("RemoteTypeZeroAllowed", False):
@@ -346,7 +346,7 @@ class RemoteControl:
 class InitInputDevices:
 	def __init__(self):
 		self.currentDevice = ""
-		for device in sorted(list(inputDevices.devices.keys())):
+		for device in sorted(iter(inputDevices.devices.keys())):
 			print("[InputDevice] InitInputDevices DEBUG: Creating config entry for device: '%s' -> '%s'." % (device, inputDevices.devices[device]["name"]))
 			self.currentDevice = device
 			self.setupConfigEntries(self.currentDevice)
