@@ -51,16 +51,11 @@ class PluginComponent:
 			for pluginname in os.listdir(directory_category):
 				if pluginname == "__pycache__":
 					continue
-				#path = os.path.join(directory_category, pluginname)
-				path = directory_category + '/' + pluginname
+				path = os.path.join(directory_category, pluginname)
 				if os.path.isdir(path):
-						#profile('plugin ' + pluginname)
-					if fileExists(path + '/plugin.pyc') or fileExists(path + '/plugin.pyo') or fileExists(path + '/plugin.py') or fileExists(path + '/plugin.so'):
+						profile('plugin ' + pluginname)
 						try:
 							plugin = my_import('.'.join(["Plugins", c, pluginname, "plugin"]))
-							if "Plugins" not in plugin.__dict__:
-                                                               print(("Plugin %s doesn't have 'Plugin'-call." % pluginname))
-                                                               continue
 							plugins = plugin.Plugins(path=path)
 						except Exception as exc:
 							print("Plugin ", c + "/" + pluginname, "failed to load:", exc)

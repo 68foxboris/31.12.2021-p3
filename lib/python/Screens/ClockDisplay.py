@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from Screen import Screen
+from Screens.Screen import Screen
 
 # a clock display dialog
 
