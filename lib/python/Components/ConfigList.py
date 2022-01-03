@@ -144,6 +144,8 @@ class ConfigListScreen:
 			"deleteForward": self.keyDelete,
 			"deleteBackward": self.keyBackspace,
 			"toggleOverwrite": self.keyToggleOW,
+			"keyup": self.keyUp,
+			"keydown": self.keyDown,
 			"pageUp": self.keyPageUp,
 			"pageDown": self.keyPageDown,
 			"1": self.keyNumberGlobal,
@@ -180,9 +182,6 @@ class ConfigListScreen:
 		self.setup_title = self.getTitle()
 		from Screens.Setup import SetupSummary
 		return SetupSummary
-
-	def getCurrentItem(self):
-		return self["config"].getCurrent() and self["config"].getCurrent()[1] or None
 
 	def getCurrentEntry(self):
 		return self["config"].getCurrent() and self["config"].getCurrent()[0] or ""
@@ -261,6 +260,12 @@ class ConfigListScreen:
 		self["config"].handleKey(KEY_0 + number)
 		self.__changed()
 
+	def keyUp(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveUp)
+
+	def keyDown(self):
+		self["config"].instance.moveSelection(self["config"].instance.moveDown)
+
 	def keyPageDown(self):
 		self["config"].pageDown()
 
@@ -272,7 +277,7 @@ class ConfigListScreen:
 		if selection and selection[1].enabled and hasattr(selection[1], "description"):
 			self.session.openWithCallback(
 				self.handleKeyFileCallback, ChoiceBox, selection[0],
-				list=list(zip(selection[1].description, selection[1].choices)),
+				list=zip(selection[1].description, selection[1].choices),
 				selection=selection[1].choices.index(selection[1].value),
 				keys=[]
 			)

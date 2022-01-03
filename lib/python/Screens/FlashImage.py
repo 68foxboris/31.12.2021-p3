@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import struct
 import time
-import urllib.request, urllib.error, urllib.parse
+import urllib
 import zipfile
 
 from enigma import eEPGCache
@@ -227,7 +227,7 @@ class FlashImage(Screen):
 			imagesList = getImagelist()
 			currentimageslot = getCurrentImage()
 			choices = []
-			slotdict = {k: v for k, v in list(BoxInfo.getItem("canMultiBoot").items()) if not v['device'].startswith('/dev/sda')}
+			slotdict = {k: v for k, v in BoxInfo.getItem("canMultiBoot").items() if not v['device'].startswith('/dev/sda')}
 			for x in range(1, len(slotdict) + 1):
 				choices.append(((_("slot%s - %s (current image) with, backup") if x == currentimageslot else _("slot%s - %s, with backup")) % (x, imagesList[x]['imagename']), (x, "with backup")))
 			for x in range(1, len(slotdict) + 1):

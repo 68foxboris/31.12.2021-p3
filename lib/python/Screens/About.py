@@ -1,8 +1,5 @@
 from __future__ import print_function
-try:
-	import urllib.request, urllib.error, urllib.parse
-except ImportError:
-	import urllib.request, urllib.parse, urllib.error
+from urllib.request import urlopen
 
 from enigma import eConsoleAppContainer, eDVBResourceManager, eGetEnigmaDebugLvl, eLabel, eTimer, getDesktop
 from os import listdir, popen, remove
@@ -30,6 +27,7 @@ from Screens.Screen import Screen
 from Tools.Directories import fileExists, pathExists
 from Tools.Geolocation import geolocation
 from Tools.StbHardware import getFPVersion, getBoxProc, getBoxProcType, getHWSerial, getBoxRCType
+import six
 
 
 class About(Screen):
@@ -309,7 +307,7 @@ class Devices(Screen):
 		self.Console = Console()
 		niminfo = ""
 		nims = nimmanager.nimListCompressed()
-		for count in range(len(nims)):
+		for count in list(range(len(nims))):
 			if niminfo:
 				niminfo += "\n"
 			niminfo += nims[count]
@@ -380,10 +378,8 @@ class Devices(Screen):
 		self.Console.ePopen("df -mh | grep -v '^Filesystem'", self.Stage1Complete)
 
 	def Stage1Complete(self, result, retval, extra_args=None):
-		if PY2:
-			result = result.replace('\n                        ', ' ').split('\n')
-		else:
-			result = result.decode().replace('\n                        ', ' ').split('\n')
+		result = six.ensure_str(result)
+		result = result.replace('\n                        ', ' ').split('\n')
 		self.mountinfo = ""
 		for line in result:
 			self.parts = line.split()
@@ -548,10 +544,8 @@ class SystemNetworkInfo(Screen):
 		self.console.ePopen('ethtool %s' % self.iface, self.SpeedFinished)
 
 	def SpeedFinished(self, result, retval, extra_args):
-		if PY2:
-			result_tmp = result.split('\n')
-		else:
-			result_tmp = result.decode().split('\n')
+		result_tmp = six.ensure_str(result)
+		result_tmp = result.replace('\n                        ', ' ').split('\n')
 		for line in result_tmp:
 			if 'Speed:' in line:
 				speed = line.split(': ')[1][:-4]
@@ -669,8 +663,7 @@ class SystemNetworkInfo(Screen):
 		self["devicepic"].show()
 
 	def dataAvail(self, data):
-		if PY3:
-			data = data.decode()
+		data = six.ensure_str(data)
 		self.LinkState = None
 		for line in data.splitlines():
 			line = line.strip()
@@ -720,7 +713,7 @@ class SystemMemoryInfo(Screen):
 		self.AboutText = _("RAM") + '\n\n'
 		RamTotal = "-"
 		RamFree = "-"
-		for lidx in range(len(out_lines) - 1):
+		for lidx in list(range(len(out_lines) - 1)):
 			tstLine = out_lines[lidx].split()
 			if "MemTotal:" in tstLine:
 				MemTotal = out_lines[lidx].split()
@@ -778,7 +771,7 @@ class TranslationInfo(Screen):
 				continue
 			(type, value) = data
 			infomap[type] = value
-		print(("[About] DEBUG: infomap=%s" % str(infomap)))
+		print("[About] DEBUG: infomap=%s" % str(infomap))
 
 		self["key_red"] = Button(_("Cancel"))
 		self["TranslationInfo"] = StaticText(info)
@@ -830,7 +823,7 @@ class CommitInfo(Screen):
 			("https://api.github.com/repos/openpli/enigma2-plugin-skins-magic/commits", "Skin Magic SD"),
 			("https://api.github.com/repos/littlesat/skin-PLiHD/commits", "Skin PLi HD"),
 			("https://api.github.com/repos/E2OpenPlugins/e2openplugin-OpenWebif/commits", "OpenWebif"),
-			("https://api.github.com/repos/haroo/HansSettings/commits", "Hans settings")
+			("https://api.github.com/repos/technl/HansSettings/commits", "Hans settings")
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -849,15 +842,9 @@ class CommitInfo(Screen):
 			try:
 				# For python 2.7.11 we need to bypass the certificate check
 				from ssl import _create_unverified_context
-				if PY2:
-					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
-				else:
-					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
 			except Exception as err:
-				if PY2:
-					log = loads(urllib.request.urlopen(url, timeout=5).read())
-				else:
-					log = loads(urllib.request.urlopen(url, timeout=5).read())
+				log = loads(urllib.request.urlopen(url, timeout=5).read())
 			for c in log:
 				creator = c['commit']['author']['name']
 				title = c['commit']['message']
@@ -867,7 +854,7 @@ class CommitInfo(Screen):
 			self.cachedProjects[self.projects[self.project][1]] = commitlog
 		except Exception as err:
 			commitlog += _("Currently the commit log cannot be retrieved - please try later again")
-		self["AboutScrollLabel"].setText(commitlog)
+		self["AboutScrollLabel"].setText(commitlog.decode())
 
 	def updateCommitLogs(self):
 		if self.projects[self.project][1] in self.cachedProjects:
@@ -951,7 +938,7 @@ class MemoryInfo(Screen):
 			self['pfree'].setText("%.1f %s" % (100.0 * free / mem, '%'))
 			self['pused'].setText("%.1f %s" % (100.0 * (mem - free) / mem, '%'))
 		except Exception as err:
-			print(("[About] getMemoryInfo FAIL: '%s'." % str(err)))
+			print("[About] getMemoryInfo FAIL: '%s'." % str(err))
 
 	def clearMemory(self):
 		eConsoleAppContainer().execute("sync")

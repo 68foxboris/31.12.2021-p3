@@ -86,7 +86,7 @@ def setResumePoint(session):
 				resumePointCache[key] = [lru, pos[1], l]
 				if len(resumePointCache) > 50:
 					candidate = key
-					for k, v in list(resumePointCache.items()):
+					for k, v in resumePointCache.items():
 						if v[0] < lru:
 							candidate = k
 					del resumePointCache[candidate]
@@ -120,7 +120,7 @@ def saveResumePoints():
 	global resumePointCache, resumePointCacheLast
 	import pickle
 	try:
-		f = open('/home/root/resumepoints.pkl', 'wb')
+		f = open('/etc/enigma2/resumepoints.pkl', 'wb')
 		pickle.dump(resumePointCache, f, pickle.HIGHEST_PROTOCOL)
 	except Exception as ex:
 		print("[InfoBarGenerics] Failed to write resumepoints:", ex)
@@ -130,7 +130,7 @@ def saveResumePoints():
 def loadResumePoints():
 	import pickle
 	try:
-		return pickle.load(open('/home/root/resumepoints.pkl', 'rb'))
+		return pickle.load(open('/etc/enigma2/resumepoints.pkl', 'rb'))
 	except Exception as ex:
 		print("[InfoBarGenerics] Failed to load resumepoints:", ex)
 		return {}
@@ -2588,7 +2588,7 @@ class InfoBarInstantRecord:
 		print("instantRecord stop and delete recording: ", entry.name)
 		import Tools.Trashcan
 		trash = Tools.Trashcan.createTrashFolder(entry.Filename)
-		from .MovieSelection import moveServiceFiles
+		from MovieSelection import moveServiceFiles
 		moveServiceFiles(entry.Filename, trash, entry.name, allowCopy=False)
 
 	def stopCurrentRecording(self, entry=-1):
@@ -2738,7 +2738,7 @@ class InfoBarInstantRecord:
 			else:
 				self.session.openWithCallback(self.setEndtime, TimerSelection, list)
 		elif answer[1] == "timer":
-			from . import TimerEdit
+			import TimerEdit
 			self.session.open(TimerEdit.TimerEditList)
 		elif answer[1] == "stop":
 			if len(self.recording) == 1:
@@ -3103,7 +3103,7 @@ class InfoBarAspectSelection:
 		self.__ExGreen_state = self.STATE_HIDDEN
 
 	def ExGreen_toggleGreen(self, arg=""):
-		print((self.__ExGreen_state))
+		print(self.__ExGreen_state)
 		if self.__ExGreen_state == self.STATE_HIDDEN:
 			print("self.STATE_HIDDEN")
 			self.ExGreen_doAspect()
@@ -3793,7 +3793,7 @@ class InfoBarPowersaver:
 		self.sleepTimer = eTimer()
 		self.sleepStartTime = 0
 		self.sleepTimer.callback.append(self.sleepTimerTimeout)
-		eActionMap.getInstance().bindAction('', -maxint - 1, self.keypress)
+		eActionMap.getInstance().bindAction('', -sys.maxsize - 1, self.keypress)
 
 	def keypress(self, key, flag):
 		if flag:

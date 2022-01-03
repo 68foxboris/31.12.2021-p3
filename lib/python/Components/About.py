@@ -260,12 +260,12 @@ def getDriverInstalledDate():
 
 
 def getPythonVersionString():
-	process = Popen(("/usr/bin/python", "-V"), stdout=PIPE, stderr=PIPE, universal_newlines=True)
-	stdout, stderr = process.communicate()
-	if process.returncode == 0:
-		return stderr.strip().split()[1]
-	print("[About] Get python version failed.")
-	return _("Unknown")
+	try:
+		import subprocess
+		status, output = subprocess.getstatusoutput("python3 -V")
+		return output.split(' ')[1]
+	except:
+		return _("unknown")
 
 
 def GetIPsFromNetworkInterfaces():
