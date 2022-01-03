@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import struct
 import time
-import urllib.request, urllib.error, urllib.parse
+import urllib
 import zipfile
 
 from enigma import eEPGCache

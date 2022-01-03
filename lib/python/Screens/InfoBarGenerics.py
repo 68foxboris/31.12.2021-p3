@@ -120,7 +120,7 @@ def saveResumePoints():
 	global resumePointCache, resumePointCacheLast
 	import pickle
 	try:
-		f = open('/home/root/resumepoints.pkl', 'wb')
+		f = open('/etc/enigma2/resumepoints.pkl', 'wb')
 		pickle.dump(resumePointCache, f, pickle.HIGHEST_PROTOCOL)
 	except Exception as ex:
 		print("[InfoBarGenerics] Failed to write resumepoints:", ex)
@@ -130,7 +130,7 @@ def saveResumePoints():
 def loadResumePoints():
 	import pickle
 	try:
-		return pickle.load(open('/home/root/resumepoints.pkl', 'rb'))
+		return pickle.load(open('/etc/enigma2/resumepoints.pkl', 'rb'))
 	except Exception as ex:
 		print("[InfoBarGenerics] Failed to load resumepoints:", ex)
 		return {}
@@ -3793,7 +3793,7 @@ class InfoBarPowersaver:
 		self.sleepTimer = eTimer()
 		self.sleepStartTime = 0
 		self.sleepTimer.callback.append(self.sleepTimerTimeout)
-		eActionMap.getInstance().bindAction('', -maxint - 1, self.keypress)
+		eActionMap.getInstance().bindAction('', -sys.maxsize - 1, self.keypress)
 
 	def keypress(self, key, flag):
 		if flag:
