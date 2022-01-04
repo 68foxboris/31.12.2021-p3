@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from urllib.request import urlopen
 
 from enigma import eConsoleAppContainer, eDVBResourceManager, eGetEnigmaDebugLvl, eLabel, eTimer, getDesktop
@@ -200,9 +201,8 @@ class Geolocation(Screen):
 		self["lab4"] = StaticText(_("https://openvision.tech"))
 		self["lab5"] = StaticText(_("Sources are available at:"))
 		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
-
-		GeolocationText = _("Geolocation information") + "\n"
-
+		self["key_red"] = Button(_("Close"))
+		GeolocationText = _("Information about your Geolocation data") + "\n"
 		GeolocationText += "\n"
 
 		try:
@@ -211,25 +211,25 @@ class Geolocation(Screen):
 			if isinstance(continent, texttype):
 				continent = ensurestr(continent.encode(encoding="UTF-8", errors="ignore"))
 			if continent is not None:
-				GeolocationText += _("Continent: ") + continent + "\n"
+				GeolocationText += _("Continent: ") + "\t" + continent + "\n"
 
 			country = geolocationData.get("country", None)
 			if isinstance(country, texttype):
 				country = ensurestr(country.encode(encoding="UTF-8", errors="ignore"))
 			if country is not None:
-				GeolocationText += _("Country: ") + country + "\n"
+				GeolocationText += _("Country: ") + "\t" + country + "\n"
 
 			state = geolocationData.get("regionName", None)
 			if isinstance(state, texttype):
 				state = ensurestr(state.encode(encoding="UTF-8", errors="ignore"))
 			if state is not None:
-				GeolocationText += _("State: ") + state + "\n"
+				GeolocationText += _("State: ") + "\t" + state + "\n"
 
 			city = geolocationData.get("city", None)
 			if isinstance(city, texttype):
 				city = ensurestr(city.encode(encoding="UTF-8", errors="ignore"))
 			if city is not None:
-				GeolocationText += _("City: ") + city + "\n"
+				GeolocationText += _("City: ") + "\t" + city + "\n"
 
 			GeolocationText += "\n"
 
@@ -237,32 +237,31 @@ class Geolocation(Screen):
 			if isinstance(timezone, texttype):
 				timezone = ensurestr(timezone.encode(encoding="UTF-8", errors="ignore"))
 			if timezone is not None:
-				GeolocationText += _("Timezone: ") + timezone + "\n"
+				GeolocationText += _("Timezone: ") + "\t" + timezone + "\n"
 
 			currency = geolocationData.get("currency", None)
 			if isinstance(currency, texttype):
 				currency = ensurestr(currency.encode(encoding="UTF-8", errors="ignore"))
 			if currency is not None:
-				GeolocationText += _("Currency: ") + currency + "\n"
+				GeolocationText += _("Currency: ") + "\t" + currency + "\n"
 
 			GeolocationText += "\n"
 
 			latitude = geolocationData.get("lat", None)
 			if str(float(latitude)) is not None:
-				GeolocationText += _("Latitude: ") + str(float(latitude)) + "\n"
+				GeolocationText += _("Latitude: ") + "\t" + str(float(latitude)) + "\n"
 
 			longitude = geolocationData.get("lon", None)
 			if str(float(longitude)) is not None:
-				GeolocationText += _("Longitude: ") + str(float(longitude)) + "\n"
+				GeolocationText += _("Longitude: ") + "\t" + str(float(longitude)) + "\n"
 			self["AboutScrollLabel"] = ScrollLabel(GeolocationText)
 		except Exception as err:
 			self["AboutScrollLabel"] = ScrollLabel(_("Requires internet connection"))
 
-		self["key_red"] = Button(_("Close"))
-
 		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"], {
-			"cancel": self.close,
+			"red": self.close,
 			"ok": self.close,
+			"cancel": self.close,
 			"up": self["AboutScrollLabel"].pageUp,
 			"down": self["AboutScrollLabel"].pageDown
 		})
@@ -286,8 +285,8 @@ class Devices(Screen):
 		self["key_red"] = Button(_("Close"))
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "TimerEditActions"], {
 			"cancel": self.close,
-			"ok": self.close,
-			"red": self.close
+			"red": self.close,
+			"save": self.close,
 		})
 		self.onLayoutFinish.append(self.populate)
 
@@ -370,7 +369,7 @@ class Devices(Screen):
 					continue
 				else:
 					freeline = _("Free: ") + _("full")
-				line = "%s      %s" % (hddp, freeline)
+				line = "%s      %s" %(hddp, freeline)
 				self.list.append(line)
 		self.list = '\n'.join(self.list)
 		self["hdd"].setText(self.list)
@@ -378,8 +377,10 @@ class Devices(Screen):
 		self.Console.ePopen("df -mh | grep -v '^Filesystem'", self.Stage1Complete)
 
 	def Stage1Complete(self, result, retval, extra_args=None):
-		result = six.ensure_str(result)
-		result = result.replace('\n                        ', ' ').split('\n')
+		if PY2:
+			result = result.replace('\n                        ', ' ').split('\n')
+		else:
+			result = result.decode().replace('\n                        ', ' ').split('\n')
 		self.mountinfo = ""
 		for line in result:
 			self.parts = line.split()
@@ -428,8 +429,14 @@ class SystemNetworkInfo(Screen):
 		self["statuspic"].setPixmapNum(1)
 		self["statuspic"].show()
 		self["devicepic"] = MultiPixmap()
-
 		self["AboutScrollLabel"] = ScrollLabel()
+		self["key_red"] = StaticText(_("Close"))
+		self["actions"] = ActionMap(["SetupActions", "ColorActionsAbout", "DirectionActions"], {
+			"cancel": self.close,
+			"ok": self.close,
+			"up": self["AboutScrollLabel"].pageUp,
+			"down": self["AboutScrollLabel"].pageDown
+		})
 
 		self.iface = None
 		self.createscreen()
@@ -445,14 +452,6 @@ class SystemNetworkInfo(Screen):
 			self.resetList()
 			self.onClose.append(self.cleanup)
 
-		self["key_red"] = StaticText(_("Close"))
-
-		self["actions"] = ActionMap(["SetupActions", "ColorActions", "DirectionActions"], {
-			"cancel": self.close,
-			"ok": self.close,
-			"up": self["AboutScrollLabel"].pageUp,
-			"down": self["AboutScrollLabel"].pageDown
-		})
 		self.onLayoutFinish.append(self.updateStatusbar)
 
 	def createscreen(self):
@@ -460,52 +459,51 @@ class SystemNetworkInfo(Screen):
 		self.iface = "eth0"
 		eth0 = about.getIfConfig('eth0')
 		if 'addr' in eth0:
-			self.AboutText += _("IP:") + "\t" + eth0['addr'] + "\n"
+			self.AboutText += _("IP:") + "\t" + "\t" + eth0['addr'] + "\n"
 			if 'netmask' in eth0:
 				self.AboutText += _("Netmask:") + "\t" + eth0['netmask'] + "\n"
 			if 'hwaddr' in eth0:
-				self.AboutText += _("MAC:") + "\t" + eth0['hwaddr'] + "\n"
+				self.AboutText += _("MAC:") + "\t" + "\t" + eth0['hwaddr'] + "\n"
 			self.iface = 'eth0'
 
 		eth1 = about.getIfConfig('eth1')
 		if 'addr' in eth1:
-			self.AboutText += _("IP:") + "\t" + eth1['addr'] + "\n"
+			self.AboutText += _("IP:") + "\t" + "\t" + eth1['addr'] + "\n"
 			if 'netmask' in eth1:
 				self.AboutText += _("Netmask:") + "\t" + eth1['netmask'] + "\n"
 			if 'hwaddr' in eth1:
-				self.AboutText += _("MAC:") + "\t" + eth1['hwaddr'] + "\n"
+				self.AboutText += _("MAC:") + "\t" + "\t" + eth1['hwaddr'] + "\n"
 			self.iface = 'eth1'
 
 		ra0 = about.getIfConfig('ra0')
 		if 'addr' in ra0:
-			self.AboutText += _("IP:") + "\t" + ra0['addr'] + "\n"
+			self.AboutText += _("IP:") + "\t" + "\t" + ra0['addr'] + "\n"
 			if 'netmask' in ra0:
 				self.AboutText += _("Netmask:") + "\t" + ra0['netmask'] + "\n"
 			if 'hwaddr' in ra0:
-				self.AboutText += _("MAC:") + "\t" + ra0['hwaddr'] + "\n"
+				self.AboutText += _("MAC:") + "\t" + "\t" + ra0['hwaddr'] + "\n"
 			self.iface = 'ra0'
 
 		wlan0 = about.getIfConfig('wlan0')
 		if 'addr' in wlan0:
-			self.AboutText += _("IP:") + "\t" + wlan0['addr'] + "\n"
+			self.AboutText += _("IP:") + "\t" + "\t" + wlan0['addr'] + "\n"
 			if 'netmask' in wlan0:
 				self.AboutText += _("Netmask:") + "\t" + wlan0['netmask'] + "\n"
 			if 'hwaddr' in wlan0:
-				self.AboutText += _("MAC:") + "\t" + wlan0['hwaddr'] + "\n"
+				self.AboutText += _("MAC:") + "\t" + "\t" + wlan0['hwaddr'] + "\n"
 			self.iface = 'wlan0'
 
 		wlan3 = about.getIfConfig('wlan3')
 		if 'addr' in wlan3:
-			self.AboutText += _("IP:") + "\t" + wlan3['addr'] + "\n"
+			self.AboutText += _("IP:") + "\t" + "\t" + wlan3['addr'] + "\n"
 			if 'netmask' in wlan3:
 				self.AboutText += _("Netmask:") + "\t" + wlan3['netmask'] + "\n"
 			if 'hwaddr' in wlan3:
-				self.AboutText += _("MAC:") + "\t" + wlan3['hwaddr'] + "\n"
+				self.AboutText += _("MAC:") + "\t" + "\t" + wlan3['hwaddr'] + "\n"
 			self.iface = 'wlan3'
 
 		rx_bytes, tx_bytes = about.getIfTransferredData(self.iface)
-		self.AboutText += "\n"
-		self.AboutText += _("Bytes received:") + "\t" + rx_bytes + "\n"
+		self.AboutText += "\n" + _("Bytes received:") + "\t" + rx_bytes + "\n"
 		self.AboutText += _("Bytes sent:") + "\t" + tx_bytes + "\n"
 
 		geolocationData = geolocation.getGeolocationData(fields="isp,org,mobile,proxy,query", useCache=True)
@@ -518,42 +516,41 @@ class SystemNetworkInfo(Screen):
 		self.AboutText += "\n"
 		if isp is not None:
 			if isporg is not None:
-				self.AboutText += _("ISP: ") + isp + " " + "(" + isporg + ")" + "\n"
+				self.AboutText += _("ISP: ") + "\t" + "\t" + isp + " " + "(" + isporg + ")" + "\n"
 			else:
-				self.AboutText += _("ISP: ") + isp + "\n"
+				self.AboutText +=  "\n" + _("ISP: ") + "\t" + "\t" + isp + "\n"
 
 		mobile = geolocationData.get("mobile", False)
 		if mobile is not False:
-			self.AboutText += _("Mobile: ") + _("Yes") + "\n"
+			self.AboutText += _("Mobile: ") + "\t" + "\t" + _("Yes") + "\n"
 		else:
-			self.AboutText += _("Mobile: ") + _("No") + "\n"
+			self.AboutText += _("Mobile: ") + "\t" + "\t" + _("No") + "\n"
 
 		proxy = geolocationData.get("proxy", False)
 		if proxy is not False:
-			self.AboutText += _("Proxy: ") + _("Yes") + "\n"
+			self.AboutText += _("Proxy: ") + "\t" + "\t" + _("Yes") + "\n"
 		else:
-			self.AboutText += _("Proxy: ") + _("No") + "\n"
+			self.AboutText += _("Proxy: ") + "\t" + "\t" + _("No") + "\n"
 
 		publicip = geolocationData.get("query", None)
 		if str(publicip) != "":
-			self.AboutText += _("Public IP: ") + str(publicip) + "\n"
-
-		self.AboutText += "\n"
+			self.AboutText +=  _("Public IP: ") + "\t" + "\t" + str(publicip) + "\n" + "\n"
 
 		self.console = Console()
 		self.console.ePopen('ethtool %s' % self.iface, self.SpeedFinished)
 
 	def SpeedFinished(self, result, retval, extra_args):
-		result_tmp = six.ensure_str(result)
-		result_tmp = result.replace('\n                        ', ' ').split('\n')
+		if PY2:
+			result_tmp = result.split('\n')
+		else:
+			result_tmp = result.decode().split('\n')
 		for line in result_tmp:
 			if 'Speed:' in line:
 				speed = line.split(': ')[1][:-4]
-				self.AboutText += _("Speed:") + "\t" + speed + _('Mb/s')
+				self.AboutText += _("Speed:") + "\t" + "\t" + speed + _('Mb/s')
 
 		hostname = open('/proc/sys/kernel/hostname').read()
-		self.AboutText += "\n"
-		self.AboutText += _("Hostname:") + "\t" + hostname + "\n"
+		self.AboutText += "\n" + _("Hostname:") + "\t" + "\t" + hostname + "\n"
 		self["AboutScrollLabel"].setText(self.AboutText)
 
 	def cleanup(self):
@@ -568,14 +565,14 @@ class SystemNetworkInfo(Screen):
 		self.LinkState = None
 		if data is not None and data:
 			if status is not None:
-				# getDataForInterface()->iwconfigFinished() in
-				# Plugins/SystemPlugins/WirelessLan/Wlan.py sets fields to boolean False
-				# if there is no info for them, so we need to check that possibility
-				# for each status[self.iface] field...
-
+# getDataForInterface()->iwconfigFinished() in
+# Plugins/SystemPlugins/WirelessLan/Wlan.py sets fields to boolean False
+# if there is no info for them, so we need to check that possibility
+# for each status[self.iface] field...
+#
 				if self.iface == 'wlan0' or self.iface == 'wlan3' or self.iface == 'ra0':
-					# accesspoint is used in the "enc" code too, so we get it regardless
-
+# accesspoint is used in the "enc" code too, so we get it regardless
+#
 					if not status[self.iface]["accesspoint"]:
 						accesspoint = _("Unknown")
 					else:
@@ -634,7 +631,9 @@ class SystemNetworkInfo(Screen):
 								encryption = _("Enabled")
 						self.AboutText += _('Encryption:') + '\t' + encryption + '\n'
 
-					if ((status[self.iface]["essid"] and status[self.iface]["essid"] == "off") or not status[self.iface]["accesspoint"] or status[self.iface]["accesspoint"] == "Not-Associated"):
+					if ((status[self.iface]["essid"] and status[self.iface]["essid"] == "off") or
+						not status[self.iface]["accesspoint"] or
+						status[self.iface]["accesspoint"] == "Not-Associated"):
 						self.LinkState = False
 						self["statuspic"].setPixmapNum(1)
 						self["statuspic"].show()
@@ -663,7 +662,8 @@ class SystemNetworkInfo(Screen):
 		self["devicepic"].show()
 
 	def dataAvail(self, data):
-		data = six.ensure_str(data)
+		if PY3:
+			data = data.decode()
 		self.LinkState = None
 		for line in data.splitlines():
 			line = line.strip()
@@ -706,33 +706,33 @@ class SystemMemoryInfo(Screen):
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"], {
 			"cancel": self.close,
 			"ok": self.close,
-			"red": self.close
+			"red": self.close,
 		})
 
 		out_lines = open("/proc/meminfo").readlines()
 		self.AboutText = _("RAM") + '\n\n'
 		RamTotal = "-"
 		RamFree = "-"
-		for lidx in list(range(len(out_lines) - 1)):
+		for lidx in range(len(out_lines) - 1):
 			tstLine = out_lines[lidx].split()
 			if "MemTotal:" in tstLine:
 				MemTotal = out_lines[lidx].split()
-				self.AboutText += _("Total memory:") + "\t" + MemTotal[1] + "\n"
+				self.AboutText += _("Total memory:") + "\t" + "\t" + MemTotal[1] + "\n"
 			if "MemFree:" in tstLine:
 				MemFree = out_lines[lidx].split()
-				self.AboutText += _("Free memory:") + "\t" + MemFree[1] + "\n"
+				self.AboutText += _("Free memory:") + "\t" + "\t" + MemFree[1] + "\n"
 			if "Buffers:" in tstLine:
 				Buffers = out_lines[lidx].split()
-				self.AboutText += _("Buffers:") + "\t" + Buffers[1] + "\n"
+				self.AboutText += _("Buffers:") + "\t" + "\t" + Buffers[1] + "\n"
 			if "Cached:" in tstLine:
 				Cached = out_lines[lidx].split()
-				self.AboutText += _("Cached:") + "\t" + Cached[1] + "\n"
+				self.AboutText += _("Cached:") + "\t" + "\t" + Cached[1] + "\n"
 			if "SwapTotal:" in tstLine:
 				SwapTotal = out_lines[lidx].split()
-				self.AboutText += _("Total swap:") + "\t" + SwapTotal[1] + "\n"
+				self.AboutText += _("Total swap:") + "\t" + "\t" + SwapTotal[1] + "\n"
 			if "SwapFree:" in tstLine:
 				SwapFree = out_lines[lidx].split()
-				self.AboutText += _("Free swap:") + "\t" + SwapFree[1] + "\n\n"
+				self.AboutText += _("Free swap:") + "\t" + "\t" + SwapFree[1] + "\n\n"
 
 		self["actions"].setEnabled(False)
 		self.Console = Console()
@@ -744,8 +744,8 @@ class SystemMemoryInfo(Screen):
 		RamTotal = flash[1]
 		RamFree = flash[3]
 
-		self.AboutText += _("Total:") + "\t" + RamTotal + "\n"
-		self.AboutText += _("Free:") + "\t" + RamFree + "\n\n"
+		self.AboutText += _("Total:") + "\t" + "\t" + RamTotal + "\n"
+		self.AboutText += _("Free:") + "\t" + "\t" + RamFree + "\n\n"
 
 		self["AboutScrollLabel"].setText(self.AboutText)
 		self["actions"].setEnabled(True)
@@ -784,7 +784,7 @@ class TranslationInfo(Screen):
 
 		self["actions"] = ActionMap(["SetupActions"], {
 			"cancel": self.close,
-			"ok": self.close
+			"ok": self.close,
 		})
 
 
@@ -840,11 +840,17 @@ class CommitInfo(Screen):
 			commitlog += url.split('/')[-2] + '\n'
 			commitlog += 80 * '-' + '\n'
 			try:
-				# For python 2.7.11 we need to bypass the certificate check
+				# OpenPli 5.0 uses python 2.7.11 and here we need to bypass the certificate check
 				from ssl import _create_unverified_context
-				log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
-			except Exception as err:
-				log = loads(urllib.request.urlopen(url, timeout=5).read())
+				if PY2:
+					log = loads(urllib2.urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				else:
+					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
+			except:
+				if PY2:
+					log = loads(urllib2.urlopen(url, timeout=5).read())
+				else:
+					log = loads(urllib.request.urlopen(url, timeout=5).read())
 			for c in log:
 				creator = c['commit']['author']['name']
 				title = c['commit']['message']
@@ -875,27 +881,25 @@ class CommitInfo(Screen):
 class MemoryInfo(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-
-		self["actions"] = ActionMap(["SetupActions", "ColorActions"], {
-			"cancel": self.close,
-			"ok": self.getMemoryInfo,
-			"green": self.getMemoryInfo,
-			"blue": self.clearMemory
-		})
-
-		self["key_red"] = Label(_("Cancel"))
+		self["key_red"] = StaticText(_("Close"))
 		self["key_green"] = Label(_("Refresh"))
 		self["key_blue"] = Label(_("Clear"))
-
 		self['lmemtext'] = Label()
 		self['lmemvalue'] = Label()
 		self['rmemtext'] = Label()
 		self['rmemvalue'] = Label()
-
 		self['pfree'] = Label()
 		self['pused'] = Label()
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
+
+		self["actions"] = ActionMap(["ColorActionsAbout"], {
+			"cancel": self.close,
+			"red": self.close,
+			"ok": self.getMemoryInfo,
+			"green": self.getMemoryInfo,
+			"blue": self.clearMemory,
+		})
 
 		self["params"] = MemoryInfoSkinParams()
 
@@ -911,7 +915,7 @@ class MemoryInfo(Screen):
 			mem = 1
 			free = 0
 			rows_in_column = self["params"].rows_in_column
-			for i, line in enumerate(open('/proc/meminfo', 'r')):
+			for i, line in enumerate(open('/proc/meminfo','r')):
 				s = line.strip().split(None, 2)
 				if len(s) == 3:
 					name, size, units = s
@@ -925,18 +929,18 @@ class MemoryInfo(Screen):
 				if name.startswith("MemFree") or name.startswith("Buffers") or name.startswith("Cached"):
 					free += int(size)
 				if i < rows_in_column:
-					ltext += "".join((name, "\n"))
-					lvalue += "".join((size, " ", units, "\n"))
+					ltext += "".join((name,"\n"))
+					lvalue += "".join((size," ",units,"\n"))
 				else:
-					rtext += "".join((name, "\n"))
-					rvalue += "".join((size, " ", units, "\n"))
+					rtext += "".join((name,"\n"))
+					rvalue += "".join((size," ",units,"\n"))
 			self['lmemtext'].setText(ltext)
 			self['lmemvalue'].setText(lvalue)
 			self['rmemtext'].setText(rtext)
 			self['rmemvalue'].setText(rvalue)
-			self["slide"].setValue(int(100.0 * (mem - free) / mem + 0.25))
-			self['pfree'].setText("%.1f %s" % (100.0 * free / mem, '%'))
-			self['pused'].setText("%.1f %s" % (100.0 * (mem - free) / mem, '%'))
+			self["slide"].setValue(int(100.0*(mem-free)/mem+0.25))
+			self['pfree'].setText("%.1f %s" % (100.0*free/mem,'%'))
+			self['pused'].setText("%.1f %s" % (100.0*(mem-free)/mem,'%'))
 		except Exception as err:
 			print("[About] getMemoryInfo FAIL: '%s'." % str(err))
 
@@ -980,7 +984,7 @@ class Troubleshoot(Screen):
 			"left": self.left,
 			"right": self.right,
 			"red": self.red,
-			"green": self.green
+			"green": self.green,
 		})
 
 		self.container = eConsoleAppContainer()
@@ -1092,5 +1096,5 @@ class Troubleshoot(Screen):
 		self.updateKeys()
 
 	def updateKeys(self):
-		self["key_red"].setText(_("Cancel") if self.commandIndex < self.numberOfCommands else _("Remove all logfiles"))
+		self["key_red"].setText(_("Close") if self.commandIndex < self.numberOfCommands else _("Remove all logfiles"))
 		self["key_green"].setText(_("Refresh") if self.commandIndex < self.numberOfCommands else _("Remove this logfile"))

@@ -1,6 +1,6 @@
-from Screens.Wizard import Wizard
 from Components.Label import Label
 from Screens.LanguageSelection import LanguageWizard
+from Screens.Wizard import Wizard
 
 
 class WizardLanguage(Wizard):
