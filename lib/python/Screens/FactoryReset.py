@@ -222,8 +222,8 @@ class FactoryReset(Screen, ConfigListScreen, ProtectedScreen):
 	def closeConfigList(self, closeParameters=()):  # Suppress the save settings pop up on exit.
 		self.close(*closeParameters)
 
-        def cancel(self):
-                for i in self["config"].list:
-                        if len(i)>1:
-                                i[1].cancel()
-                self.close(False)
+	def cancel(self):
+		for i in self["config"].list:
+				if len(i)>1:
+					i[1].cancel()
+		self.close(False)
