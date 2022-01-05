@@ -3,7 +3,6 @@ from __future__ import print_function
 # similar things, like network connections being (un)plugged.
 import os
 import socket
-import six
 
 
 class NetlinkSocket(socket.socket):
@@ -13,7 +12,7 @@ class NetlinkSocket(socket.socket):
 		self.bind((os.getpid(), -1))
 
 	def parse(self):
-		data = six.ensure_str(self.recv(512))
+		data = self.recv(512).decode(encoding="utf-8", errors='ignore')
 		event = {}
 		for item in data.split('\x00'):
 			if not item:

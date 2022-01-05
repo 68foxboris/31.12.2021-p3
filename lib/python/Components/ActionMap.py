@@ -14,7 +14,7 @@ class ActionMap:
 		self.exec_active = False
 		self.enabled = True
 		unknown = list(self.actions.keys())
-		for action in unknown[:]:
+		for action in unknown:
 			for context in self.contexts:
 				if queryKeyBinding(context, action):
 					unknown.remove(action)
@@ -99,7 +99,7 @@ class HelpableActionMap(ActionMap):
 					return True
 			return False
 
-		if not hasattr(contexts, '__iter__'):
+		if isinstance(contexts, str):
 			contexts = [contexts]
 		actions = actions or {}
 		self.description = description
