@@ -13,7 +13,7 @@ from time import localtime, time, strftime
 from Components.config import config
 from ServiceReference import ServiceReference
 from Tools.Directories import resolveFilename, SCOPE_GUISKIN
-from skin import applySkinFactor, parseFont, parseScale
+from skin import parseFont
 
 
 EPG_TYPE_SINGLE = 0
@@ -52,13 +52,13 @@ class EPGList(GUIComponent):
                 GUIComponent.__init__(self)
                 self.type = type
                 self.l = eListboxPythonMultiContent()
-                self.eventItemFont = gFont("Regular", applySkinFactor(22))
-                self.eventTimeFont = gFont("Regular", applySkinFactor(16))
-                self.iconSize = applySkinFactor(21)
-                self.iconDistance = applySkinFactor(2)
-                self.colGap = applySkinFactor(10)
+                self.eventItemFont = gFont("Regular", 22)
+                self.eventTimeFont = gFont("Regular", 16)
+                self.iconSize = 21
+                self.iconDistance = 2
+                self.colGap = 10
                 self.skinColumns = False
-                self.tw = applySkinFactor(120)
+                self.tw = 120
                 self.dy = 0
 
                 if type == EPG_TYPE_SINGLE:
@@ -424,13 +424,13 @@ class EPGList(GUIComponent):
                         self.eventTimeFont = parseFont(value, ((1, 1), (1, 1)))
 
                 def setIconDistance(value):
-                        self.iconDistance = parseScale(value)
+                        self.iconDistance = int(value)
 
                 def setIconShift(value):
-                        self.dy = parseScale(value)
+                        self.dy = int(value)
 
                 def setTimeWidth(value):
-                        self.tw = parseScale(value)
+                        self.tw = int(value)
 
                 def setColWidths(value):
                         self.col = map(int, value.split(','))
@@ -440,7 +440,7 @@ class EPGList(GUIComponent):
                                 warningWrongSkinParameter(attrib)
 
                 def setColGap(value):
-                        self.colGap = parseScale(value)
+                        self.colGap = int(value)
                 for (attrib, value) in self.skinAttributes[:]:
                         try:
                                 locals().get(attrib)(value)

@@ -6,7 +6,7 @@ from Components.Harddisk import harddiskmanager
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename, fileExists
 from enigma import RT_HALIGN_LEFT, eListboxPythonMultiContent, eServiceReference, eServiceCenter, gFont
 from Tools.LoadPixmap import LoadPixmap
-from skin import applySkinFactor, fonts, parameters
+import skin
 
 
 EXTENSIONS = {
@@ -70,7 +70,7 @@ EXTENSIONS = {
 
 def FileEntryComponent(name, absolute=None, isDir=False):
 	res = [(absolute, isDir)]
-	x, y, w, h = parameters.get("FileListName", applySkinFactor(35, 1, 600, 20))
+	x, y, w, h = skin.parameters.get("FileListName", (35, 1, 600, 20))
 	res.append((eListboxPythonMultiContent.TYPE_TEXT, x, y, w, h, 0, RT_HALIGN_LEFT, name))
 	if isDir:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "extensions/directory.png"))
@@ -82,7 +82,7 @@ def FileEntryComponent(name, absolute=None, isDir=False):
 		else:
 			png = None
 	if png is not None:
-		x, y, w, h = parameters.get("FileListIcon", applySkinFactor(10, 2, 20, 20))
+		x, y, w, h = skin.parameters.get("FileListIcon", (10, 2, 20, 20))
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x, y, w, h, png))
 
 	return res
@@ -113,7 +113,7 @@ class FileList(MenuList):
 
 		self.refreshMountpoints()
 		self.changeDir(directory)
-		font = fonts.get("FileList", applySkinFactor("Regular", 18, 23))
+		font = skin.fonts.get("FileList", ("Regular", 18, 23))
 		self.l.setFont(0, gFont(font[0], font[1]))
 		self.l.setItemHeight(font[2])
 		self.serviceHandler = eServiceCenter.getInstance()
@@ -307,7 +307,7 @@ class FileList(MenuList):
 
 def MultiFileSelectEntryComponent(name, absolute=None, isDir=False, selected=False):
 	res = [(absolute, isDir, selected, name)]
-	x, y, w, h = parameters.get("FileListMultiName", applySkinFactor(55, 0, 600, 25))
+	x, y, w, h = skin.parameters.get("FileListMultiName", (55, 0, 600, 25))
 	res.append((eListboxPythonMultiContent.TYPE_TEXT, x, y, w, h, 0, RT_HALIGN_LEFT, name))
 	if isDir:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "extensions/directory.png"))
@@ -319,14 +319,14 @@ def MultiFileSelectEntryComponent(name, absolute=None, isDir=False, selected=Fal
 		else:
 			png = None
 	if png is not None:
-		x, y, w, h = parameters.get("FileListMultiIcon", applySkinFactor(30, 2, 20, 20))
+		x, y, w, h = skin.parameters.get("FileListMultiIcon", (30, 2, 20, 20))
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x, y, w, h, png))
 	if not name.startswith('<'):
 		if selected:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/lock_on.png"))
 		else:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_GUISKIN, "icons/lock_off.png"))
-		x, y, w, h = parameters.get("FileListMultiLock", applySkinFactor(2, 0, 25, 25))
+		x, y, w, h = skin.parameters.get("FileListMultiLock", (2, 0, 25, 25))
 		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x, y, w, h, icon))
 	return res
 
@@ -339,7 +339,7 @@ class MultiFileSelectList(FileList):
 			self.selectedFiles = preselectedFiles
 		FileList.__init__(self, directory, showMountpoints=showMountpoints, matchingPattern=matchingPattern, showDirectories=showDirectories, showFiles=showFiles, useServiceRef=useServiceRef, inhibitDirs=inhibitDirs, inhibitMounts=inhibitMounts, isTop=isTop, enableWrapAround=enableWrapAround, additionalExtensions=additionalExtensions)
 		self.changeDir(directory)
-		font = fonts.get("FileListMulti", applySkinFactor("Regular", 20, 25))
+		font = skin.fonts.get("FileListMulti", ("Regular", 20, 25))
 		self.l.setFont(0, gFont(font[0], font[1]))
 		self.l.setItemHeight(font[2])
 		self.onSelectionChanged = []

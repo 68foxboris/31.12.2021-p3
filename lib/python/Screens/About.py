@@ -7,7 +7,7 @@ from os import listdir, popen, remove
 from os.path import getmtime, isfile, join as pathjoin
 from six import PY2, PY3, ensure_str as ensurestr, text_type as texttype
 
-from skin import applySkinFactor, parameters, parseScale
+import skin
 from Components.About import about
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -35,7 +35,7 @@ class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("About Information"))
-		hddsplit = parameters.get("AboutHddSplit", 1)
+		hddsplit = skin.parameters.get("AboutHddSplit", 1)
 
 		model = BoxInfo.getItem("model")
 		brand = BoxInfo.getItem("brand")
@@ -953,14 +953,14 @@ class MemoryInfo(Screen):
 class MemoryInfoSkinParams(GUIComponent):
 	def __init__(self):
 		GUIComponent.__init__(self)
-		self.rows_in_column = applySkinFactor(25)
+		self.rows_in_column = 25
 
 	def applySkin(self, desktop, screen):
 		if self.skinAttributes is not None:
 			attribs = []
 			for (attrib, value) in self.skinAttributes:
 				if attrib == "rowsincolumn":
-					self.rows_in_column = parseScale(value)
+					self.rows_in_column = int(value)
 			self.skinAttributes = attribs
 		return GUIComponent.applySkin(self, desktop, screen)
 

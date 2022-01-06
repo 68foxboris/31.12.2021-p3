@@ -15,7 +15,7 @@ from Components.Sources.List import List
 from Components.ConfigList import ConfigList, ConfigListScreen
 
 from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigYesNo, KEY_LEFT, KEY_RIGHT, getConfigListEntry
-from skin import applySkinFactor, parameters
+import skin
 
 
 def getScale():
@@ -232,7 +232,7 @@ class Pic_Thumb(Screen):
 
 		self.textcolor = config.pic.textcolor.value
 		self.color = config.pic.bgcolor.value
-		self.spaceX, self.picX, self.spaceY, self.picY, textsize, thumtxt = parameters.get("PicturePlayerThumb", applySkinFactor(35, 190, 30, 200, 20, 14))
+		self.spaceX, self.picX, self.spaceY, self.picY, textsize, thumtxt = skin.parameters.get("PicturePlayerThumb", (35, 190, 30, 200, 20, 14))
 
 		pic_frame = resolveFilename(SCOPE_GUISKIN, "icons/pic_frame.png")
 
