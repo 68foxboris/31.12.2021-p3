@@ -298,7 +298,7 @@ class Network:
 		return result
 
 	def setAdapterAttribute(self, iface, attribute, value):
-		print "setting for adapter", iface, "attribute", attribute, " to value", value
+		print("setting for adapter", iface, "attribute", attribute, " to value", value)
 		if iface in self.ifaces:
 			self.ifaces[iface][attribute] = value
 
