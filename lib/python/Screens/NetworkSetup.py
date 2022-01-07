@@ -47,12 +47,6 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 			"ok": (self.okbuttonClick, _("Select interface")),
 			})
 
-		self["updown_actions"] = HelpableActionMap(self, ["WizardActions"],
-			{
-			"up": self.up,
-			"down": self.down,
-			})
-
 		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.close, _("Exit network interface list")),
@@ -218,12 +212,6 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 				if selection != None:
 					self.session.openWithCallback(self.AdapterSetupClosed, NetworkWizard, selection[0])
 
-	def up(self):
-		self["list"].up()
-
-	def down(self):
-		self["list"].down()
-
 
 class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 	def __init__(self, session):
@@ -253,10 +241,8 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 			"yellow": (self.remove, _("Remove a nameserver entry")),
 			})
 
-		self["actions"] = HelpableActionMap(self, ["SetupActions"],
+		self["actions"] = NumberActionMap(self, ["SetupActions"],
 		{
-			"keyup": self.keyUp,
-			"keydown": self.keyDown,
 			"ok": self.ok,
 		}, -2)
 
@@ -328,12 +314,6 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 			self.createConfig()
 			self.createSetup()
 
-	def keyUp(self):
-		self["config"].instance.moveSelection(self["config"].instance.moveUp)
-
-	def keyDown(self):
-		self["config"].instance.moveSelection(self["config"].instance.moveDown)
-
 
 class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 	def __init__(self, session, networkinfo, essid=None):
@@ -371,8 +351,6 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 		self["actions"] = NumberActionMap(["SetupActions"],
 		{
 			"ok": self.keySave,
-			"keyup": self.keyUp,
-			"keydown": self.keyDown,
 		}, -2)
 
 		self.list = []
@@ -657,12 +635,6 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 			iNetwork.deactivateInterface(self.iface, self.keyCancelCB)
 		else:
 			self.close('cancel')
-
-	def keyUp(self):
-		self["config"].instance.moveSelection(self["config"].instance.moveUp)
-
-	def keyDown(self):
-		self["config"].instance.moveSelection(self["config"].instance.moveDown)
 
 	def keyCancel(self):
 		self.hideInputHelp()

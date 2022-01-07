@@ -89,8 +89,6 @@ class PluginBrowser(Screen, ProtectedScreen):
 		})
 		self["DirectionActions"] = ActionMap(["DirectionActions"],
 		{
-			"up": self.keyUp,
-			"down": self.keyDown,
 			"moveUp": self.moveUp,
 			"moveDown": self.moveDown
 		})
@@ -122,12 +120,6 @@ class PluginBrowser(Screen, ProtectedScreen):
 		self.onChangedEntry = []
 		self["list"].onSelectionChanged.append(self.selectionChanged)
 		self.onLayoutFinish.append(self.saveListsize)
-
-	def keyUp(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveUp)
-
-	def keyDown(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveDown)
 
 	def isProtected(self):
 		return config.ParentalControl.setuppinactive.value and (not config.ParentalControl.config_sections.main_menu.value or hasattr(self.session, 'infobar') and self.session.infobar is None) and config.ParentalControl.config_sections.plugin_browser.value
@@ -303,10 +295,6 @@ class PluginDownloadBrowser(Screen):
 		self["actions"] = ActionMap(["WizardActions"],
 		{
 			"ok": self.go,
-			"up": self.keyUp,
-			"down": self.keyDown,
-			"left": self.pageUp,
-			"right": self.pageDown,
 			"back": self.requestClose,
 		})
 		if os.path.isfile('/usr/bin/opkg'):
@@ -317,18 +305,6 @@ class PluginDownloadBrowser(Screen):
 			self.opkg = 'opkg'
 			self.opkg_install = 'opkg install -force-defaults'
 			self.opkg_remove = self.opkg + ' remove'
-
-	def keyUp(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveUp)
-
-	def keyDown(self):
-		self["list"].instance.moveSelection(self["list"].instance.moveDown)
-
-	def pageUp(self):
-		self["list"].instance.moveSelection(self["list"].instance.pageUp)
-
-	def pageDown(self):
-		self["list"].instance.moveSelection(self["list"].instance.pageDown)
 
 	def go(self):
 		sel = self["list"].l.getCurrentSelection()

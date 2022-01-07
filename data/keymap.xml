@@ -255,8 +255,6 @@
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
-		<key id="KEY_UP" mapto="keyup" flags="mr" />
-		<key id="KEY_DOWN" mapto="keydown" flags="mr" />
 		<key id="KEY_LEFT" mapto="left" flags="mr" />
 		<key id="KEY_RIGHT" mapto="right" flags="mr" />
 		<key id="KEY_RED" mapto="cancel" flags="m" />
@@ -391,8 +389,6 @@
 	<map context="MenuActions">
 		<key id="KEY_MENU" mapto="menu" flags="mr" />
 		<key id="KEY_SPACE" mapto="menu" flags="mr" />
-		<key id="KEY_UP" mapto="moveUp" flags="mr" />
-		<key id="KEY_DOWN" mapto="moveDown" flags="mr" />
 	</map>
 
 	<map context="InfobarShowHideActions">
@@ -623,8 +619,6 @@
 		<key id="KEY_BLUE" mapto="showFavourites" flags="m" />
 		<key id="KEY_CHANNELUP" mapto="nextBouquet" flags="m" />
 		<key id="KEY_CHANNELDOWN" mapto="prevBouquet" flags="m" />
-		<key id="KEY_UP" mapto="keyUp" flags="mr"/>
-		<key id="KEY_DOWN" mapto="keyDown" flags="mr"/>
 		<key id="KEY_PREVIOUS" mapto="prevMarker" flags="m" />
 		<key id="KEY_NEXT" mapto="nextMarker" flags="m" />
 		<key id="KEY_LEFT" mapto="keyLeft" flags="m" />
