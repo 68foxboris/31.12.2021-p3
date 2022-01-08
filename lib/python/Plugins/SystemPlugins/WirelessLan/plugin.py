@@ -233,8 +233,6 @@ class WlanScan(Screen):
 		{
 			"ok": self.select,
 			"back": self.cancel,
-			"up": self.keyUp,
-			"down": self.keyDown,
 		}, -1)
 
 		self["shortcuts"] = ActionMap(["ShortcutActions"],
@@ -364,12 +362,6 @@ class WlanScan(Screen):
 		if self.WlanList is None:
 			self.buildWlanList()
 		return self.WlanList
-
-	def keyUp(self):
-		self["list"].up()
-
-	def keyDown(self):
-		self["list"].down()
 
 
 def WlanStatusScreenMain(session, iface):
