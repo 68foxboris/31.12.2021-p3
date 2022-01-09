@@ -160,7 +160,7 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 
 	def checkInterface(self, iface):
 		self.stopScan()
-		if self.Adapterlist is None:
+		if self.Adapterlist == None:
 			self.Adapterlist = iNetwork.getAdapterList()
 		if self.NextStep is not 'end':
 			if len(self.Adapterlist) == 0:
