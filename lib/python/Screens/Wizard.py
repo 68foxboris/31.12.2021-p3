@@ -1,5 +1,5 @@
 from __future__ import print_function
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.config import config, ConfigText, ConfigPassword, KEY_LEFT, KEY_RIGHT, KEY_0, KEY_DELETE, KEY_BACKSPACE, KEY_ASCII
 
@@ -95,9 +95,9 @@ class Wizard(Screen):
 				self.wizard[self.lastStep]["config"]["type"] = type
 				if type == "ConfigList" or type == "standalone":
 					try:
-						exec "from Screens." + str(attrs.get('module')) + " import *"
+						exec("from Screens." + str(attrs.get('module')) + " import *")
 					except:
-						exec "from " + str(attrs.get('module')) + " import *"
+						exec("from " + str(attrs.get('module')) + " import *")
 
 					self.wizard[self.lastStep]["config"]["screen"] = eval(str(attrs.get('screen')))
 					if 'args' in attrs:
@@ -463,7 +463,7 @@ class Wizard(Screen):
 	def runCode(self, code):
 		if code != "":
 			print("[Wizard] code", code)
-			exec code
+			exec(code)
 			return True
 		return False
 

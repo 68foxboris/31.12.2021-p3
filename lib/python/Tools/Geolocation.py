@@ -1,9 +1,7 @@
 from __future__ import print_function
 from json import loads
-try:
-	from urllib2 import URLError, urlopen
-except ImportError:
-	from urllib.request import URLError, urlopen
+from urllib.request import urlopen
+from urllib.error import URLError
 
 # Data available from http://ip-api.com/json/:
 #

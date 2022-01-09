@@ -134,8 +134,8 @@ class LogManagerPoller:
 		self.TrimTimer.startLongTimer(3600) #once an hour
 
 	def JobTrash(self):
-		ctimeLimit = int(time()) - int(config.crash.daysloglimit.value * 3600 * 24)
-		allowedBytes = 1024*1024 * int(config.crash.sizeloglimit.value)
+		ctimeLimit = time() - (config.crash.daysloglimit.value * 3600 * 24)
+		allowedBytes = 1024 * 1024 * int(config.crash.sizeloglimit.value)
 
 		mounts = []
 		matches = []

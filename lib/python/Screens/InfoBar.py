@@ -7,7 +7,7 @@ from Tools.Directories import fileExists
 # workaround for required config entry dependencies.
 import Screens.MovieSelection
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 
 profile("LOAD:enigma")
@@ -208,7 +208,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, InfoBarMenu, InfoBarSeek, InfoBa
 		}, prio=0, description=_("Movie Player Actions"))
 
 
-		self["DirectionActions"] = HelpableActionMap(self, "DirectionActions", {
+		self["DirectionActions"] = HelpableActionMap(self, ["DirectionActions"], {
 			"left": (self.left, (_("Scan backwards"), _("Pressing this button multiple times will increase the rate of backward scan."))),
 			"right": (self.right, (_("Scan forwards"), _("Pressing this button multiple times will increase the rate of forward scan.")))
 		}, prio=-2, description=_("Movie Player Actions"))

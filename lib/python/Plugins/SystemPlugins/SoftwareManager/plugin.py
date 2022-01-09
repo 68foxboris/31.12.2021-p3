@@ -33,8 +33,8 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListbox, gFont, getDesktop, ePicLoad, eRCInput, getPrevAsciiCode, eEnv
 from twisted.web import client
-from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
-from SoftwareTools import iSoftwareTools
+from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
+from Plugins.SystemPlugins.SoftwareManager.SoftwareTools import iSoftwareTools
 
 config.plugins.configurationbackup = ConfigSubsection()
 config.plugins.configurationbackup.backuplocation = ConfigText(default='/media/hdd/', visible_width=50, fixed_size=False)
@@ -1397,7 +1397,7 @@ class OPKGSource(Screen):
 		text = ""
 		if self.configfile:
 			try:
-				fp = file(configfile, 'r')
+				fp = open(configfile, 'r')
 				sources = fp.readlines()
 				if sources:
 					text = sources[0]
@@ -1449,7 +1449,7 @@ class OPKGSource(Screen):
 	def go(self):
 		text = self["text"].getText()
 		if text:
-			fp = file(self.configfile, 'w')
+			fp = open(self.configfile, 'w')
 			fp.write(text)
 			fp.write("\n")
 			fp.close()

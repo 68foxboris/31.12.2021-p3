@@ -8,18 +8,19 @@ from Components.TimerList import TimerList
 from Components.TimerSanityCheck import TimerSanityCheck
 from Components.UsageConfig import preferredTimerPath, dropEPGNewLines, replaceEPGSeparator
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT, createRecordTimerEntry
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.InputBox import PinInput
 from ServiceReference import ServiceReference
-from TimerEntry import TimerEntry, TimerLog
+from Screens.TimerEntry import TimerEntry, TimerLog
 from Tools.BoundFunction import boundFunction
 from Tools.FallbackTimer import FallbackTimerList
 from time import time
 from timer import TimerEntry as RealTimerEntry
 from ServiceReference import ServiceReference
 from enigma import eServiceReference, eEPGCache
+import functools
 
 
 class TimerEditList(Screen):
@@ -256,7 +257,7 @@ class TimerEditList(Screen):
 		self.list.extend([(timer, True) for timer in self.session.nav.RecordTimer.processed_timers])
 
 		if config.usage.timerlist_finished_timer_position.index: #end of list
-			self.list.sort(cmp=eol_compare)
+			self.list.sort(key=functools.cmp_to_key(eol_compare))
 		else:
 			self.list.sort(key=lambda x: x[0].begin)
 		self["timerlist"].l.setList(self.list)

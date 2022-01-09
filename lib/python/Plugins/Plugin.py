@@ -87,6 +87,9 @@ class PluginDescriptor:
 
 		self.__call__ = fnc
 
+	def __call__(self, *args, **kwargs):
+		return
+
 	def updateIcon(self, path):
 		self.path = path
 
@@ -96,7 +99,8 @@ class PluginDescriptor:
 	@property
 	def icon(self):
 		if self.iconstr and self.path:
-			return LoadPixmap(pathjoin(self.path, self.iconstr))
+			from Tools.LoadPixmap import LoadPixmap
+			return LoadPixmap(os.path.join(self.path, self.iconstr))
 		else:
 			return self._icon
 

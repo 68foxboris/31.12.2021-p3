@@ -28,7 +28,7 @@ class PluginComponent:
 			for x in plugin.where:
 				insort(self.plugins.setdefault(x, []), plugin)
 				if x == PluginDescriptor.WHERE_AUTOSTART:
-					plugin(reason=0)
+					plugin.__call__(reason=0)
 		else:
 			self.restartRequired = True
 
@@ -47,16 +47,13 @@ class PluginComponent:
 			if not os.path.isdir(directory_category):
 				continue
 			for pluginname in os.listdir(directory_category):
-				#path = os.path.join(directory_category, pluginname)
-				path = directory_category + '/' + pluginname
+				if pluginname == "__pycache__":
+					continue
+				path = os.path.join(directory_category, pluginname)
 				if os.path.isdir(path):
-						#profile('plugin ' + pluginname)
-					if fileExists(path + '/plugin.pyc') or fileExists(path + '/plugin.pyo') or fileExists(path + '/plugin.py') or fileExists(path + '/plugin.so'):
+						profile('plugin ' + pluginname)
 						try:
 							plugin = my_import('.'.join(["Plugins", c, pluginname, "plugin"]))
-							if "Plugins" not in plugin.__dict__:
-                                                               print("Plugin %s doesn't have 'Plugin'-call." % pluginname)
-                                                               continue
 							plugins = plugin.Plugins(path=path)
 						except Exception as exc:
 							print("Plugin ", c + "/" + pluginname, "failed to load:", exc)
@@ -137,7 +134,7 @@ class PluginComponent:
 	def getPluginsForMenu(self, menuid):
 		res = []
 		for p in self.getPlugins(PluginDescriptor.WHERE_MENU):
-			res += p(menuid)
+			res += p.__call__(menuid)
 		return res
 
 	def clearPluginList(self):

@@ -7,7 +7,7 @@ from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigN
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 
-from VideoHardware import video_hw
+from Plugins.SystemPlugins.Videomode.VideoHardware import video_hw
 
 config.misc.videowizardenabled = ConfigBoolean(default=True)
 
@@ -287,7 +287,7 @@ def startSetup(menuid):
 
 
 def VideoWizard(*args, **kwargs):
-	from VideoWizard import VideoWizard
+	from Plugins.SystemPlugins.Videomode.VideoWizard import VideoWizard
 	return VideoWizard(*args, **kwargs)
 
 

@@ -2,7 +2,7 @@
 from __future__ import print_function
 from Tools.Profile import profile
 
-from Screen import Screen
+from Screens.Screen import Screen
 import Screens.InfoBar
 from Screens.ScreenSaver import InfoBarScreenSaver
 import Components.ParentalControl
@@ -12,7 +12,7 @@ from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
 from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 profile("ChannelSelection.py 1")
-from EpgSelection import EPGSelection
+from Screens.EpgSelection import EPGSelection
 from enigma import eServiceReference, eServiceReferenceDVB, eEPGCache, eServiceCenter, eRCInput, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, loadPNG
 from Components.config import config, configfile, ConfigSubsection, ConfigText, ConfigYesNo
 from Tools.NumericalTextInput import NumericalTextInput
@@ -737,7 +737,7 @@ class ChannelSelectionEPG(InfoBarHotkey):
 
 	def getEPGPluginList(self, getAll=False):
 		pluginlist = [(p.name, boundFunction(self.runPlugin, p), p.description or p.name) for p in plugins.getPlugins(where=PluginDescriptor.WHERE_EVENTINFO)
-				if 'selectedevent' not in p.__call__.func_code.co_varnames] or []
+				if 'selectedevent' not in p.__call__.__code__.co_varnames] or []
 		from Components.ServiceEventTracker import InfoBarCount
 		if getAll or InfoBarCount == 1:
 			pluginlist.append((_("Show EPG for current channel..."), self.openSingleServiceEPG, _("Display EPG list for current channel")))
@@ -2522,7 +2522,7 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 ########## RDS Radiotext / Rass Support BEGIN
 		self.infobar = infobar # reference to real infobar (the one and only)
 		self["RdsDecoder"] = self.info["RdsDecoder"]
-		self["RdsActions"] = HelpableActionMap(self, "InfobarRdsActions",
+		self["RdsActions"] = HelpableActionMap(self, ["InfobarRdsActions"],
 		{
 			"startRassInteractive": (self.startRassInteractive, _("View Rass interactive..."))
 		}, -1)

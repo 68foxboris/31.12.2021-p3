@@ -4,12 +4,13 @@ import os
 from Components.SystemInfo import BoxInfo
 from Tools.BoundFunction import boundFunction
 
-from config import config, ConfigSubsection, ConfigSelection, ConfigFloat, ConfigSatlist, ConfigYesNo, ConfigInteger, ConfigSubList, ConfigNothing, ConfigSubDict, ConfigOnOff, ConfigDateTime, ConfigText
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigFloat, ConfigSatlist, ConfigYesNo, ConfigInteger, ConfigSubList, ConfigNothing, ConfigSubDict, ConfigOnOff, ConfigDateTime, ConfigText
 
 from enigma import eDVBFrontendParametersSatellite, eDVBSatelliteEquipmentControl as secClass, eDVBSatelliteDiseqcParameters as diseqcParam, eDVBSatelliteSwitchParameters as switchParam, eDVBSatelliteRotorParameters as rotorParam, eDVBResourceManager, eDVBDB, eEnv
 
 from time import localtime, mktime
 from datetime import datetime
+from itertools import chain
 
 import xml.etree.cElementTree
 
@@ -1326,7 +1327,7 @@ def InitNimManager(nimmgr, update_slots=[]):
 	lnb_choices_default = "universal_lnb"
 
 	prio_list = [("-1", _("Auto"))]
-	for prio in range(65) + range(14000, 14065) + range(19000, 19065):
+	for prio in chain(range(65) + range(14000, 14065) + range(19000, 19065)):
 		description = ""
 		if prio == 0:
 			description = _(" (disabled)")

@@ -306,7 +306,7 @@ def parseValuePair(s, scale, object=None, desktop=None, size=None):
 		parentsize = getParentSize(object, desktop)
 	xval = parseCoordinate(x, parentsize.width(), size and size.width() or 0)
 	yval = parseCoordinate(y, parentsize.height(), size and size.height() or 0)
-	return (xval * scale[0][0] / scale[0][1], yval * scale[1][0] / scale[1][1])
+	return (xval * scale[0][0] // scale[0][1], yval * scale[1][0] // scale[1][1])
 
 
 def parsePosition(s, scale, object=None, desktop=None, size=None):
@@ -416,14 +416,14 @@ def collectAttributes(skinAttributes, node, context, skinPath=None, ignore=(), f
 			# listbox; when the scrollbar setting is applied after the size, a scrollbar
 			# will not be shown until the selection moves for the first time.
 			if attrib == "size":
-				size = value.encode("utf-8")
+				size = value
 			elif attrib == "position":
-				pos = value.encode("utf-8")
+				pos = value
 			elif attrib == "font":
-				font = value.encode("utf-8")
+				font = value
 				skinAttributes.append((attrib, font))
 			else:
-				skinAttributes.append((attrib, value.encode("utf-8")))
+				skinAttributes.append((attrib))
 	if pos is not None:
 		pos, size = context.parse(pos, size, font)
 		skinAttributes.append(("position", pos))
@@ -1205,7 +1205,7 @@ def readSkin(screen, skin, names, desktop):
 		screen.additionalWidgets.append(w)
 
 	def processScreen(widget, context):
-		for w in widget.getchildren():
+		for w in widget:
 			conditional = w.attrib.get("conditional")
 			if conditional and not [i for i in conditional.split(",") if i in screen.keys()]:
 				continue

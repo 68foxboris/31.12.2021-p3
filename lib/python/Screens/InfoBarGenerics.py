@@ -1414,7 +1414,7 @@ class InfoBarSeek:
 	SEEK_STATE_PAUSE = (1, 0, 0, "||")
 	SEEK_STATE_EOF = (1, 0, 0, "END")
 
-	def __init__(self, actionmap="InfobarSeekActions"):
+	def __init__(self, actionmap=["InfobarSeekActions"]):
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 				iPlayableService.evSeekableStatusChanged: self.__seekableStatusChanged,
 				iPlayableService.evStart: self.__serviceStarted,
@@ -1429,7 +1429,7 @@ class InfoBarSeek:
 				self.screen = screen
 
 			def action(self, contexts, action):
-				print "action:", action
+				print("action:", action)
 				if action[:5] == "seek:":
 					time = int(action[5:])
 					self.screen.doSeekRelative(time * 90000)

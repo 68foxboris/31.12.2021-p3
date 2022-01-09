@@ -1,5 +1,5 @@
 from enigma import eDVBDB, getLinkedSlotID, eDVBResourceManager
-from Screen import Screen
+from Screens.Screen import Screen
 from Components.SystemInfo import BoxInfo
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
@@ -612,8 +612,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self["actions"] = ActionMap(["SetupActions", "SatlistShortcutAction"],
 		{
 			"ok": self.keyOk,
-			"keyup": self.keyUp,
-			"keydown": self.keyDown,
 			"save": self.keySave,
 			"cancel": self.keyCancel,
 			"changetype": self.changeConfigurationMode,
@@ -756,13 +754,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		if cc.upper() in self.countrycodes:
 			return self.countrycodes[cc.upper()]
 		return cc
-
-	def keyUp(self):
-		self["config"].instance.moveSelection(self["config"].instance.moveUp)
-
-	def keyDown(self):
-		self["config"].instance.moveSelection(self["config"].instance.moveDown)
-
 
 class NimSelection(Screen):
 	def __init__(self, session):

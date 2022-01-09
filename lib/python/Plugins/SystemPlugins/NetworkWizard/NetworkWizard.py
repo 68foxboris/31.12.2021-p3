@@ -160,7 +160,7 @@ class NetworkWizard(WizardLanguage, ShowRemoteControl):
 		self.stopScan()
 		if self.Adapterlist == None:
 			self.Adapterlist = iNetwork.getAdapterList()
-		if self.NextStep is not 'end':
+		if self.NextStep != 'end':
 			if len(self.Adapterlist) == 0:
 				#Reset Network to defaults if network broken
 				iNetwork.resetNetworkConfig('lan', self.resetNetworkConfigCB)

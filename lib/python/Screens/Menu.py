@@ -1,7 +1,7 @@
 from os.path import exists
 from xml.etree.cElementTree import parse
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.ParentalControlSetup import ProtectedScreen
 from Components.Sources.List import List
@@ -236,7 +236,7 @@ class Menu(Screen, ProtectedScreen):
 		conditional = node.get("conditional")
 		if conditional and not eval(conditional):
 			return
-		item_text = node.get("text", "").encode("UTF-8")
+		item_text = node.get("text", "")
 		entryID = node.get("entryID", "undefined")
 		weight = node.get("weight", 50)
 		for x in node:
@@ -316,11 +316,11 @@ class Menu(Screen, ProtectedScreen):
 				"displayHelp": self.showHelp,
 				"blue": self.keyBlue,
 			})
-		title = parent.get("title", "").encode("UTF-8") or None
-		title = title and _(title) or _(parent.get("text", "").encode("UTF-8"))
+		title = parent.get("title", "") or None
+		title = title and _(title) or _(parent.get("text", ""))
 		title = self.__class__.__name__ == "MenuSort" and _("Menusort (%s)") % title or title
 		if title is None:
-			title = _(parent.get("text", "").encode("UTF-8", "ignore"))
+			title = _(parent.get("text", ""))
 		else:
 			t_history.reset()
 		self["title"] = StaticText(title)

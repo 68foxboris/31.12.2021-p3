@@ -108,8 +108,8 @@ class Wlan:
 
 				extra = []
 				for element in result.custom:
-					element = element.encode()
-					extra.append(strip(self.asciify(element)))
+					element = element.decode()
+					extra.append(str.strip(self.asciify(element)))
 				for element in extra:
 					if 'SignalStrength' in element:
 						signal = element[element.index('SignalStrength') + 15:element.index(',L')]
@@ -207,7 +207,7 @@ class wpaSupplicant:
 					'key': "",
 				}
 
-		for (k, v) in list(wsconf.items()):
+		for (k, v) in wsconf.items():
 			print("[wsconf][%s] %s" % (k, v))
 
 		return wsconf
@@ -223,7 +223,7 @@ class wpaSupplicant:
 			self.writeBcmWifiConfig(iface, essid, encryption, psk)
 			return
 
-		fp = file(getWlanConfigName(iface), 'w')
+		fp = open(getWlanConfigName(iface), 'w')
 		fp.write('#WPA Supplicant Configuration by enigma2\n')
 		fp.write('ctrl_interface=/var/run/wpa_supplicant\n')
 		fp.write('eapol_version=1\n')
@@ -273,7 +273,7 @@ class wpaSupplicant:
 		try:
 			#parse the wpasupplicant configfile
 			print("[WirelessLan] parsing configfile: ", configfile)
-			fp = file(configfile, 'r')
+			fp = open(configfile, 'r')
 			supplicant = fp.readlines()
 			fp.close()
 			essid = None
@@ -324,7 +324,7 @@ class wpaSupplicant:
 					'key': config.plugins.wlan.psk.value,
 				}
 
-			for (key, item) in list(wsconfig.items()):
+			for (key, item) in wsconfig.items():
 				if item == "None" or item == "":
 					if key == 'hiddenessid':
 						wsconfig['hiddenessid'] = False

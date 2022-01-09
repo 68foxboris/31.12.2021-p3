@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from skin import applySkinFactor, parseColor, parseFont, parseScale
 from Components.config import config, ConfigClock, ConfigInteger, ConfigSubsection, ConfigYesNo, ConfigSelection, ConfigSelectionNumber
@@ -31,7 +33,7 @@ from Tools.Alternatives import CompareWithAlternatives
 from Tools.FallbackTimer import FallbackTimerList
 from Tools.TextBoundary import getTextBoundarySize
 from enigma import eEPGCache, eListbox, gFont, eListboxPythonMultiContent, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_WRAP, BT_SCALE, BT_KEEP_ASPECT_RATIO, BT_ALIGN_CENTER, eSize, eRect, eTimer, eServiceReference
-from GraphMultiEpgSetup import GraphMultiEpgSetup
+from Plugins.Extensions.GraphMultiEPG.GraphMultiEpgSetup import GraphMultiEpgSetup
 from time import localtime, time, strftime, mktime
 from Components.PluginComponent import plugins
 from Plugins.Plugin import PluginDescriptor
@@ -45,7 +47,7 @@ config.misc.graph_mepg.prev_time_period = ConfigInteger(default=120, limits=(60,
 now_time = [x for x in localtime()]
 now_time[3] = 20
 now_time[4] = 30
-config.misc.graph_mepg.prime_time = ConfigClock(default=mktime(now_time))
+config.misc.graph_mepg.prime_time = ConfigClock(default=mktime((now_time[0], now_time[1], now_time[2], now_time[3], now_time[4], 0, 0, 0, 0)))
 config.misc.graph_mepg.ev_fontsize = ConfigSelectionNumber(default=0, stepwidth=1, min=-12, max=12, wraparound=True)
 config.misc.graph_mepg.items_per_page = ConfigSelectionNumber(min=3, max=40, stepwidth=1, default=6, wraparound=True)
 config.misc.graph_mepg.items_per_page_listscreen = ConfigSelectionNumber(min=3, max=60, stepwidth=1, default=12, wraparound=True)
@@ -923,13 +925,13 @@ class GraphMultiEPG(Screen, HelpableScreen):
 					epg_bouquet=epg_bouquet)
 
 		HelpableScreen.__init__(self)
-		self["okactions"] = HelpableActionMap(self, "OkCancelActions",
+		self["okactions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 				"cancel": (self.closeScreen, _("Exit EPG")),
 				"ok": (self.eventSelected, _("Zap to selected channel, or show detailed event info (depends on configuration)"))
 			}, -1)
 		self["okactions"].csel = self
-		self["gmepgactions"] = HelpableActionMap(self, "GMEPGSelectActions",
+		self["gmepgactions"] = HelpableActionMap(self, ["GMEPGSelectActions"],
 			{
 				"timerAdd": (self.timerAdd, _("Add/remove change timer for current event")),
 				"info": (self.infoKeyPressed, _("Show detailed event info")),
@@ -951,7 +953,7 @@ class GraphMultiEPG(Screen, HelpableScreen):
 			}, -1)
 		self["gmepgactions"].csel = self
 
-		self["inputactions"] = HelpableActionMap(self, "InputActions",
+		self["inputactions"] = HelpableActionMap(self, ["InputActions"],
 			{
 				"left": (self.leftPressed, _("Go to previous event")),
 				"right": (self.rightPressed, _("Go to next event")),
@@ -1174,7 +1176,7 @@ class GraphMultiEPG(Screen, HelpableScreen):
 		event = self["list"].getCurrent()[0]
 		if event:
 			menu = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where=PluginDescriptor.WHERE_EVENTINFO)
-				if 'selectedevent' in p.__call__.func_code.co_varnames]
+				if 'selectedevent' in p.__call__.__code__.co_varnames]
 			if menu:
 				text += ": %s" % event.getEventName()
 			keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow"][:len(menu)] + (len(menu) - 13) * [""] + keys

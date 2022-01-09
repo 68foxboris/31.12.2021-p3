@@ -131,9 +131,6 @@ class Timezones:
 				name = commonTimezoneNames.get(tz, zone)  # Use the more common name if one is defined.
 				if name is None:
 					continue
-				name = name.encode(encoding="UTF-8", errors="ignore") if PY2 else name
-				area = area.encode(encoding="UTF-8", errors="ignore") if PY2 else area
-				zone = zone.encode(encoding="UTF-8", errors="ignore") if PY2 else zone
 				zones.append((zone, name.replace("_", " ")))
 			if area:
 				if area in self.timezones:

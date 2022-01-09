@@ -1,4 +1,4 @@
-from MenuList import MenuList
+from Components.MenuList import MenuList
 
 from Tools.Directories import SCOPE_GUISKIN, resolveFilename
 from os import path

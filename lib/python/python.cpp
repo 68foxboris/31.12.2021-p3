@@ -13,7 +13,6 @@ extern "C" void eConsoleInit(void);
 #endif
 extern void bsodFatal(const char *component);
 extern void quitMainloop(int exitCode);
-extern void bsodFatal(const char *component);
 extern bool bsodRestart();
 
 #define SKIP_PART2

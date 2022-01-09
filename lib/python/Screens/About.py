@@ -194,12 +194,6 @@ class Geolocation(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("Geolocation Information"))
-		self["lab1"] = StaticText(_("OpenVision"))
-		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
-		self["lab3"] = StaticText(_("Report problems to:"))
-		self["lab4"] = StaticText(_("https://openvision.tech"))
-		self["lab5"] = StaticText(_("Sources are available at:"))
-		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 		self["key_red"] = Button(_("Close"))
 		GeolocationText = _("Information about your Geolocation data") + "\n"
 		GeolocationText += "\n"
@@ -305,7 +299,7 @@ class Devices(Screen):
 		self.Console = Console()
 		niminfo = ""
 		nims = nimmanager.nimListCompressed()
-		for count in range(len(nims)):
+		for count in list(range(len(nims))):
 			if niminfo:
 				niminfo += "\n"
 			niminfo += nims[count]
@@ -837,22 +831,17 @@ class CommitInfo(Screen):
 		commitlog = ""
 		from datetime import datetime
 		from json import loads
+		from urllib.request import urlopen
 		try:
 			commitlog += 80 * '-' + '\n'
 			commitlog += url.split('/')[-2] + '\n'
 			commitlog += 80 * '-' + '\n'
 			try:
-				# For python 2.7.11 we need to bypass the certificate check
+				# OpenPli 5.0 uses python 2.7.11 and here we need to bypass the certificate check
 				from ssl import _create_unverified_context
-				if PY2:
-					log = loads(urllib2.urlopen(url, timeout=5, context=_create_unverified_context()).read())
-				else:
-					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
-			except Exception as err:
-				if PY2:
-					log = loads(urllib2.urlopen(url, timeout=5).read())
-				else:
-					log = loads(urllib.request.urlopen(url, timeout=5).read())
+				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+			except:
+				log = loads(urlopen(url, timeout=5).read())
 			for c in log:
 				creator = c['commit']['author']['name']
 				title = c['commit']['message']
