@@ -40,7 +40,7 @@ def getIfConfig(ifname):
 	infos["hwaddr"] = 0x8927  # SIOCSIFHWADDR
 	infos["netmask"] = 0x891b  # SIOCGIFNETMASK
 	try:
-		for k, v in infos.items():
+		for k, v in list(infos.items()):
 			ifreq[k] = _ifinfo(sock, v, ifname)
 	except:
 		pass
@@ -282,10 +282,10 @@ def GetIPsFromNetworkInterfaces():
 			maxPossible *= 2
 		else:
 			break
-	nameStr = names.tobytes()
+	nameStr = names.tostring() if PY2 else names
 	ifaces = []
 	for index in range(0, outbytes, structSize):
-		iface_name = bytes.decode(namestr[i:i + 16]).split('\0', 1)[0]
+		ifaceName = bytes.decode(nameStr[index:index + 16]).split("\0", 1)[0].encode("ascii") if PY2 else str(nameStr[index:index + 16]).split("\0", 1)[0]
 		if ifaceName != "lo":
 			ifaces.append((ifaceName, inet_ntoa(nameStr[index + 20:index + 24])))
 	return ifaces

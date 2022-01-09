@@ -24,7 +24,7 @@ class StreamService(Source):
 	service = property(getService)
 
 	def handleCommand(self, cmd):
-		print "[StreamService] handle command", cmd
+		print("[StreamService] handle command", cmd)
 		self.ref = eServiceReference(cmd)
 
 	def recordEvent(self, service, event):

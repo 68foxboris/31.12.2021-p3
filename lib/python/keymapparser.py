@@ -83,7 +83,7 @@ def readKeymap(filename):
 	try:
 		source = open(filename)
 	except:
-		print "[keymapparser] keymap file " + filename + " not found"
+		print("[keymapparser] keymap file " + filename + " not found")
 		return
 
 	try:

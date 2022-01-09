@@ -180,7 +180,7 @@ class CIconfigMenu(Screen):
 			try:
 				os.remove(self.filename)
 			except:
-				print(9"[CommonInterfaceAssignment] CI_Config_CI%d error remove xml..." % self.ci_slot)
+				print("[CommonInterfaceAssignment] CI_Config_CI%d error remove xml..." % self.ci_slot)
 			else:
 				self.session.openWithCallback(self.restartGui, MessageBox, _("Restart GUI now?"), MessageBox.TYPE_YESNO)
 

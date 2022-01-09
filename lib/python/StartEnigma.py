@@ -246,7 +246,7 @@ class Session:
 
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_SESSIONSTART):
 			try:
-				p__call__(reason=0, session=self)
+				p.__call__(reason=0, session=self)
 			except:
 				print("[StartEnigma] Plugin raised exception at WHERE_SESSIONSTART")
 				import traceback

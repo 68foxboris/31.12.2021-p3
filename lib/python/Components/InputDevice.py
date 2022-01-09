@@ -37,7 +37,7 @@ class InputDevices:
 			try:
 				buffer = b"\0" * 512
 				self.fd = osopen("/dev/input/%s" % device, O_RDWR | O_NONBLOCK)
-				self.name = ioctl(self.fd, self.EVIOCGNAME(256), buffer).decode()
+				self.name = ioctl(self.fd, self.EVIOCGNAME(256), buffer)
 				osclose(self.fd)
 				self.name = str(self.name[:self.name.find(b"\0")])
 			except (IOError, OSError) as err:
@@ -71,7 +71,7 @@ class InputDevices:
 		if BoxInfo.getItem("OLDE2API"):
 			IOC_SIZEBITS = 13
 		else:
-			IOC_SIZEBITS = 13 if "mips" in machine() else 14L
+			IOC_SIZEBITS = 13 if "mips" in machine() else 14
 		IOC_NRSHIFT = 0
 		IOC_TYPESHIFT = IOC_NRSHIFT + IOC_NRBITS
 		IOC_SIZESHIFT = IOC_TYPESHIFT + IOC_TYPEBITS
@@ -89,7 +89,7 @@ class InputDevices:
 		elif "front panel" in name:
 			return "panel"
 		else:
-			# print("[InputDevice] Warning: Unknown device type: '%s'!" % name)
+			print("[InputDevice] Warning: Unknown device type: '%s'!" % name)
 			return None
 
 	def getDeviceList(self):
@@ -114,7 +114,7 @@ class InputDevices:
 
 	def setDeviceEnabled(self, device, value):
 		oldVal = self.getDeviceAttribute(device, "enabled")
-		# print("[InputDevice] setDeviceEnabled DEBUG: Set device '%s' to '%s' from '%s'." % (device, value, oldVal))
+		# print("[InputDevice] setDeviceEnabled for device '%s' to '%s' from '%s'." % (device,value,oldVal))
 		self.setDeviceAttribute(device, "enabled", value)
 		if oldVal is True and value is False:
 			self.setDeviceDefaults(device)
@@ -125,12 +125,12 @@ class InputDevices:
 		return "Unknown device name"
 
 	def setDeviceName(self, device, value):
-		# print("[InputDevice] setDeviceName DEBUG: Set device name from '%s' to '%s'." % (device, value))
+		# print("[InputDevice] setDeviceName for device name from '%s' to '%s'." % (device,value))
 		self.setDeviceAttribute(device, "configuredName", value)
 
 	def setDeviceDelay(self, device, value):  # REP_DELAY
 		if self.getDeviceAttribute(device, "enabled"):
-			# print("[InputDevice] setDeviceDelay DEBUG: Set device '%s' to %s ms." % (device, value))
+			# print("[InputDevice] setDeviceDelay for device '%s' to %d ms." % (device, value))
 			event = pack("LLHHi", 0, 0, 0x14, 0x00, int(value))
 			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
@@ -138,7 +138,7 @@ class InputDevices:
 
 	def setDeviceRepeat(self, device, value):  # REP_PERIOD
 		if self.getDeviceAttribute(device, "enabled"):
-			# print("[InputDevice] setDeviceRepeat DEBUG: Set device '%s' to %s ms." % (device, value))
+			# print("[InputDevice] setDeviceRepeat DEBUG: Set device '%s' to %d ms." % (device, value))
 			event = pack("LLHHi", 0, 0, 0x14, 0x01, int(value))
 			fd = osopen("/dev/input/%s" % device, O_RDWR)
 			oswrite(fd, event)
@@ -150,7 +150,7 @@ class InputDevices:
 		return None
 
 	def setDeviceAttribute(self, device, attribute, value):
-		# print("[InputDevice] setDeviceAttribute DEBUG: Set attribute '%s' for device '%s' to value '%s'." % (attribute, device, value))
+		# print "[InputDevices] setting for device", device, "attribute", attribute, " to value", value
 		if device in self.devices:
 			self.devices[device][attribute] = value
 

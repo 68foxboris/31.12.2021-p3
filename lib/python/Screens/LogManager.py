@@ -44,7 +44,7 @@ def getSkinFactor(refresh = False):
 			if not skinfactor in [1, 1.5, 3]:
 				print('[SKIN] getSkinFactor unknown result (%s) -> set skinfactor to 1' %skinfactor)
 				skinfactor = 1
-		except Exception, err:
+		except Exception as err:
 			skinfactor = 1
 			print('[SKIN] getSkinFactor failed: ', err)
 	return skinfactor

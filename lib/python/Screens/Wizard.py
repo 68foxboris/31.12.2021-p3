@@ -316,7 +316,7 @@ class Wizard(Screen):
 		count = 0
 		for x in self.wizard.keys():
 			if self.wizard[x]["id"] == id:
-				print "result:", count
+				print("result:", count)
 				return count
 			count += 1
 		print("[Wizard] result: nothing")

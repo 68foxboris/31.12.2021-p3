@@ -878,7 +878,7 @@ class HarddiskManager:
 			cd = open(device)
 			ioctl(cd.fileno(), ioctl_flag, speed)
 			cd.close()
-		except Exception, ex:
+		except Exception as ex:
 			print("[Harddisk] Failed to set %s speed to %s" % (device, speed), ex)
 
 
@@ -968,7 +968,7 @@ class MkfsTask(Task.LoggingTask):
 					if '\x08' in d[1]:
 						d[1] = d[1].split('\x08', 1)[0]
 					self.setProgress(80 * int(d[0]) / int(d[1]))
-				except Exception, as e:
+				except Exception as e:
 					print("[Harddisk] Mkfs E:", e)
 				return # don't log the progess
 		self.log.append(data)
