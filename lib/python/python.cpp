@@ -11,7 +11,6 @@ extern "C" void init_enigma(void);
 extern "C" void eBaseInit(void);
 extern "C" void eConsoleInit(void);
 #endif
-extern void bsodFatal(const char *component);
 extern void quitMainloop(int exitCode);
 extern void bsodFatal(const char *component);
 extern bool bsodRestart();
@@ -221,7 +220,7 @@ int ePython::call(ePyObject pFunc, ePyObject pArgs)
 		 	PyErr_Print();
 			ePyObject FuncStr = PyObject_Str(pFunc);
 			ePyObject ArgStr = PyObject_Str(pArgs);
-			eLog(lvlFatal, "[ePyObject] (CallObject(%s,%s) failed)", PyString_AS_STRING(FuncStr), PyString_AS_STRING(ArgStr));
+			eLog(lvlFatal, "[ePyObject] (PyObject_CallObject(%s,%s) failed)", PyString_AS_STRING(FuncStr), PyString_AS_STRING(ArgStr));
 			Py_DECREF(FuncStr);
 			Py_DECREF(ArgStr);
 			/* immediately show BSOD, so we have the actual error at the bottom */
