@@ -16,7 +16,7 @@ from Components.Slider import Slider
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import fileExists
 from enigma import eTimer, eDVBDB
-from urllib2 import urlopen
+from urllib.request import urlopen
 import datetime
 import os
 import json

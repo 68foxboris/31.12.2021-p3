@@ -1,6 +1,6 @@
 from __future__ import print_function
 from Components.GUIComponent import GUIComponent
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.AudioSelection import AudioSelection
 from Components.ActionMap import ActionMap
 from Components.Label import Label
@@ -183,7 +183,7 @@ class ServiceInfo(Screen):
 					#live dvb-s-t
 						fillList = fillList + [(_("Service reference"), refstr, TYPE_TEXT)]
 				self.audio = self.service and self.service.audioTracks()
-				self.numberofTracks = self.audio and self.audio.getNumberOfTracks()
+				self.numberofTracks = self.audio.getNumberOfTracks() if self.audio else 0
 				self.subList = self.getSubtitleList()
 				self.togglePIDButton()
 				trackList = self.getTrackList()

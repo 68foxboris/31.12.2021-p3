@@ -315,9 +315,9 @@ class VirtualKeyBoard(Screen, HelpableScreen):
 			u"SAVE": "self.save()",
 			u"SHIFT": "self.shiftSelected()",
 			u"SHIFTICON": "self.shiftSelected()",
-			u"SPACE": "self['text'].char(' '.encode('UTF-8'))",
-			u"SPACEICON": "self['text'].char(' '.encode('UTF-8'))",
-			u"SPACEICONALT": "self['text'].char(' '.encode('UTF-8'))"
+			u"SPACE": "self['text'].char(' ')",
+			u"SPACEICON": "self['text'].char(' ')",
+			u"SPACEICONALT": "self['text'].char(' ')"
 		}
 		self.footer = [u"EXITICON", u"LEFTICON", u"RIGHTICON", SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, u"SHIFTICON", u"LOCALEICON", u"CLEARICON", u"DELETEICON"]
 		self.czech = [
@@ -1119,7 +1119,7 @@ class VirtualKeyBoard(Screen, HelpableScreen):
 		text = self.keyList[self.shiftLevel][self.selectedKey // self.keyboardWidth][self.selectedKey % self.keyboardWidth].encode("UTF-8")
 		cmd = self.cmds.get(text.upper(), None)
 		if cmd is None:
-			self['text'].char(text.encode('UTF-8'))
+			self['text'].char(text)
 		else:
 			exec(cmd)
 		if text not in (u"SHIFT", u"SHIFTICON") and self.shiftHold != -1:
@@ -1133,7 +1133,7 @@ class VirtualKeyBoard(Screen, HelpableScreen):
 
 	def localeMenu(self):
 		languages = []
-		for locale, data in self.locales.iteritems():
+		for locale, data in iter(self.locales.items()):
 			languages.append((data[0] + "  -  " + data[1] + "  (" + locale + ")", locale))
 		languages = sorted(languages)
 		index = 0

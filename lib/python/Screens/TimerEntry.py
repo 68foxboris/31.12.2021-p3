@@ -5,7 +5,8 @@ import urllib
 
 from enigma import eEPGCache, iRecordableServicePtr
 
-import ChannelSelection
+from Screens.Screen import Screen
+from Screens import ChannelSelection
 from RecordTimer import AFTEREVENT
 from ServiceReference import ServiceReference
 from Components.ActionMap import HelpableNumberActionMap
@@ -22,7 +23,6 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.HelpMenu import HelpableScreen
 from Screens.LocationBox import MovieLocationBox
 from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
 from Screens.TagEditor import TagEditor
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Alternatives import GetWithAlternative

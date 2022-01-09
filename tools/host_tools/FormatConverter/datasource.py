@@ -22,7 +22,7 @@ class datasource:
 	def printAll(self):
 		for sat in self.transponderlist.keys():
 			print("***********")
-			print("[datasource] sat:", sat, self.satnames[sat])
+			print("sat:", sat, self.satnames[sat])
 			for transponder in self.transponderlist[sat]:
 				print(transponder)
 
@@ -78,14 +78,14 @@ class genericdatasource(datasource):
 
 	def docopymerge(self, action="copy"):
 		if self.source is None:
-			print("[datasource] select a source first!")
+			print("select a source first!")
 		elif self.destination is None:
-			print("[datasource] select a destination first!")
+			print("select a destination first!")
 		else:
 			if action == "copy":
-				print("[datasource] copying ",)
+				print("copying ", end=' ')
 			elif action == "merge":
-				print("[datasource] merging ")
+				print("merging ", end=' ')
 			print("from %s to %s" % (self.source.getName(), self.destination.getName()))
 			countsat = 0
 			counttransponder = 0
@@ -97,7 +97,7 @@ class genericdatasource(datasource):
 				for transponder in self.source.transponderlist[satpos]:
 					counttransponder += 1
 					self.destination.addTransponder(satpos, transponder)
-			print("[datasource] copied %d sats with %d transponders" % (countsat, counttransponder))
+			print("copied %d sats with %d transponders" % (countsat, counttransponder))
 
 	def selectDatasource(self):
 		list = []

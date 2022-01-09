@@ -198,7 +198,7 @@ def getCPUInfoString():
 					if "temperature = " in line:
 						temperature = line.split("temperature = ")[1].split()[0]
 		if temperature:
-			degree = u"\u00B0"
+			degree = "\u00B0"
 			if not isinstance(degree, str):
 				degree = degree.encode("UTF-8", errors="ignore")
 			return "%s %s MHz (%s) %s%sC" % (processor, cpuSpeed, ngettext("%d core", "%d cores", cpuCount) % cpuCount, temperature, degree)
@@ -260,12 +260,12 @@ def getDriverInstalledDate():
 
 
 def getPythonVersionString():
-	process = Popen(("/usr/bin/python", "-V"), stdout=PIPE, stderr=PIPE, universal_newlines=True)
-	stdout, stderr = process.communicate()
-	if process.returncode == 0:
-		return stderr.strip().split()[1]
-	print("[About] Get python version failed.")
-	return _("Unknown")
+	try:
+		import subprocess
+		status, output = subprocess.getstatusoutput("python3 -V")
+		return output.split(' ')[1]
+	except:
+		return _("unknown")
 
 
 def GetIPsFromNetworkInterfaces():
@@ -282,10 +282,10 @@ def GetIPsFromNetworkInterfaces():
 			maxPossible *= 2
 		else:
 			break
-	nameStr = names.tostring() if PY2 else names
+	nameStr = names.tobytes()
 	ifaces = []
 	for index in range(0, outbytes, structSize):
-		ifaceName = bytes.decode(nameStr[index:index + 16]).split("\0", 1)[0].encode("ascii") if PY2 else str(nameStr[index:index + 16]).split("\0", 1)[0]
+		iface_name = bytes.decode(namestr[i:i + 16]).split('\0', 1)[0]
 		if ifaceName != "lo":
 			ifaces.append((ifaceName, inet_ntoa(nameStr[index + 20:index + 24])))
 	return ifaces

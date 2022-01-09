@@ -1,16 +1,16 @@
 from __future__ import print_function
 import threading
-import urllib2
+import urllib
 import os
 import shutil
 import tempfile
 from json import loads
 from enigma import eDVBDB, eEPGCache
 from Screens.MessageBox import MessageBox
-from config import config, ConfigText
+from Components.config import config, ConfigText
 from Tools import Notifications
-from base64 import encodestring
-from urllib import quote
+from base64 import encodebytes
+from urllib.parse import quote
 import xml.etree.ElementTree as et
 
 settingfiles = ('lamedb', 'bouquets.', 'userbouquet.', 'blacklist', 'whitelist', 'alternatives.')
@@ -28,16 +28,16 @@ class ImportChannels():
 			if config.usage.remote_fallback_openwebif_customize.value:
 				self.url = "%s:%s" % (self.url, config.usage.remote_fallback_openwebif_port.value)
 				if config.usage.remote_fallback_openwebif_userid.value and config.usage.remote_fallback_openwebif_password.value:
-					self.header = "Basic %s" % encodestring("%s:%s" % (config.usage.remote_fallback_openwebif_userid.value, config.usage.remote_fallback_openwebif_password.value)).strip()
+					self.header = "Basic %s" % encodebytes("%s:%s" % (config.usage.remote_fallback_openwebif_userid.value, config.usage.remote_fallback_openwebif_password.value)).strip()
 			self.remote_fallback_import = config.usage.remote_fallback_import.value
 			self.thread = threading.Thread(target=self.threaded_function, name="ChannelsImport")
 			self.thread.start()
 
 	def getUrl(self, url, timeout=5):
-		request = urllib2.Request(url)
+		request = urllib.request.Request(url)
 		if self.header:
 			request.add_header("Authorization", self.header)
-		return urllib2.urlopen(request, timeout=timeout)
+		return urllib.request.urlopen(request, timeout=timeout)
 
 	def getTerrestrialUrl(self):
 		url = config.usage.remote_fallback_dvb_t.value

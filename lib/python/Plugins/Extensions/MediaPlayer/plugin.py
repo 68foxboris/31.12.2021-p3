@@ -24,7 +24,7 @@ from Components.config import config
 from Components.SystemInfo import BoxInfo
 from Tools.Directories import fileExists, resolveFilename, SCOPE_CONFIG, SCOPE_PLAYLIST, SCOPE_GUISKIN
 from Tools.BoundFunction import boundFunction
-from settings import MediaPlayerSettings
+from Plugins.Extensions.MediaPlayer.settings import MediaPlayerSettings
 import random
 
 
@@ -175,13 +175,13 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarScreenSaver, InfoBarSeek, InfoBarA
 				self.player.show()
 				return NumberActionMap.action(self, contexts, action)
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 				"ok": (self.ok, _("Add file to playlist")),
 				"cancel": (self.exit, _("Exit mediaplayer")),
 			}, -2)
 
-		self["MediaPlayerActions"] = HelpableActionMap(self, "MediaPlayerActions",
+		self["MediaPlayerActions"] = HelpableActionMap(self, ["MediaPlayerActions"],
 			{
 				"play": (self.xplayEntry, _("Play entry")),
 				"pause": (self.pauseEntry, _("Pause")),
@@ -199,7 +199,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarScreenSaver, InfoBarSeek, InfoBarA
 				"subtitles": (self.subtitleSelection, _("Subtitle selection")),
 			}, -2)
 
-		self["InfobarEPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+		self["InfobarEPGActions"] = HelpableActionMap(self, ["InfobarEPGActions"],
 			{
 				"showEventInfo": (self.showEventInformation, _("show event details")),
 			})
@@ -362,9 +362,9 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarScreenSaver, InfoBarSeek, InfoBarA
 
 	def __evPluginError(self):
 		currPlay = self.session.nav.getCurrentService()
-		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		message = currPlay.info().getInfoString(iServiceInformation.sUser + 12)
 		print("[MediaPlayer] __evPluginError" , message)
-		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )
+		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout=20)
 
 	def delMPTimer(self):
 		del self.rightKeyTimer

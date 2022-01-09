@@ -39,20 +39,20 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 		self["key_blue"] = StaticText("")
 		self["introduction"] = StaticText(self.edittext)
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.close, _("Exit network interface list")),
 			"ok": (self.okbuttonClick, _("Select interface")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.close, _("Exit network interface list")),
 			"green": (self.okbuttonClick, _("Select interface")),
 			"blue": (self.openNetworkWizard, _("Use the network wizard to configure selected network adapter")),
 			})
 
-		self["DefaultInterfaceAction"] = HelpableActionMap(self, "ColorActions",
+		self["DefaultInterfaceAction"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"yellow": (self.setDefaultInterface, [_("Set interface as default Interface"), _("* Only available if more than one interface is active.")]),
 			})
@@ -128,7 +128,7 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 			os.unlink("/etc/default_gw")
 
 		if os.path.exists("/etc/default_gw"):
-			fp = file('/etc/default_gw', 'r')
+			fp = open('/etc/default_gw', 'r')
 			result = fp.read()
 			fp.close()
 			default_gw = result
@@ -168,7 +168,7 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 
 	def okbuttonClick(self):
 		selection = self["list"].getCurrent()
-		if selection is not None:
+		if selection != None:
 			self.session.openWithCallback(self.AdapterSetupClosed, AdapterSetupConfiguration, selection[0])
 
 	def AdapterSetupClosed(self, *ret):
@@ -207,7 +207,7 @@ class NetworkAdapterSelection(Screen, HelpableScreen):
 				self.session.open(MessageBox, _("The network wizard extension is not installed!\nPlease install it."), type=MessageBox.TYPE_INFO, timeout=10)
 			else:
 				selection = self["list"].getCurrent()
-				if selection is not None:
+				if selection != None:
 					self.session.openWithCallback(self.AdapterSetupClosed, NetworkWizard, selection[0])
 
 
@@ -226,13 +226,13 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 		self["introduction"] = StaticText(_("Press OK to activate the settings."))
 		self.createConfig()
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.cancel, _("Exit nameserver configuration")),
 			"ok": (self.ok, _("Activate current configuration")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.cancel, _("Exit nameserver configuration")),
 			"green": (self.add, _("Add a nameserver entry")),
@@ -333,13 +333,13 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 
 		self.createConfig()
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.keyCancel, _("exit network adapter configuration")),
 			"ok": (self.keySave, _("activate network adapter configuration")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.keyCancel, _("exit network adapter configuration")),
 			"green": (self.keySave, _("activate network adapter configuration")),
@@ -385,14 +385,14 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 	def layoutFinished(self):
 		self["DNS1"].setText(self.primaryDNS.getText())
 		self["DNS2"].setText(self.secondaryDNS.getText())
-		if self.ipConfigEntry.getText() is not None:
+		if self.ipConfigEntry.getText() != None:
 			if self.ipConfigEntry.getText() == "0.0.0.0":
 				self["IP"].setText(_("N/A"))
 			else:
 				self["IP"].setText(self.ipConfigEntry.getText())
 		else:
 			self["IP"].setText(_("N/A"))
-		if self.netmaskConfigEntry.getText() is not None:
+		if self.netmaskConfigEntry.getText() != None:
 			if self.netmaskConfigEntry.getText() == "0.0.0.0":
 				self["Mask"].setText(_("N/A"))
 			else:
@@ -440,7 +440,7 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 			self.weplist.append("HEX")
 
 			self.wsconfig = self.ws.loadConfig(self.iface)
-			if self.essid is None:
+			if self.essid == None:
 				self.essid = self.wsconfig['ssid']
 
 			config.plugins.wlan.hiddenessid = NoSave(ConfigYesNo(default=self.wsconfig['hiddenessid']))
@@ -483,7 +483,7 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 			self.configStrings = None
 			for p in plugins.getPlugins(PluginDescriptor.WHERE_NETWORKSETUP):
 				callFnc = p.__call__["ifaceSupported"](self.iface)
-				if callFnc is not None:
+				if callFnc != None:
 					if "WlanPluginEntry" in p.__call__: # internally used only for WLAN Plugin
 						self.extended = callFnc
 						if "configStrings" in p.__call__:
@@ -580,7 +580,7 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 			else:
 				iNetwork.removeAdapterAttribute(self.iface, "gateway")
 
-			if self.extended is not None and self.configStrings is not None:
+			if self.extended != None and self.configStrings != None:
 				iNetwork.setAdapterAttribute(self.iface, "configStrings", self.configStrings(self.iface))
 				self.ws.writeConfig(self.iface)
 
@@ -622,8 +622,8 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 				self.session.openWithCallback(self.ConfigfinishedCB, MessageBox, _("Your network configuration has been activated."), type=MessageBox.TYPE_INFO, timeout=10)
 
 	def ConfigfinishedCB(self, data):
-		if data is not None:
-			if data is True:
+		if data != None:
+			if data == True:
 				self.close('ok')
 
 	def keyCancelConfirm(self, result):
@@ -642,8 +642,8 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 			self.close('cancel')
 
 	def keyCancelCB(self, data):
-		if data is not None:
-			if data is True:
+		if data != None:
+			if data == True:
 				self.close('cancel')
 
 	def runAsync(self, finished_cb):
@@ -664,10 +664,10 @@ class AdapterSetup(Screen, ConfigListScreen, HelpableScreen):
 	def hideInputHelp(self):
 		current = self["config"].getCurrent()
 		if current == self.wlanSSID:
-			if current[1].help_window.instance is not None:
+			if current[1].help_window.instance != None:
 				current[1].help_window.instance.hide()
-		elif current == self.encryptionKey and config.plugins.wlan.encryption.value is not "Unencrypted":
-			if current[1].help_window.instance is not None:
+		elif current == self.encryptionKey and config.plugins.wlan.encryption.value != "Unencrypted":
+			if current[1].help_window.instance != None:
 				current[1].help_window.instance.hide()
 
 
@@ -694,7 +694,7 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 		self.errortext = _("No working wireless network interface found.\n Please verify that you have attached a compatible WLAN device or enable your local network interface.")
 		self.missingwlanplugintxt = _("The wireless LAN plugin is not installed!\nPlease install it.")
 
-		self["WizardActions"] = HelpableActionMap(self, "WizardActions",
+		self["WizardActions"] = HelpableActionMap(self, ["WizardActions"],
 			{
 			"up": (self.up, _("move up to previous entry")),
 			"down": (self.down, _("move down to next entry")),
@@ -702,13 +702,13 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 			"right": (self.right, _("move down to last entry")),
 			})
 
-		self["OkCancelActions"] = HelpableActionMap(self, "OkCancelActions",
+		self["OkCancelActions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 			"cancel": (self.close, _("exit networkadapter setup menu")),
 			"ok": (self.ok, _("select menu entry")),
 			})
 
-		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.close, _("exit networkadapter setup menu")),
 			})
@@ -867,7 +867,7 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 		self.extendedSetup = None
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_NETWORKSETUP):
 			callFnc = p.__call__["ifaceSupported"](self.iface)
-			if callFnc is not None:
+			if callFnc != None:
 				self.extended = callFnc
 				if "WlanPluginEntry" in p.__call__: # internally used only for WLAN Plugin
 					menu.append((_("Scan wireless networks"), "scanwlan"))
@@ -891,7 +891,7 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 		return menu
 
 	def AdapterSetupClosed(self, *ret):
-		if ret is not None and len(ret):
+		if ret != None and len(ret):
 			if ret[0] == 'ok' and (iNetwork.isWirelessInterface(self.iface) and iNetwork.getAdapterAttribute(self.iface, "up") is True):
 				try:
 					from Plugins.SystemPlugins.WirelessLan.plugin import WlanStatus
@@ -908,13 +908,13 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 			self.updateStatusbar()
 
 	def WlanStatusClosed(self, *ret):
-		if ret is not None and len(ret):
+		if ret != None and len(ret):
 			from Plugins.SystemPlugins.WirelessLan.Wlan import iStatus
 			iStatus.stopWlanConsole()
 			self.updateStatusbar()
 
 	def WlanScanClosed(self, *ret):
-		if ret[0] is not None:
+		if ret[0] != None:
 			self.session.openWithCallback(self.AdapterSetupClosed, AdapterSetup, self.iface, ret[0])
 		else:
 			from Plugins.SystemPlugins.WirelessLan.Wlan import iStatus
@@ -941,7 +941,7 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 	def dataAvail(self, data):
 		self.LinkState = None
 		for line in data.splitlines():
-			line = line.strip()
+			line = line.strip().decode()
 			if 'Link detected:' in line:
 				if "yes" in line:
 					self.LinkState = True
@@ -970,9 +970,9 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 
 	def getInfoCB(self, data, status):
 		self.LinkState = None
-		if data is not None:
-			if data is True:
-				if status is not None:
+		if data != None:
+			if data == True:
+				if status != None:
 					if status[self.iface]["essid"] == "off" or status[self.iface]["accesspoint"] == "Not-Associated" or status[self.iface]["accesspoint"] == False:
 						self.LinkState = False
 						self["statuspic"].setPixmapNum(1)
@@ -1393,9 +1393,9 @@ class NetworkAdapterTest(Screen):
 		self.activebutton = 6
 
 	def getInfoCB(self, data, status):
-		if data is not None:
-			if data is True:
-				if status is not None:
+		if data != None:
+			if data == True:
+				if status != None:
 					if status[self.iface]["essid"] == "off" or status[self.iface]["accesspoint"] == "Not-Associated" or status[self.iface]["accesspoint"] == False:
 						self["Network"].setForegroundColorNum(1)
 						self["Network"].setText(_("disconnected"))

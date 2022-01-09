@@ -1,5 +1,5 @@
-from GUIComponent import GUIComponent
-from VariableText import VariableText
+from Components.GUIComponent import GUIComponent
+from Components.VariableText import VariableText
 
 from enigma import eLabel
 
@@ -48,7 +48,7 @@ class Input(VariableText, GUIComponent, NumericalTextInput):
 				for x in self.Text[self.offset:self.offset + self.visible_width]:
 					self.text += (x == " " and " " or "*")
 			else:
-				self.text = self.Text[self.offset:self.offset + self.visible_width].encode("utf-8") + " "
+				self.text = self.Text[self.offset:self.offset + self.visible_width] + " "
 		else:
 			if self.type == self.PIN:
 				self.text = ""
@@ -62,14 +62,11 @@ class Input(VariableText, GUIComponent, NumericalTextInput):
 			self.currPos = 0
 			self.Text = u""
 		else:
-			if isinstance(text, str):
-				self.Text = text.decode("utf-8", "ignore")
-			else:
-				self.Text = text
+			self.Text = text
 		self.update()
 
 	def getText(self):
-		return self.Text.encode('utf-8')
+		return self.Text
 
 	def createWidget(self, parent):
 		if self.allmarked:
@@ -155,8 +152,6 @@ class Input(VariableText, GUIComponent, NumericalTextInput):
 		self.update()
 
 	def insertChar(self, ch, pos=False, owr=False, ins=False):
-		if isinstance(ch, str):
-			ch = ch.decode("utf-8", "ignore")
 		if not pos:
 			pos = self.currPos
 		if ins and not self.maxSize:

@@ -2,6 +2,7 @@ from __future__ import print_function
 from bisect import insort
 from os import fsync, makedirs, remove, rename, sys
 from os.path import exists, isdir, realpath
+from os import sys
 from sys import maxsize
 from threading import Lock
 from time import ctime, localtime, strftime, time
@@ -705,13 +706,13 @@ class RecordTimerEntry(TimerEntry, object):
 	@staticmethod
 	def setWasInDeepStandby():
 		RecordTimerEntry.wasInDeepStandby = True
-		eActionMap.getInstance().bindAction("", -maxsize - 1, RecordTimerEntry.keypress)
+		eActionMap.getInstance().bindAction("", -sys.maxsize - 1, RecordTimerEntry.keypress)
 
 	@staticmethod
 	def setWasInStandby():
 		if not RecordTimerEntry.wasInStandby:
 			if not RecordTimerEntry.wasInDeepStandby:
-				eActionMap.getInstance().bindAction("", -maxsize - 1, RecordTimerEntry.keypress)
+				eActionMap.getInstance().bindAction("", -sys.maxsize - 1, RecordTimerEntry.keypress)
 			RecordTimerEntry.wasInDeepStandby = False
 			RecordTimerEntry.wasInStandby = True
 

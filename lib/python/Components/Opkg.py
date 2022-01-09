@@ -59,7 +59,7 @@ def enumPlugins(filter_start=''):
 	for feed in enumFeeds():
 		package = None
 		try:
-			for line in open(os.path.join(list_dir, feed), 'r'):
+			for line in open(os.path.join(list_dir, feed), 'r', errors='ignore'):
 				if line.startswith('Package:'):
 					package = line.split(":", 1)[1].strip()
 					version = ''
@@ -185,6 +185,7 @@ class OpkgComponent:
 		self.cmd.dataAvail.remove(self.cmdData)
 
 	def cmdData(self, data):
+		data = data.decode()
 		print("data:", data)
 		if self.cache is None:
 			self.cache = data

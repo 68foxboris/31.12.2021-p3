@@ -4,7 +4,7 @@ import time
 from Tools.CList import CList
 from Components.SystemInfo import BoxInfo
 from Components.Console import Console
-import Task
+from Components import Task
 from Tools.StbHardware import getBoxProc
 import re
 

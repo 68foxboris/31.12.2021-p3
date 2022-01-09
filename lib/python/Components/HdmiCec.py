@@ -1,12 +1,13 @@
 from __future__ import print_function
 import os
 import time
-from config import config, ConfigSelection, ConfigYesNo, ConfigSubsection, ConfigText, ConfigCECAddress, ConfigLocations, ConfigDirectory
+from Components.config import config, ConfigSelection, ConfigYesNo, ConfigSubsection, ConfigText, ConfigCECAddress, ConfigLocations, ConfigDirectory
 from enigma import eHdmiCEC, eActionMap
 from Tools.StbHardware import getFPWasTimerWakeup
 import NavigationInstance
 from enigma import eTimer
-from sys import maxint
+from os import sys
+from sys import maxsize
 
 LOGPATH = "/hdd/"
 LOGFILE = "hdmicec.log"
@@ -84,7 +85,7 @@ for i in (10, 50, 100, 150, 250, 500, 750, 1000):
 	choicelist.append(("%d" % i, _("%d ms") % i))
 config.hdmicec.minimum_send_interval = ConfigSelection(default="0", choices=[("0", _("Disabled"))] + choicelist)
 choicelist = []
-for i in [3] + range(5, 65, 5):
+for i in [3] + list(range(5, 65, 5)):
 	choicelist.append(("%d" % i, _("%d sec") % i))
 config.hdmicec.repeat_wakeup_timer = ConfigSelection(default="3", choices=[("0", _("Disabled"))] + choicelist)
 config.hdmicec.debug = ConfigSelection(default="0", choices=[("0", _("Disabled")), ("1", _("Messages")), ("2", _("Key Events")), ("3", _("All"))])
@@ -95,6 +96,8 @@ config.hdmicec.sourceactive_zaptimers = ConfigYesNo(default=False)
 
 
 class HdmiCec:
+
+	instance = None
 
 	def __init__(self):
 		assert not HdmiCec.instance, "only one HdmiCec instance is allowed!"
@@ -123,7 +126,7 @@ class HdmiCec:
 		self.volumeForwardingEnabled = False
 		self.volumeForwardingDestination = 0
 		self.wakeup_from_tv = False
-		eActionMap.getInstance().bindAction('', -maxint - 1, self.keyEvent)
+		eActionMap.getInstance().bindAction('', -sys.maxsize - 1, self.keyEvent)
 		config.hdmicec.volume_forwarding.addNotifier(self.configVolumeForwarding)
 		config.hdmicec.enabled.addNotifier(self.configVolumeForwarding)
 		if config.hdmicec.enabled.value:
@@ -521,7 +524,7 @@ class HdmiCec:
 		log_path = config.hdmicec.log_path.value
 		path = os.path.join(log_path, LOGFILE)
 		if pathExists(log_path):
-			fp = file(path, 'a')
+			fp = open(path, 'a')
 			fp.write(output)
 			fp.close()
 

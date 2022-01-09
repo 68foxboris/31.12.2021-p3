@@ -6,7 +6,6 @@ from Components.Network import iNetwork
 import enigma
 
 import os
-from string import maketrans, strip
 from pythonwifi.iwlibs import Wireless, getWNICnames
 from pythonwifi import flags as wififlags
 
@@ -55,7 +54,7 @@ class Wlan:
 			else:
 				b = b + chr(i)
 
-		self.asciitrans = maketrans(a, b)
+		self.asciitrans = str.maketrans(a, b)
 
 	def asciify(self, str):
 		return str.translate(self.asciitrans)
@@ -109,8 +108,8 @@ class Wlan:
 
 				extra = []
 				for element in result.custom:
-					element = element.encode()
-					extra.append(strip(self.asciify(element)))
+					element = element.decode()
+					extra.append(str.strip(self.asciify(element)))
 				for element in extra:
 					if 'SignalStrength' in element:
 						signal = element[element.index('SignalStrength') + 15:element.index(',L')]
@@ -128,7 +127,7 @@ class Wlan:
 					'bssid': result.bssid,
 					'channel': channel,
 					'encrypted': encryption,
-					'essid': strip(self.asciify(result.essid)),
+					'essid': str.strip(self.asciify(result.essid)),
 					'iface': self.iface,
 					'maxrate': ifobj._formatBitrate(result.rate[-1][-1]),
 					'noise': '',#result.quality.nlevel-0x100,
@@ -224,7 +223,7 @@ class wpaSupplicant:
 			self.writeBcmWifiConfig(iface, essid, encryption, psk)
 			return
 
-		fp = file(getWlanConfigName(iface), 'w')
+		fp = open(getWlanConfigName(iface), 'w')
 		fp.write('#WPA Supplicant Configuration by enigma2\n')
 		fp.write('ctrl_interface=/var/run/wpa_supplicant\n')
 		fp.write('eapol_version=1\n')
@@ -274,7 +273,7 @@ class wpaSupplicant:
 		try:
 			#parse the wpasupplicant configfile
 			print("[WirelessLan] parsing configfile: ", configfile)
-			fp = file(configfile, 'r')
+			fp = open(configfile, 'r')
 			supplicant = fp.readlines()
 			fp.close()
 			essid = None
@@ -326,7 +325,7 @@ class wpaSupplicant:
 				}
 
 			for (key, item) in wsconfig.items():
-				if item is "None" or item is "":
+				if item == "None" or item == "":
 					if key == 'hiddenessid':
 						wsconfig['hiddenessid'] = False
 					if key == 'ssid':
@@ -374,7 +373,7 @@ class Status:
 		iface = extra_args
 		data = {'essid': False, 'frequency': False, 'accesspoint': False, 'bitrate': False, 'encryption': False, 'quality': False, 'signal': False}
 		for line in result.splitlines():
-			line = line.strip()
+			line = line.strip().decode()
 			if "ESSID" in line:
 				if "off/any" in line:
 					ssid = "off"

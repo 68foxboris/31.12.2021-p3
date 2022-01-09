@@ -87,6 +87,9 @@ class PluginDescriptor:
 
 		self.__call__ = fnc
 
+	def __call__(self, *args, **kwargs):
+		return
+
 	def updateIcon(self, path):
 		self.path = path
 

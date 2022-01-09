@@ -13,7 +13,7 @@ class ActionMap:
 		self.bound = False
 		self.exec_active = False
 		self.enabled = True
-		unknown = self.actions.keys()
+		unknown = ist(self.actions.keys())
 		for action in unknown[:]:
 			for context in self.contexts:
 				if queryKeyBinding(context, action):
@@ -99,14 +99,14 @@ class HelpableActionMap(ActionMap):
 					return True
 			return False
 
-		if not hasattr(contexts, '__iter__'):
+		if isinstance(contexts, str):
 			contexts = [contexts]
 		actions = actions or {}
 		self.description = description
 		adict = {}
 		for context in contexts:
 			alist = []
-			for (action, funchelp) in actions.iteritems():
+			for (action, funchelp) in iter(actions.items()):
 				# Check if this is a tuple.
 				if isinstance(funchelp, tuple):
 					if queryKeyBinding(context, action):

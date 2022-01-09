@@ -1,8 +1,5 @@
 from __future__ import print_function
-try:
-	import urllib2
-except ImportError:
-	import urllib
+from urllib.request import urlopen
 
 from enigma import eConsoleAppContainer, eDVBResourceManager, eGetEnigmaDebugLvl, eLabel, eTimer, getDesktop
 from os import listdir, popen, remove
@@ -867,7 +864,7 @@ class CommitInfo(Screen):
 			self.cachedProjects[self.projects[self.project][1]] = commitlog
 		except Exception as err:
 			commitlog += _("Currently the commit log cannot be retrieved - please try later again")
-		self["AboutScrollLabel"].setText(commitlog)
+		self["AboutScrollLabel"].setText(commitlog.decode())
 
 	def updateCommitLogs(self):
 		if self.projects[self.project][1] in self.cachedProjects:

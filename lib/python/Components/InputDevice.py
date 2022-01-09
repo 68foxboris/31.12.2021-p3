@@ -37,7 +37,7 @@ class InputDevices:
 			try:
 				buffer = b"\0" * 512
 				self.fd = osopen("/dev/input/%s" % device, O_RDWR | O_NONBLOCK)
-				self.name = ioctl(self.fd, self.EVIOCGNAME(256), buffer)
+				self.name = ioctl(self.fd, self.EVIOCGNAME(256), buffer).decode()
 				osclose(self.fd)
 				self.name = str(self.name[:self.name.find(b"\0")])
 			except (IOError, OSError) as err:
@@ -66,17 +66,17 @@ class InputDevices:
 
 	def EVIOCGNAME(self, length):
 		# From include/uapi/asm-generic/ioctl.h and asm-generic/ioctl.h for HAVE_OLDE2_API
-		IOC_NRBITS = 8L
-		IOC_TYPEBITS = 8L
+		IOC_NRBITS = 8
+		IOC_TYPEBITS = 8
 		if BoxInfo.getItem("OLDE2API"):
-			IOC_SIZEBITS = 13L
+			IOC_SIZEBITS = 13
 		else:
-			IOC_SIZEBITS = 13L if "mips" in machine() else 14L
-		IOC_NRSHIFT = 0L
+			IOC_SIZEBITS = 13 if "mips" in machine() else 14L
+		IOC_NRSHIFT = 0
 		IOC_TYPESHIFT = IOC_NRSHIFT + IOC_NRBITS
 		IOC_SIZESHIFT = IOC_TYPESHIFT + IOC_TYPEBITS
 		IOC_DIRSHIFT = IOC_SIZESHIFT + IOC_SIZEBITS
-		IOC_READ = 2L
+		IOC_READ = 2
 		return (IOC_READ << IOC_DIRSHIFT) | (length << IOC_SIZESHIFT) | (0x45 << IOC_TYPESHIFT) | (0x06 << IOC_NRSHIFT)
 
 	def getInputDeviceType(self, name):
@@ -93,7 +93,7 @@ class InputDevices:
 			return None
 
 	def getDeviceList(self):
-		return sorted(list(self.devices.keys()))
+		return sorted(iter(self.devices.keys()))
 
 	# struct input_event {
 	# 	struct timeval time;    -> ignored
@@ -346,7 +346,7 @@ class RemoteControl:
 class InitInputDevices:
 	def __init__(self):
 		self.currentDevice = ""
-		for device in sorted(list(inputDevices.devices.keys())):
+		for device in sorted(iter(inputDevices.devices.keys())):
 			print("[InputDevice] InitInputDevices DEBUG: Creating config entry for device: '%s' -> '%s'." % (device, inputDevices.devices[device]["name"]))
 			self.currentDevice = device
 			self.setupConfigEntries(self.currentDevice)

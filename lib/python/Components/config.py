@@ -12,7 +12,7 @@ from time import localtime, strftime
 # ConfigElement, the base class of all ConfigElements.
 
 # it stores:
-#   value    the current value, usefully encoded.
+#   value    the current value.
 #            usually a property which retrieves _value,
 #            and maybe does some reformatting
 #   _value   the value as it's going to be saved in the configfile,
@@ -199,7 +199,7 @@ class choicesList(object):  # XXX: we might want a better name for this
 		if self.type == choicesList.LIST_TYPE_LIST:
 			ret = [not isinstance(x, tuple) and x or x[0] for x in self.choices]
 		else:
-			ret = self.choices.keys()
+			ret = list(self.choices.keys())
 		return ret or [""]
 
 	def __iter__(self):
@@ -220,7 +220,7 @@ class choicesList(object):  # XXX: we might want a better name for this
 			if isinstance(ret, tuple):
 				ret = ret[0]
 			return ret
-		return self.choices.keys()[index]
+		return list(self.choices.keys())[index]
 
 	def index(self, value):
 		try:
@@ -239,7 +239,7 @@ class choicesList(object):  # XXX: we might want a better name for this
 			else:
 				self.choices[index] = value
 		else:
-			key = self.choices.keys()[index]
+			key = list(self.choices.keys())[index]
 			orig = self.choices[key]
 			del self.choices[key]
 			self.choices[value] = orig
@@ -253,7 +253,7 @@ class choicesList(object):  # XXX: we might want a better name for this
 			if isinstance(default, tuple):
 				default = default[0]
 		else:
-			default = choices.keys()[0]
+			default = list(choices.keys())[0]
 		return default
 
 
@@ -405,7 +405,7 @@ class ConfigSelection(ConfigElement):
 	def getMulti(self, selected):
 		if self._descr is None:
 			self._descr = self.description[self.value]
-		from config import config
+		from Components.config import config
 		from skin import switchPixmap
 		if self.graphic and config.usage.boolean_graphic.value == "true" and "menu_on" in switchPixmap and "menu_off" in switchPixmap:
 			pixmap = "menu_on" if self._descr in (_('True'), _('true'), _('Yes'), _('yes'), _('Enable'), _('enable'), _('Enabled'), _('enabled'), _('On'), _('on')) else "menu_off" if self._descr in (_('False'), _('false'), _('No'), _('no'), _("Disable"), _('disable'), _('Disabled'), _('disabled'), _('Off'), _('off'), _('None'), _('none')) else None
@@ -457,7 +457,7 @@ class ConfigBoolean(ConfigElement):
 		return self.descriptions[self.value]
 
 	def getMulti(self, selected):
-		from config import config
+		from Components.config import config
 		from skin import switchPixmap
 		if self.graphic and config.usage.boolean_graphic.value in ("true", "only_bool") and "menu_on" in switchPixmap and "menu_off" in switchPixmap:
 			return ('pixmap', switchPixmap["menu_on" if self.value else "menu_off"])
@@ -772,7 +772,7 @@ class ConfigIP(ConfigSequence):
 			value += str(i)
 		leftPos = sum(block_strlen[:(self.marked_block)]) + self.marked_block
 		rightPos = sum(block_strlen[:(self.marked_block + 1)]) + self.marked_block
-		mBlock = range(leftPos, rightPos)
+		mBlock = list(range(leftPos, rightPos))
 		return (value, mBlock)
 
 	def getMulti(self, selected):
@@ -1123,17 +1123,13 @@ class ConfigText(ConfigElement, NumericalTextInput):
 			return self.text
 
 	def setValue(self, val):
-		try:
-			self.text = val.decode("utf-8")
-		except UnicodeDecodeError:
-			self.text = val.decode("utf-8", "ignore")
-			print("[Config] Broken UTF8!")
+		self.text = val
 
 	value = property(getValue, setValue)
 	_value = property(getValue, setValue)
 
 	def getText(self):
-		return self.text.encode("utf-8")
+		return self.text
 
 	def getMulti(self, selected):
 		if self.visible_width:
@@ -1141,13 +1137,13 @@ class ConfigText(ConfigElement, NumericalTextInput):
 				mark = range(0, min(self.visible_width, len(self.text)))
 			else:
 				mark = [self.marked_pos - self.offset]
-			return ("mtext"[1 - selected:], self.text[self.offset:self.offset + self.visible_width].encode("utf-8") + " ", mark)
+			return ("mtext"[1 - selected:], self.text[self.offset:self.offset + self.visible_width] + " ", mark)
 		else:
 			if self.allmarked:
 				mark = range(0, len(self.text))
 			else:
 				mark = [self.marked_pos]
-			return ("mtext"[1 - selected:], self.text.encode("utf-8") + " ", mark)
+			return ("mtext"[1 - selected:], self.text + " ", mark)
 
 	def onSelect(self, session):
 		self.allmarked = (self.value != "")
@@ -2104,7 +2100,7 @@ class ConfigCECAddress(ConfigSequence):
 			value += str(i)
 		leftPos = sum(block_strlen[:(self.marked_block)]) + self.marked_block
 		rightPos = sum(block_strlen[:(self.marked_block + 1)]) + self.marked_block
-		mBlock = range(leftPos, rightPos)
+		mBlock = list(range(leftPos, rightPos))
 		return (value, mBlock)
 
 	def getMulti(self, selected):

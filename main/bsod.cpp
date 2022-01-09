@@ -215,6 +215,7 @@ void bsodFatal(const char *component)
 		stringFromFile(f, "kernel", "/proc/enigma/kernel");
 		stringFromFile(f, "kernelcmdline", "/proc/cmdline");
 		stringFromFile(f, "nimsockets", "/proc/bus/nim_sockets");
+                stringFromFile(f, "imageversion", "/etc/image-version");
 		stringFromFile(f, "imageissue", "/etc/issue.net");
 		stringFromFile(f, "distro", "/proc/enigma/distro");
 		stringFromFile(f, "mediaservice", "/proc/enigma/mediaservice");

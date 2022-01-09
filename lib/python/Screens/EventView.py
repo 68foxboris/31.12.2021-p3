@@ -1,5 +1,5 @@
 from __future__ import print_function
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.TimerEdit import TimerSanityConflict
 from Screens.ChoiceBox import ChoiceBox
 from Components.ActionMap import ActionMap
@@ -13,7 +13,7 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.Event import Event
 from enigma import eEPGCache, eTimer, eServiceReference
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT, createRecordTimerEntry
-from TimerEntry import TimerEntry
+from Screens.TimerEntry import TimerEntry
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
 from Tools.FallbackTimer import FallbackTimerList
@@ -222,14 +222,6 @@ class EventViewBase:
 			else:
 				self["channel"].setText(_("unknown service"))
 
-	def sort_func(self, x, y):
-		if x[1] < y[1]:
-			return -1
-		elif x[1] == y[1]:
-			return 0
-		else:
-			return 1
-
 	def setEvent(self, event):
 		self.event = event
 		self["Event"].newEvent(event)
@@ -302,8 +294,7 @@ class EventViewBase:
 		ret = epgcache.search(('NB', 100, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, refstr, id))
 		if ret is not None:
 			text = '\n\n' + _('Similar broadcasts:')
-			ret.sort(self.sort_func)
-			for x in ret:
+			for x in sorted(ret, key=lambda x: x[1]):
 				text += "\n%s  -  %s" % (strftime(config.usage.date.long.value + ", " + config.usage.time.short.value, localtime(x[1])), x[0])
 
 			descr = self["epg_description"]
@@ -323,8 +314,8 @@ class EventViewBase:
 		if self.event:
 			text = _("Select action")
 			menu = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where=PluginDescriptor.WHERE_EVENTINFO)
-				if 'servicelist' not in p.__call__.func_code.co_varnames
-					if 'selectedevent' not in p.__call__.func_code.co_varnames]
+				if 'servicelist' not in p.__call__.__code__.co_varnames
+					if 'selectedevent' not in p.__call__.__code__.co_varnames]
 			if len(menu) == 1:
 				menu and menu[0][1]()
 			elif len(menu) > 1:

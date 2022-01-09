@@ -1,4 +1,4 @@
-from Screen import Screen
+from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.config import config, ConfigNothing, ConfigBoolean, ConfigSelection
 from Components.Label import Label
@@ -15,10 +15,10 @@ import xml.etree.cElementTree
 # read the setupmenu
 try:
 	# first we search in the current path
-	setupfile = file('data/setup.xml', 'r')
+	setupfile = open('data/setup.xml', 'r')
 except:
 	# if not found in the current path, we use the global datadir-path
-	setupfile = file(eEnv.resolve('${datadir}/enigma2/setup.xml'), 'r')
+	setupfile = open(eEnv.resolve('${datadir}/enigma2/setup.xml'), 'r')
 setupdom = xml.etree.cElementTree.parse(setupfile)
 setupfile.close()
 
@@ -81,7 +81,7 @@ class Setup(ConfigListScreen, Screen):
 				self.setup = x
 				break
 
-		self.setup_title = self.setup.get("title", "").encode("UTF-8")
+		self.setup_title = self.setup.get("title", "")
 		self.seperation = int(self.setup.get('separation', '0'))
 
 		#check for list.entries > 0 else self.close
@@ -153,8 +153,8 @@ class Setup(ConfigListScreen, Screen):
 				if conditional and not eval(conditional):
 					continue
 
-				item_text = _(x.get("text", "??").encode("UTF-8"))
-				item_description = _(x.get("description", " ").encode("UTF-8")) # don't change
+				item_text = _(x.get("text", "??"))
+				item_description = _(x.get("description", " ")) # don't change
 				b = eval(x.text or "")
 				if b == "":
 					continue
@@ -194,5 +194,5 @@ def getSetupTitle(id):
 	xmldata = setupdom.getroot()
 	for x in xmldata.findall("setup"):
 		if x.get("key") == id:
-			return x.get("title", "").encode("UTF-8")
+			return x.get("title", "")
 	raise SetupError("unknown setup id '%s'!" % repr(id))

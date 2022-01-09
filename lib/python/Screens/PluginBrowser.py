@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from __future__ import print_function
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.ParentalControlSetup import ProtectedScreen
 from enigma import eConsoleAppContainer, eDVBDB, eTimer, eSize, ePoint, getDesktop
 
@@ -159,7 +159,7 @@ class PluginBrowser(Screen, ProtectedScreen):
 
 	def run(self):
 		plugin = self["list"].l.getCurrentSelection()[0]
-		plugin(session=self.session)
+		plugin.__call__(session=self.session)
 		self.help = False
 
 	def setDefaultList(self, answer):
@@ -480,7 +480,7 @@ class PluginDownloadBrowser(Screen):
 
 	def dataAvail(self, str):
 		#prepend any remaining data from the previous call
-		str = self.remainingdata + str
+		str = self.remainingdata + str.decode()
 		#split in lines
 		lines = str.split('\n')
 		#'str' should end with '\n', so when splitting, the last line should be empty. If this is not the case, we received an incomplete line

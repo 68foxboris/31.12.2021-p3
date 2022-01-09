@@ -1,5 +1,5 @@
 from __future__ import print_function
-from Source import Source
+from Components.Sources.Source import Source
 from Components.Element import cached
 from Components.SystemInfo import BoxInfo
 from enigma import eServiceReference
@@ -24,7 +24,7 @@ class StreamService(Source):
 	service = property(getService)
 
 	def handleCommand(self, cmd):
-		print "[StreamService] handle command", cmd
+		print("[StreamService] handle command", cmd)
 		self.ref = eServiceReference(cmd)
 
 	def recordEvent(self, service, event):

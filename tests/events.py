@@ -7,7 +7,7 @@ recorded_events = []
 
 def event(self, name, args, kwargs):
 	global recorded_events
-	print "*EVENT*", time.time(), self, name, args, kwargs
+	print("*EVENT*", time.time(), self, name, args, kwargs)
 	recorded_events.append((time.time(), self, name, args, kwargs))
 
 
@@ -47,22 +47,22 @@ def end_log(test_name):
 		expected = f.read()
 		f.close()
 	except:
-		print("[events] NO TEST RESULT FOUND, creating new")
+		print("NO TEST RESULT FOUND, creating new")
 		f = open(test_name + ".new_results", "wb")
 		f.write(results)
 		f.close()
 
-	print results
+	print(results)
 
 	if expected is not None:
-		print("[events] expected:")
+		print("expected:")
 		if expected != results:
 			open(test_name + ".bogus_results", "wb").write(results)
 			raise tests.TestError("test data does not match")
 		else:
-			print("[events] test compared ok")
+			print("test compared ok")
 	else:
-		print("[events] no test data to compare with.")
+		print("no test data to compare with.")
 
 
 def log(fnc, base_time=0, test_name="test", *args, **kwargs):

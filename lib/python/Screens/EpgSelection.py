@@ -1,7 +1,7 @@
 
 from __future__ import print_functionfrom Screen import Screen
-import ChannelSelection
-import Screens.InfoBar
+from Screens.Screen import Screen
+from Screens import ChannelSelection
 from Components.config import config, ConfigClock
 from Components.Pixmap import Pixmap
 from Components.Label import Label
@@ -14,10 +14,10 @@ from Components.Sources.Event import Event
 from Screens.ChoiceBox import ChoiceBox
 from Screens.TimerEdit import TimerSanityConflict, TimerEditList
 from Screens.EventView import EventViewSimple
-from TimeDateInput import TimeDateInput
+from Screens.TimeDateInput import TimeDateInput
 from enigma import eServiceReference
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT, createRecordTimerEntry
-from TimerEntry import TimerEntry
+from Screens.TimerEntry import TimerEntry
 from ServiceReference import ServiceReference
 from time import localtime, time, strftime
 from Components.PluginComponent import plugins
@@ -145,7 +145,7 @@ class EPGSelection(Screen):
 		event = self["list"].getCurrent()[0]
 		if event:
 			menu = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where=PluginDescriptor.WHERE_EVENTINFO)
-				if 'selectedevent' in p.__call__.func_code.co_varnames]
+				if 'selectedevent' in p.__call__.__code__.co_varnames]
 			if menu:
 				text += ": %s" % event.getEventName()
 		if self.type == EPG_TYPE_MULTI:
@@ -161,7 +161,7 @@ class EPGSelection(Screen):
 
 	def runPlugin(self, plugin):
 		event = self["list"].getCurrent()
-		plugin(session=self.session, selectedevent=event)
+		plugin.__call__(session=self.session, selectedevent=event)
 
 	def openTimerOverview(self):
 		self.session.open(TimerEditList)
