@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from os.path import join as pathjoin
 from Components.config import ConfigSubsection, config
 from Tools.LoadPixmap import LoadPixmap
@@ -100,7 +102,7 @@ class PluginDescriptor:
 	def icon(self):
 		if self.iconstr and self.path:
 			from Tools.LoadPixmap import LoadPixmap
-			return LoadPixmap(os.path.join(self.path, self.iconstr))
+			return LoadPixmap(pathjoin(self.path, self.iconstr))
 		else:
 			return self._icon
 

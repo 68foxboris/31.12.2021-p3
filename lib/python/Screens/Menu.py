@@ -200,7 +200,7 @@ class Menu(Screen, ProtectedScreen):
 			elif not BoxInfo.getItem(requires, False):
 				return
 
-		MenuTitle = _(node.get("text", "??").encode("UTF-8"))
+		MenuTitle = _(node.get("text", "??"))
 		entryID = node.get("entryID", "undefined")
 		weight = node.get("weight", 50)
 		x = node.get("flushConfigOnClose")

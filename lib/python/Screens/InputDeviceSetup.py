@@ -63,7 +63,7 @@ class InputDeviceSelection(Screen, HelpableScreen):
 			"ok": (self.okbuttonClick, _("Select input device.")),
 			}, -2)
 
-		self["ColorActions"] = HelpableActionMap(self, ["ColorActions]",
+		self["ColorActions"] = HelpableActionMap(self, ["ColorActions"],
 			{
 			"red": (self.close, _("Exit input device selection.")),
 			"green": (self.okbuttonClick, _("Select input device.")),

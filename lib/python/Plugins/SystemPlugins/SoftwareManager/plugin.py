@@ -18,6 +18,7 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Pixmap import Pixmap
 from Components.MenuList import MenuList
 from Components.Sources.List import List
+from Components.SystemInfo import BoxInfo
 from Components.Harddisk import harddiskmanager
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
 from Components.ConfigList import ConfigListScreen
@@ -35,6 +36,9 @@ from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListbox, gFont, getDesktop
 from twisted.web import client
 from Plugins.SystemPlugins.SoftwareManager.BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
 from Plugins.SystemPlugins.SoftwareManager.SoftwareTools import iSoftwareTools
+import six
+
+boxtype = BoxInfo.getItem("model")
 
 config.plugins.configurationbackup = ConfigSubsection()
 config.plugins.configurationbackup.backuplocation = ConfigText(default='/media/hdd/', visible_width=50, fixed_size=False)
@@ -82,9 +86,9 @@ def load_cache(cache_file):
 class UpdatePluginMenu(Screen):
 	skin = """
 		<screen name="UpdatePluginMenu" position="center,center" size="610,410" title="Software management" >
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<ePixmap pixmap="skin_default/border_menu_350.png" position="5,50" zPosition="1" size="350,300" transparent="1" alphatest="on" />
+			<ePixmap pixmap="border_menu_350.png" position="5,50" zPosition="1" size="350,300" transparent="1" alphatest="on" />
 			<widget source="menu" render="Listbox" position="15,60" size="330,290" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
 					{"template": [
@@ -214,7 +218,7 @@ class UpdatePluginMenu(Screen):
 
 	def getUpdateInfos(self):
 		if iSoftwareTools.NetworkConnectionAvailable is True:
-			if iSoftwareTools.available_updates != 0:
+			if iSoftwareTools.available_updates is not 0:
 				self.text = _("There are at least %d updates available.") % iSoftwareTools.available_updates
 			else:
 				self.text = "" #_("There are no updates available.")
@@ -631,7 +635,7 @@ class PluginManager(Screen, PackageInfoHandler):
 	def getUpdateInfosCB(self, retval=None):
 		if retval is not None:
 			if retval is True:
-				if iSoftwareTools.available_updates != 0:
+				if iSoftwareTools.available_updates is not 0:
 					self["status"].setText(_("There are at least %d updates available.") % iSoftwareTools.available_updates)
 				else:
 					self["status"].setText(_("There are no updates available."))
@@ -675,9 +679,9 @@ class PluginManager(Screen, PackageInfoHandler):
 						self["key_green"].setText("")
 				self["key_yellow"].setText(_("View details"))
 				self["key_blue"].setText("")
-				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates != 0:
+				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates is not 0:
 					self["status"].setText(_("There are at least %d updates available.") % iSoftwareTools.available_updates)
-				elif len(self.selectedFiles) != 0:
+				elif len(self.selectedFiles) is not 0:
 					self["status"].setText(ngettext("%d package selected.", "%d packages selected.", len(self.selectedFiles)) % len(self.selectedFiles))
 				else:
 					self["status"].setText(_("There are currently no outstanding actions."))
@@ -686,10 +690,10 @@ class PluginManager(Screen, PackageInfoHandler):
 				self["key_green"].setText("")
 				self["key_yellow"].setText("")
 				self["key_blue"].setText("")
-				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates != 0:
+				if len(self.selectedFiles) == 0 and iSoftwareTools.available_updates is not 0:
 					self["status"].setText(_("There are at least %d updates available.") % iSoftwareTools.available_updates)
 					self["key_yellow"].setText(_("Update"))
-				elif len(self.selectedFiles) != 0:
+				elif len(self.selectedFiles) is not 0:
 					self["status"].setText(ngettext("%d package selected.", "%d packages selected.", len(self.selectedFiles)) % len(self.selectedFiles))
 					self["key_yellow"].setText(_("Process"))
 				else:
@@ -709,7 +713,7 @@ class PluginManager(Screen, PackageInfoHandler):
 				selectedTag = current[2]
 				self.buildPacketList(selectedTag)
 			elif self.currList == "packages":
-				if current[7] != '':
+				if current[7] is not '':
 					idx = self["list"].getIndex()
 					detailsFile = self.list[idx][1]
 					if self.list[idx][7] == True:
@@ -751,7 +755,7 @@ class PluginManager(Screen, PackageInfoHandler):
 		current = self["list"].getCurrent()
 		if current:
 			if self.currList == "packages":
-				if current[7] != '':
+				if current[7] is not '':
 					detailsfile = iSoftwareTools.directory[0] + "/" + current[1]
 					if (os.path.exists(detailsfile) == True):
 						self.saved_currentSelectedPackage = self.currentSelectedPackage
@@ -1559,7 +1563,7 @@ class PacketManager(Screen, NumericalTextInput):
 				self.setNextIdx(keyvalue[0])
 
 	def keyGotAscii(self):
-		keyvalue = unichr(getPrevAsciiCode()).encode("utf-8")
+		keyvalue = six.unichr(getPrevAsciiCode()).encode("utf-8")
 		if len(keyvalue) == 1:
 			self.setNextIdx(keyvalue[0])
 
@@ -1694,26 +1698,21 @@ class PacketManager(Screen, NumericalTextInput):
 
 	def OpkgList_Finished(self, result, retval, extra_args=None):
 		if result:
+			result = six.ensure_str(result)
+			result = result.replace('\n ', ' - ')
 			self.packetlist = []
 			last_name = ""
 			for x in result.splitlines():
-				if ' - ' in x:
-					tokens = x.split(' - ')
-					name = tokens[0].strip()
-					if name and not any(name.endswith(x) for x in self.unwanted_extensions):
-						l = len(tokens)
-						version = l > 1 and tokens[1].strip() or ""
-						descr = l > 2 and tokens[2].strip() or ""
-						if name == last_name:
-							continue
-						last_name = name
-						self.packetlist.append([name, version, descr])
-				elif len(self.packetlist) > 0:
-					# no ' - ' in the text, assume that this is the description
-					# therefore add this text to the last packet description
-					last_packet = self.packetlist[-1]
-					last_packet[2] = last_packet[2] + x
-					self.packetlist[:-1] + last_packet
+				tokens = x.split(' - ')
+				name = tokens[0].strip()
+				if not any((name.endswith(x) or name.find('locale') != -1) for x in self.unwanted_extensions):
+					l = len(tokens)
+					version = l > 1 and tokens[1].strip() or ""
+					descr = l > 3 and tokens[3].strip() or l > 2 and tokens[2].strip() or ""
+					if name == last_name:
+						continue
+					last_name = name
+					self.packetlist.append([name, version, descr])
 
 		if not self.Console:
 			self.Console = Console()
@@ -1722,6 +1721,7 @@ class PacketManager(Screen, NumericalTextInput):
 
 	def OpkgListInstalled_Finished(self, result, retval, extra_args=None):
 		if result:
+			result = six.ensure_str(result)
 			self.installed_packetlist = {}
 			for x in result.splitlines():
 				tokens = x.split(' - ')
@@ -1737,6 +1737,7 @@ class PacketManager(Screen, NumericalTextInput):
 
 	def OpkgListUpgradeable_Finished(self, result, retval, extra_args=None):
 		if result:
+			result = six.ensure_str(result)
 			self.upgradeable_packages = {}
 			for x in result.splitlines():
 				tokens = x.split(' - ')
