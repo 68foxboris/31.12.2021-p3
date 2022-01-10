@@ -134,8 +134,8 @@ class LogManagerPoller:
 		self.TrimTimer.startLongTimer(3600) #once an hour
 
 	def JobTrash(self):
-		ctimeLimit = time() - (config.crash.daysloglimit.value * 3600 * 24)
-		allowedBytes = 1024 * 1024 * int(config.crash.sizeloglimit.value)
+		ctimeLimit = int(time()) - int(config.crash.daysloglimit.value * 3600 * 24)
+		allowedBytes = 1024*1024 * int(config.crash.sizeloglimit.value)
 
 		mounts = []
 		matches = []
@@ -193,7 +193,7 @@ class LogManagerPoller:
 					candidates.sort()
 					# Now we have a list of ctime, candidates, size. Sorted by ctime (=deletion time)
 					for st_ctime, fn, st_size in candidates:
-						print("[LogManager] " + str(logsfolder) + ": bytesToRemove", bytesToRemove)
+						print(("[LogManager] " + str(logsfolder) + ": bytesToRemove", bytesToRemove))
 						if bytesToRemove < 0:
 							break
 						eBackgroundFileEraser.getInstance().erase(fn)

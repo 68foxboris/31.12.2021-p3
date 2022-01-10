@@ -705,13 +705,13 @@ class RecordTimerEntry(TimerEntry, object):
 	@staticmethod
 	def setWasInDeepStandby():
 		RecordTimerEntry.wasInDeepStandby = True
-		eActionMap.getInstance().bindAction("", -maxsize - 1, RecordTimerEntry.keypress)
+		eActionMap.getInstance().bindAction("", -sys.maxsize - 1, RecordTimerEntry.keypress)
 
 	@staticmethod
 	def setWasInStandby():
 		if not RecordTimerEntry.wasInStandby:
 			if not RecordTimerEntry.wasInDeepStandby:
-				eActionMap.getInstance().bindAction("", -maxsize - 1, RecordTimerEntry.keypress)
+				eActionMap.getInstance().bindAction("", -sys.maxsize - 1, RecordTimerEntry.keypress)
 			RecordTimerEntry.wasInDeepStandby = False
 			RecordTimerEntry.wasInStandby = True
 

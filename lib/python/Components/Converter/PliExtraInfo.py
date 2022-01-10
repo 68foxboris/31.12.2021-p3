@@ -1,4 +1,6 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 # shamelessly copied from pliExpertInfo (Vali, Mirakels, Littlesat)
 
 from enigma import iServiceInformation, iPlayableService

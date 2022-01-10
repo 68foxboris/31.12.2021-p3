@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from input import inputChoices
 
@@ -21,7 +23,6 @@ class datasource:
 
 	def printAll(self):
 		for sat in self.transponderlist.keys():
-			print("***********")
 			print("[datasource] sat:", sat, self.satnames[sat])
 			for transponder in self.transponderlist[sat]:
 				print(transponder)
@@ -83,10 +84,10 @@ class genericdatasource(datasource):
 			print("[datasource] select a destination first!")
 		else:
 			if action == "copy":
-				print("[datasource] copying ",)
+				print("[datasource] copying ")
 			elif action == "merge":
 				print("[datasource] merging ")
-			print("from %s to %s" % (self.source.getName(), self.destination.getName()))
+			print("[datasource] from %s to %s" % (self.source.getName(), self.destination.getName()))
 			countsat = 0
 			counttransponder = 0
 			if action == "copy":

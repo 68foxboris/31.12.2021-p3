@@ -1944,7 +1944,7 @@ class Config(ConfigSubsection):
 			print("[Config] Config: Couldn't write %s" % filename)
 
 	def loadFromFile(self, filename, base_file=True):
-		self.unpickle(open(filename, "r"), base_file)
+		self.unpickle(open(filename, "r", encoding="UTF-8"), base_file)
 
 
 config = Config()

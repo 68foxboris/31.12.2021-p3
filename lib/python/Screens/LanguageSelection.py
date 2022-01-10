@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
@@ -41,7 +43,6 @@ class LanguageSelection(Screen):
 			"ok": self.save,
 			"cancel": self.cancel,
 		}, -1)
-
 
 	def selectActiveLanguage(self):
 		pos = 0

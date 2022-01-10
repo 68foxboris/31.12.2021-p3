@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from Components.ActionMap import ActionMap
 from Components.config import getConfigListEntry, config, ConfigSubsection, ConfigText, ConfigSelection, ConfigInteger, ConfigClock, NoSave
 from Components.ConfigList import ConfigListScreen
@@ -12,7 +14,7 @@ from Screens.MessageBox import MessageBox
 from Tools.Directories import fileExists
 from os import system, listdir, rename, path, mkdir
 from time import sleep
-import six
+from six import PY3
 
 
 class CronTimers(Screen):

@@ -1,10 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 #
 # create links for picon
 #   usage: create_picon_links lamedb
 # run in picon directory.
 # It will read the servicenames from the lamedb and create symlinks
 # for the servicereference names.
-from __future__ import print_function
+
 import os
 import sys
 

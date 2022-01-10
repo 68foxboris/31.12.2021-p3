@@ -500,7 +500,7 @@ class Wizard(Screen):
 		self.condition = True
 		exec(self.wizard[self.currStep]["condition"])
 		if not self.condition:
-			print("[Wizard] keys*******************:", self.wizard[self.currStep].keys())
+			print("[Wizard] keys*******************:", list(self.wizard[self.currStep].keys()))
 			if "laststep" in self.wizard[self.currStep]: # exit wizard, if condition of laststep doesn't hold
 				self.markDone()
 				self.exit()
@@ -608,6 +608,7 @@ class Wizard(Screen):
 								self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"], eval(self.wizard[self.currStep]["config"]["args"]))
 							except:
 								self.configInstance = self.session.instantiateDialog(self.wizard[self.currStep]["config"]["screen"], self.wizard[self.currStep]["config"]["args"])
+						self.configInstance.setAnimationMode(0)
 						self["config"].l.setList(self.configInstance["config"].list)
 						callbacks = self.configInstance["config"].onSelectionChanged
 						self.configInstance["config"].destroy()

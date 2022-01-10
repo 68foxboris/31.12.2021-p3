@@ -1,6 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
 from enigma import eConsoleAppContainer
+from Components.config import config
 from Components.Harddisk import harddiskmanager
 from Tools.Directories import resolveFilename, SCOPE_LIBDIR
 
@@ -186,7 +189,7 @@ class OpkgComponent:
 
 	def cmdData(self, data):
 		data = data.decode()
-		print("data:", data)
+		print("[Opkg] data:", data)
 		if self.cache is None:
 			self.cache = data
 		else:

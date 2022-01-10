@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 # don't expect too much.
 # this is a really simple&stupid svg parser, which will use rectangles
 # and text fields to produce <widget> snippets for a skin.
@@ -8,7 +10,7 @@
 # text. otherwise, width and height are unknown.
 #
 # tested only with a single inkscape-generated SVG.
-from __future__ import print_function
+
 import sys
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler

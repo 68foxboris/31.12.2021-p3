@@ -3,7 +3,7 @@ from os import _exit, listdir, remove, system
 from os.path import isdir, join as pathjoin
 from shutil import rmtree
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.Setup import Setup
 from Components.ActionMap import ActionMap
 from Components.config import ConfigYesNo, config, ConfigSubsection, getConfigListEntry

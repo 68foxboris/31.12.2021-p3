@@ -28,6 +28,7 @@ from Screens.Screen import Screen
 from Tools.Directories import fileExists, pathExists
 from Tools.Geolocation import geolocation
 from Tools.StbHardware import getFPVersion, getBoxProc, getBoxProcType, getHWSerial, getBoxRCType
+import six
 
 
 class About(Screen):
@@ -362,7 +363,7 @@ class Devices(Screen):
 					continue
 				else:
 					freeline = _("Free: ") + _("full")
-				line = "%s      %s" % (hddp, freeline)
+				line = "%s      %s" %(hddp, freeline)
 				self.list.append(line)
 		self.list = '\n'.join(self.list)
 		self["hdd"].setText(self.list)
@@ -509,27 +510,25 @@ class SystemNetworkInfo(Screen):
 		self.AboutText += "\n"
 		if isp is not None:
 			if isporg is not None:
-				self.AboutText += _("ISP: ") + isp + " " + "(" + isporg + ")" + "\n"
+				self.AboutText += _("ISP: ") + "\t" + "\t" + isp + " " + "(" + isporg + ")" + "\n"
 			else:
-				self.AboutText += _("ISP: ") + isp + "\n"
+				self.AboutText +=  "\n" + _("ISP: ") + "\t" + "\t" + isp + "\n"
 
 		mobile = geolocationData.get("mobile", False)
 		if mobile is not False:
-			self.AboutText += _("Mobile: ") + _("Yes") + "\n"
+			self.AboutText += _("Mobile: ") + "\t" + "\t" + _("Yes") + "\n"
 		else:
-			self.AboutText += _("Mobile: ") + _("No") + "\n"
+			self.AboutText += _("Mobile: ") + "\t" + "\t" + _("No") + "\n"
 
 		proxy = geolocationData.get("proxy", False)
 		if proxy is not False:
-			self.AboutText += _("Proxy: ") + _("Yes") + "\n"
+			self.AboutText += _("Proxy: ") + "\t" + "\t" + _("Yes") + "\n"
 		else:
-			self.AboutText += _("Proxy: ") + _("No") + "\n"
+			self.AboutText += _("Proxy: ") + "\t" + "\t" + _("No") + "\n"
 
 		publicip = geolocationData.get("query", None)
 		if str(publicip) != "":
-			self.AboutText += _("Public IP: ") + str(publicip) + "\n"
-
-		self.AboutText += "\n"
+			self.AboutText +=  _("Public IP: ") + "\t" + "\t" + str(publicip) + "\n" + "\n"
 
 		self.console = Console()
 		self.console.ePopen('ethtool %s' % self.iface, self.SpeedFinished)
@@ -542,11 +541,10 @@ class SystemNetworkInfo(Screen):
 		for line in result_tmp:
 			if 'Speed:' in line:
 				speed = line.split(': ')[1][:-4]
-				self.AboutText += _("Speed:") + "\t" + speed + _('Mb/s')
+				self.AboutText += _("Speed:") + "\t" + "\t" + speed + _('Mb/s')
 
 		hostname = open('/proc/sys/kernel/hostname').read()
-		self.AboutText += "\n"
-		self.AboutText += _("Hostname:") + "\t" + hostname + "\n"
+		self.AboutText += "\n" + _("Hostname:") + "\t" + "\t" + hostname + "\n"
 		self["AboutScrollLabel"].setText(self.AboutText)
 
 	def cleanup(self):
@@ -702,7 +700,7 @@ class SystemMemoryInfo(Screen):
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"], {
 			"cancel": self.close,
 			"ok": self.close,
-			"red": self.close
+			"red": self.close,
 		})
 
 		out_lines = open("/proc/meminfo").readlines()
@@ -713,22 +711,22 @@ class SystemMemoryInfo(Screen):
 			tstLine = out_lines[lidx].split()
 			if "MemTotal:" in tstLine:
 				MemTotal = out_lines[lidx].split()
-				self.AboutText += _("Total memory:") + "\t" + MemTotal[1] + "\n"
+				self.AboutText += _("Total memory:") + "\t" + "\t" + MemTotal[1] + "\n"
 			if "MemFree:" in tstLine:
 				MemFree = out_lines[lidx].split()
-				self.AboutText += _("Free memory:") + "\t" + MemFree[1] + "\n"
+				self.AboutText += _("Free memory:") + "\t" + "\t" + MemFree[1] + "\n"
 			if "Buffers:" in tstLine:
 				Buffers = out_lines[lidx].split()
-				self.AboutText += _("Buffers:") + "\t" + Buffers[1] + "\n"
+				self.AboutText += _("Buffers:") + "\t" + "\t" + Buffers[1] + "\n"
 			if "Cached:" in tstLine:
 				Cached = out_lines[lidx].split()
-				self.AboutText += _("Cached:") + "\t" + Cached[1] + "\n"
+				self.AboutText += _("Cached:") + "\t" + "\t" + Cached[1] + "\n"
 			if "SwapTotal:" in tstLine:
 				SwapTotal = out_lines[lidx].split()
-				self.AboutText += _("Total swap:") + "\t" + SwapTotal[1] + "\n"
+				self.AboutText += _("Total swap:") + "\t" + "\t" + SwapTotal[1] + "\n"
 			if "SwapFree:" in tstLine:
 				SwapFree = out_lines[lidx].split()
-				self.AboutText += _("Free swap:") + "\t" + SwapFree[1] + "\n\n"
+				self.AboutText += _("Free swap:") + "\t" + "\t" + SwapFree[1] + "\n\n"
 
 		self["actions"].setEnabled(False)
 		self.Console = Console()
@@ -831,7 +829,6 @@ class CommitInfo(Screen):
 		commitlog = ""
 		from datetime import datetime
 		from json import loads
-		from urllib.request import urlopen
 		try:
 			commitlog += 80 * '-' + '\n'
 			commitlog += url.split('/')[-2] + '\n'
@@ -839,9 +836,15 @@ class CommitInfo(Screen):
 			try:
 				# OpenPli 5.0 uses python 2.7.11 and here we need to bypass the certificate check
 				from ssl import _create_unverified_context
-				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				if PY2:
+					log = loads(urllib2.urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				else:
+					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
 			except:
-				log = loads(urlopen(url, timeout=5).read())
+				if PY2:
+					log = loads(urllib2.urlopen(url, timeout=5).read())
+				else:
+					log = loads(urllib.request.urlopen(url, timeout=5).read())
 			for c in log:
 				creator = c['commit']['author']['name']
 				title = c['commit']['message']
@@ -1039,7 +1042,7 @@ class Troubleshoot(Screen):
 		else:
 			try:
 				if self.container.execute(command):
-					raise Exception("failed to execute: " + command)
+					raise Exception("failed to execute: ").with_traceback(command)
 			except Exception as e:
 				self["AboutScrollLabel"].setText("%s\n%s" % (_("An error occurred - Please try again later"), e))
 

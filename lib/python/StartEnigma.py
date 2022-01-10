@@ -175,7 +175,7 @@ had = dict()
 
 def dump(dir, p=""):
 	if isinstance(dir, dict):
-		for (entry, val) in dir.items():
+		for (entry, val) in list(dir.items()):
 			dump(val, p + "(dict)/" + entry)
 	if hasattr(dir, "__dict__"):
 		for name, value in dir.__dict__.items():

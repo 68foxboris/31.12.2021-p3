@@ -40,7 +40,7 @@ class eTimer:
 		timers.remove(self)
 
 	def __repr__(self):
-		return("<eTimer timeout=%s next_activation=%s singleshot=%s>" % (repr(self.timeout), repr(self.next_activation), repr(self.singleshot)))
+		return "<eTimer timeout=%s next_activation=%s singleshot=%s>" % (repr(self.timeout), repr(self.next_activation), repr(self.singleshot))
 
 	def do(self):
 		if self.singleshot:

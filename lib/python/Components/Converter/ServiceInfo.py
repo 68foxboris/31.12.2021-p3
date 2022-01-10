@@ -190,11 +190,17 @@ class ServiceInfo(Converter):
 						elif self.type == self.IS_HD:
 							return self.videoHeight >= 720 and self.videoHeight < 1500
 						elif self.type == self.IS_4K:
-							return self.videoHeight >= 1500
+							return self.videoHeight >= 1500 and self.videoHeight <= 2160
 						elif self.type == self.IS_1080:
 							return self.videoHeight > 1000 and self.videoHeight <= 1080
 						elif self.type == self.IS_720:
-							return self.videoHeight == 720
+							return self.videoHeight > 700 and self.videoHeight <= 720
+						elif self.type == self.IS_576:
+							return self.videoHeight > 500 and self.videoHeight <= 576
+						elif self.type == self.IS_480:
+							return self.videoHeight > 0 and self.videoHeight <= 480
+						elif self.type == self.IS_HDHDR:
+							return self.videoHeight > 721 and self.videoHeight <= 1980
 						else:
 							aspect = info.getInfo(iServiceInformation.sAspect)
 							self.aspect = aspect if aspect > -1 else self.aspect

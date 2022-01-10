@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
 import re
@@ -309,9 +311,11 @@ class Network:
 		return self.ifaces.keys()
 
 	def getAdapterAttribute(self, iface, attribute):
-		if not self.ifaces[iface]['up']:
+		result = self.ifaces.get(iface, {}).get(attribute)
+		if not result:
 			self.getAddrInet(iface, callback=None)
-		return self.ifaces.get(iface, {}).get(attribute)
+			result = self.ifaces.get(iface, {}).get(attribute)
+		return result
 
 	def setAdapterAttribute(self, iface, attribute, value):
 		print("setting for adapter", iface, "attribute", attribute, " to value", value)

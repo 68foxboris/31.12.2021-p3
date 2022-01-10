@@ -7,7 +7,7 @@ recorded_events = []
 
 def event(self, name, args, kwargs):
 	global recorded_events
-	print "*EVENT*", time.time(), self, name, args, kwargs
+	print("[events] *EVENT*", time.time(), self, name, args, kwargs)
 	recorded_events.append((time.time(), self, name, args, kwargs))
 
 
@@ -52,7 +52,7 @@ def end_log(test_name):
 		f.write(results)
 		f.close()
 
-	print results
+	print(results)
 
 	if expected is not None:
 		print("[events] expected:")

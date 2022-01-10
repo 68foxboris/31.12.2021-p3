@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
 from Screens.Screen import Screen
@@ -239,7 +241,7 @@ class NameserverSetup(Screen, ConfigListScreen, HelpableScreen):
 			"yellow": (self.remove, _("Remove a nameserver entry")),
 			})
 
-		self["actions"] = NumberActionMap(["SetupActions"],
+		self["actions"] = NumberActionMap(self, ["SetupActions"],
 		{
 			"ok": self.ok,
 		}, -2)
