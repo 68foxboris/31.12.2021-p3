@@ -23,9 +23,9 @@ class HardwareInfo:
 
 		self.device_version = fileReadLine("/proc/stb/info/version", "", source=MODULE_NAME).strip()
 		self.device_revision = fileReadLine("/proc/stb/info/board_revision", "", source=MODULE_NAME).strip()
-		self.device_name = BoxInfo.get("model")
-		self.device_brandname = BoxInfo.get("brand")
-		self.device_model = BoxInfo.get("model")
+		self.device_name = BoxInfo.getItem("model")
+		self.device_brandname = BoxInfo.getItem("brand")
+		self.device_model = BoxInfo.getItem("model")
 		self.device_model = self.device_model or self.device_name
 		self.device_hw = self.device_model
 		self.machine_name = self.device_model
@@ -35,7 +35,7 @@ class HardwareInfo:
 			self.device_string = "%s (%s)" % (self.device_hw, self.device_version)
 		else:
 			self.device_string = self.device_hw
-		self.device_hdmi = BoxInfo.get("hdmi")  # Only some early DMM boxes do not have HDMI hardware.
+		self.device_hdmi = BoxInfo.getItem("hdmi")  # Only some early DMM boxes do not have HDMI hardware.
 		print("[HardwareInfo] Detected: '%s'." % self.get_device_string())
 
 	def get_device_name(self):
@@ -54,7 +54,7 @@ class HardwareInfo:
 		return hw_info.device_string
 
 	def get_machine_name(self):
-		return hw_info.device_name
+		return hw_info.machine_name
 
 	def has_hdmi(self):
 		return hw_info.device_hdmi

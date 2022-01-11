@@ -1342,7 +1342,7 @@ class NetworkAdapterTest(Screen):
 			iNetwork.getLinkState(iface, self.LinkStatedataAvail)
 
 	def LinkStatedataAvail(self, data):
-		for item in data.splitlines():
+		for item in data.decode().splitlines():
 			if "Link detected:" in item:
 				if "yes" in item:
 					self["Network"].setForegroundColorNum(2)
