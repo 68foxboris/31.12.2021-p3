@@ -279,6 +279,7 @@ class Menu(Screen, ProtectedScreen):
 	def __init__(self, session, parent):
 		self.parentmenu = parent
 		Screen.__init__(self, session)
+		self.menulength = 0
 		self["key_blue"] = StaticText("")
 		self["menu"] = List([])
 		self["menu"].enableWrapAround = True
@@ -468,7 +469,11 @@ class Menu(Screen, ProtectedScreen):
 		if config.usage.menu_show_numbers.value in ("menu&plugins", "menu") or showNumericHelp:
 			self.list = [(str(x[0] + 1) + " " + x[1][0], x[1][1], x[1][2]) for x in enumerate(self.list)]
 
-		self["menu"].setList(self.list)
+		if self.menulength != len(self.list): # updateList must only be used on a list of the same length. If length is different we call setList.
+			self["menu"].setList(self.list)
+			self.menulength = len(self.list)
+
+		self["menu"].updateList(self.list)
 
 	def keyNumberGlobal(self, number):
 		self.number = self.number * 10 + number
