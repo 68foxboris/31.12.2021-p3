@@ -1,7 +1,6 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function
 from Plugins.Plugin import PluginDescriptor
-from Plugins.Extensions.SocketMMI.SocketMMI import SocketMMIMessageHandler
+from . SocketMMI import SocketMMIMessageHandler
 
 socketHandler = None
 
