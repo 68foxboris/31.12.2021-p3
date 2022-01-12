@@ -267,11 +267,11 @@ class RecordTimer(Timer):
 		return self.saveTimers()
 
 	def createTimer(self, timerDom):
-		serviceReference = ServiceReference(timerDom.get("serviceref").encode("UTF-8"))
+		serviceReference = ServiceReference(timerDom.get("serviceref"))
 		begin = int(timerDom.get("begin"))
 		end = int(timerDom.get("end"))
-		name = timerDom.get("name").encode("UTF-8")
-		description = timerDom.get("description").encode("UTF-8")
+		name = timerDom.get("name")
+		description = timerDom.get("description")
 		eit = timerDom.get("eit")
 		eit = int(eit) if eit and eit != "None" else None
 		disabled = bool(int(timerDom.get("disabled", False)))
@@ -294,14 +294,14 @@ class RecordTimer(Timer):
 		renameRepeat = bool(int(timerDom.get("rename_repeat", True)))
 		conflictDetection = bool(int(timerDom.get("conflict_detection", True)))
 		pipZap = bool(int(timerDom.get("pipzap", False)))
-		# filename = timerDom.get("filename").encode("UTF-8")
+		# filename = timerDom.get("filename")
 		entry = RecordTimerEntry(serviceReference, begin, end, name, description, eit, disabled, justPlay, afterEvent, dirname=location, tags=tags, descramble=descramble, record_ecm=recordEcm, isAutoTimer=isAutoTimer, always_zap=alwaysZap, zap_wakeup=zapWakeup, rename_repeat=renameRepeat, conflict_detection=conflictDetection, pipzap=pipZap)
 		entry.repeated = bool(int(timerDom.get("repeated", False)))
 		flags = timerDom.get("flags")
 		if flags:
-			entry.flags = set(flags.encode("UTF-8").split(" "))
+			entry.flags = set(flags.split(" "))
 		for log in timerDom.findall("log"):
-			entry.log_entries.append((int(log.get("time")), int(log.get("code")), log.text.strip().encode("UTF-8")))
+			entry.log_entries.append((int(log.get("time")), int(log.get("code")), log.text.strip()))
 		return entry
 
 	def doActivate(self, w):

@@ -943,7 +943,7 @@ class AdapterSetupConfiguration(Screen, HelpableScreen):
 	def dataAvail(self, data):
 		self.LinkState = None
 		for line in data.splitlines():
-			line = line.strip().decode()
+			line = line.strip()
 			if 'Link detected:' in line:
 				if "yes" in line:
 					self.LinkState = True
@@ -1342,7 +1342,7 @@ class NetworkAdapterTest(Screen):
 			iNetwork.getLinkState(iface, self.LinkStatedataAvail)
 
 	def LinkStatedataAvail(self, data):
-		for item in data.decode().splitlines():
+		for item in data.splitlines():
 			if "Link detected:" in item:
 				if "yes" in item:
 					self["Network"].setForegroundColorNum(2)
