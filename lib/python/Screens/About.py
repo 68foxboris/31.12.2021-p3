@@ -374,7 +374,7 @@ class Devices(Screen):
 		if PY2:
 			result = result.replace('\n                        ', ' ').split('\n')
 		else:
-			result = result.decode().replace('\n                        ', ' ').split('\n')
+			result = result.replace('\n                        ', ' ').split('\n')
 		self.mountinfo = ""
 		for line in result:
 			self.parts = line.split()
@@ -537,7 +537,7 @@ class SystemNetworkInfo(Screen):
 		if PY2:
 			result_tmp = result.split('\n')
 		else:
-			result_tmp = result.decode().split('\n')
+			result_tmp = result.split('\n')
 		for line in result_tmp:
 			if 'Speed:' in line:
 				speed = line.split(': ')[1][:-4]
@@ -656,8 +656,7 @@ class SystemNetworkInfo(Screen):
 		self["devicepic"].show()
 
 	def dataAvail(self, data):
-		if PY3:
-			data = data.decode()
+		data = six.ensure_str(data)
 		self.LinkState = None
 		for line in data.splitlines():
 			line = line.strip()
