@@ -1,6 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 # shamelessly copied from pliExpertInfo (Vali, Mirakels, Littlesat)
 
 from enigma import iServiceInformation, iPlayableService
@@ -217,7 +215,7 @@ class PliExtraInfo(Poll, Converter):
 		frequency = feraw.get("frequency")
 		if frequency:
 			if "DVB-T" in feraw.get("tuner_type"):
-				return str(int(frequency / 1000000. + 0.5))
+				return "%d %s" % (int(frequency / 1000000. + 0.5), _("MHz"))
 			else:
 				return str(int(frequency / 1000 + 0.5))
 		return ""
@@ -271,10 +269,11 @@ class PliExtraInfo(Poll, Converter):
 
 	def createOrbPos(self, feraw):
 		orbpos = feraw.get("orbital_position")
-		if orbpos > 1800:
-			return _("%.1f° W") % ((3600 - orbpos) / 10.0)
-		elif orbpos > 0:
-			return _("%.1f° E") % (orbpos / 10.0)
+		if orbpos:
+			if orbpos > 1800:
+				return _("%.1f° W") % ((3600 - orbpos) / 10.0)
+			elif orbpos > 0:
+				return _("%.1f° E") % (orbpos / 10.0)
 		return ""
 
 	def createOrbPosOrTunerSystem(self, fedata, feraw):
@@ -288,12 +287,15 @@ class PliExtraInfo(Poll, Converter):
 
 	def createMisPls(self, fedata):
 		tmp = ""
-		if fedata.get("is_id") > -1:
-			tmp = "MIS %d" % fedata.get("is_id")
-		if fedata.get("pls_code") > 0:
-			tmp = addspace(tmp) + "%s %d" % (fedata.get("pls_mode"), fedata.get("pls_code"))
-		if fedata.get("t2mi_plp_id") > -1:
-			tmp = addspace(tmp) + "T2MI %d PID %d" % (fedata.get("t2mi_plp_id"), fedata.get("t2mi_pid"))
+		if fedata.get("is_id"):
+			if fedata.get("is_id") > -1:
+				tmp = "MIS %d" % fedata.get("is_id")
+		if fedata.get("pls_code"):
+			if fedata.get("pls_code") > 0:
+				tmp = addspace(tmp) + "%s %d" % (fedata.get("pls_mode"), fedata.get("pls_code"))
+		if fedata.get("t2mi_plp_id"):
+			if fedata.get("t2mi_plp_id") > -1:
+				tmp = addspace(tmp) + "T2MI %d PID %d" % (fedata.get("t2mi_plp_id"), fedata.get("t2mi_pid"))
 		return tmp
 
 	@cached

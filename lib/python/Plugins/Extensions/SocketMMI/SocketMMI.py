@@ -1,5 +1,5 @@
 from Screens.Ci import MMIDialog
-from . import socketmmi
+import socketmmi
 
 
 class SocketMMIMessageHandler:
