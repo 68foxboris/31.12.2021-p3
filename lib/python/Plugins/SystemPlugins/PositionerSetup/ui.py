@@ -27,8 +27,8 @@ from random import SystemRandom as SystemRandom
 from threading import Thread as Thread
 from threading import Event as Event
 
-import log
-import rotor_calc
+from . import log
+from . import rotor_calc
 
 
 class PositionerSetup(Screen):
@@ -534,13 +534,13 @@ class PositionerSetup(Screen):
 			self.blue.setText(_("Limits on"))
 		elif entry == "storage":
 			self.red.setText("")
-			if self.getUsals() is False:
+			if self.getUsals():
 				self.green.setText(_("Store position"))
 				self.yellow.setText(_("Goto position"))
 			else:
 				self.green.setText("")
 				self.yellow.setText("")
-			if self.advanced and self.getUsals() is False:
+			if self.advanced and not self.getUsals():
 				self.blue.setText(_("Allocate"))
 			else:
 				self.blue.setText("")
@@ -635,7 +635,7 @@ class PositionerSetup(Screen):
 			self.diseqccommand("moveWest", 0xFF) # one step
 			self.statusMsg(_("Stepped west") + self.stepCourse(self.finesteps), timeout=self.STATUS_MSG_TIMEOUT)
 		elif entry == "storage":
-			if self.getUsals() is False:
+			if self.getUsals():
 				menu = [(_("yes"), "yes"), (_("no"), "no")]
 				available_orbos = False
 				orbos = None
@@ -692,7 +692,7 @@ class PositionerSetup(Screen):
 			self.diseqccommand("moveEast", 0xFF) # one step
 			self.statusMsg(_("Stepped east") + self.stepCourse(self.finesteps), timeout=self.STATUS_MSG_TIMEOUT)
 		elif entry == "storage":
-			if self.getUsals() is False:
+			if self.getUsals():
 				self.printMsg(_("Goto index position"))
 				index = int(self.positioner_storage.value)
 				self.diseqccommand("moveTo", index)
@@ -739,7 +739,7 @@ class PositionerSetup(Screen):
 			# Start (re-)calculate
 			self.session.openWithCallback(self.recalcConfirmed, MessageBox, _("This will (re-)calculate all positions of your rotor and may remove previously memorised positions and fine-tuning!\nAre you sure?"), MessageBox.TYPE_YESNO, default=False, timeout=10)
 		elif entry == "storage":
-			if self.advanced and self.getUsals() is False:
+			if self.advanced and not self.getUsals():
 				self.printMsg(_("Allocate unused memory index"))
 				while True:
 					if not len(self.allocatedIndices):
@@ -1050,9 +1050,9 @@ class PositionerSetup(Screen):
 			print((_("Lock ratio") + "     %5.1f" + chr(176) + "   : %6.2f") % (pos, lock), file=log)
 
 		def optimise(readings):
-			xi = readings.keys()
-			yi = list(map(lambda (x, y): x, readings.values()))
-			x0 = sum(list(map(mul, xi, yi)) / sum(yi))
+			xi = [*readings]
+			yi = list(map(lambda x: x[0], readings.values()))
+			x0 = sum(map(mul, xi, yi)) // sum(yi)
 			xm = xi[yi.index(max(yi))]
 			return (x0, xm)
 
@@ -1185,9 +1185,9 @@ class PositionerSetup(Screen):
 			print((_("Lock ratio") + " [%2d]       : %6.2f") % (pos, lock), file=log)
 
 		def optimise(readings):
-			xi = readings.keys()
-			yi = list(map(lambda (x, y): x, readings.values()))
-			x0 = int(round(sum(list(map(mul, xi, yi)) / sum(yi))))
+			xi = [*readings]
+			yi = list(map(lambda x[0]: x, readings.values()))
+			x0 = int(round(sum(map(mul, xi, yi)) / sum(yi)))
 			xm = xi[yi.index(max(yi))]
 			return (x0, xm)
 
@@ -1297,7 +1297,7 @@ class Diseqc:
 			else:
 				string = 'E03160' #positioner stop
 
-			print("diseqc command:",)
+			print("diseqc command:", end=' ')
 			print(string)
 			cmd.setCommandString(string)
 			self.frontend.setTone(iDVBFrontend.toneOff)

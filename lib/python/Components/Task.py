@@ -205,12 +205,12 @@ class Task(object):
 		pass
 
 	def processStdout(self, data):
-		self.processOutput(data)
+		self.processOutput(data.decode())
 
 	def processStderr(self, data):
 		self.processOutput(data)
 
-	def processOutput(self, data):
+	def processOutput(self, data.decode()):
 		self.output_line += data
 		while True:
 			i = self.output_line.find('\n')
@@ -383,13 +383,13 @@ class JobManager:
 				self.active_job.start(self.jobDone)
 
 	def notifyFailed(self, job, task, problems):
-		from Tools import Notifications
+		from Tools.Notifications import AddNotification, AddNotificationWithCallback
 		from Screens.MessageBox import MessageBox
 		if problems[0].RECOVERABLE:
-			Notifications.AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)))
+			AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)))
 			return True
 		else:
-			Notifications.AddNotification(MessageBox, job.name + "\n" + _("Error") + (': %s') % (problems[0].getErrorMessage(task)), type=MessageBox.TYPE_ERROR)
+			AddNotification(MessageBox, job.name + "\n" + _("Error") + (': %s') % (problems[0].getErrorMessage(task)), type=MessageBox.TYPE_ERROR)
 			return False
 
 	def jobDone(self, job, task, problems):
@@ -406,10 +406,10 @@ class JobManager:
 	# Set job.onSuccess to this function if you want to pop up the jobview when the job is done/
 	def popupTaskView(self, job):
 		if not self.visible:
-			from Tools import Notifications
+			from Tools.Notifications import AddNotification
 			from Screens.TaskView import JobView
 			self.visible = True
-			Notifications.AddNotification(JobView, job)
+			AddNotification(JobView, job)
 
 	def errorCB(self, answer):
 		if answer:

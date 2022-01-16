@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function
 from Plugins.Plugin import PluginDescriptor
-from SocketMMI import SocketMMIMessageHandler
+from .SocketMMI import SocketMMIMessageHandler
 
 socketHandler = None
 

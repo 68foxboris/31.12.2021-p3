@@ -39,7 +39,7 @@ from Screens.PictureInPicture import PictureInPicture
 from Screens.RdsDisplay import RassInteractive
 from ServiceReference import ServiceReference, service_types_tv_ref, service_types_radio_ref, serviceRefAppendPath
 from Tools.BoundFunction import boundFunction
-from Tools import Notifications
+from Tools.Notifications import RemovePopup
 from Tools.Alternatives import GetWithAlternative, CompareWithAlternatives
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
 from Plugins.Plugin import PluginDescriptor
@@ -2185,7 +2185,7 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 					self.mainScreenRoot = self.getRoot()
 				self.revertMode = None
 			else:
-				Notifications.RemovePopup("Parental control")
+				RemovePopup("Parental control")
 				self.setCurrentSelection(nref)
 		elif not self.dopipzap:
 			self.setStartRoot(self.curRoot)
