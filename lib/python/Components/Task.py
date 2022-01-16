@@ -208,9 +208,9 @@ class Task(object):
 		self.processOutput(data.decode())
 
 	def processStderr(self, data):
-		self.processOutput(data)
+		self.processOutput(data.decode())
 
-	def processOutput(self, data.decode()):
+	def processOutput(self, data):
 		self.output_line += data
 		while True:
 			i = self.output_line.find('\n')
@@ -383,7 +383,7 @@ class JobManager:
 				self.active_job.start(self.jobDone)
 
 	def notifyFailed(self, job, task, problems):
-		from Tools.Notifications import AddNotification, AddNotificationWithCallback
+		from Tools import AddNotification, AddNotificationWithCallback
 		from Screens.MessageBox import MessageBox
 		if problems[0].RECOVERABLE:
 			AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)))
@@ -406,7 +406,7 @@ class JobManager:
 	# Set job.onSuccess to this function if you want to pop up the jobview when the job is done/
 	def popupTaskView(self, job):
 		if not self.visible:
-			from Tools.Notifications import AddNotification
+			from Tools import AddNotification
 			from Screens.TaskView import JobView
 			self.visible = True
 			AddNotification(JobView, job)

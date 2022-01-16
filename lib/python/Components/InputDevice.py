@@ -17,8 +17,6 @@ from Tools.Directories import SCOPE_KEYMAPS, SCOPE_SKINS, fileReadLine, fileWrit
 from six import ensure_str
 MODULE_NAME = __name__.split(".")[-1]
 
-# BLACKLIST = ("dreambox front panel", "cec_input")  # Why was this being done?
-
 REMOTE_MODEL = 0
 REMOTE_RCTYPE = 1
 REMOTE_NAME = 2
@@ -116,7 +114,7 @@ class InputDevices:
 		oldVal = self.getDeviceAttribute(device, "enabled")
 		# print("[InputDevice] setDeviceEnabled for device '%s' to '%s' from '%s'." % (device,value,oldVal))
 		self.setDeviceAttribute(device, "enabled", value)
-		if oldval and not value:
+		if oldVal is True and value is False:
 			self.setDeviceDefaults(device)
 
 	def getDeviceName(self, device):
@@ -218,7 +216,7 @@ class RemoteControl:
 				codeName = remote.attrib.get("codeName")
 				displayName = remote.attrib.get("displayName")
 				if codeName and displayName:
-					print("[InputDevice] Adding remote control for '%s'." % displayName)
+					print("[InputDevice] Adding remote control identifier for '%s'." % displayName)
 					self.remotes.append((model, rcType, codeName, displayName))
 		self.remotes.insert(0, ("", "", "", _("Default")))
 		if BoxInfo.getItem("RemoteTypeZeroAllowed", False):

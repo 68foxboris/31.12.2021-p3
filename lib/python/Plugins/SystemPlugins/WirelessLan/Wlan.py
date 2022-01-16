@@ -71,9 +71,10 @@ class Wlan:
 	def getNetworkList(self):
 		if self.oldInterfaceState is None:
 			self.oldInterfaceState = iNetwork.getAdapterAttribute(self.iface, "up")
-		if self.oldInterfaceState is False:
-			if not self.oldInterfaceState:
+		if not self.oldInterfaceState:
+
 			if not iNetwork.getAdapterAttribute(self.iface, "up"):
+				iNetwork.setAdapterAttribute(self.iface, "up", True)
 				enigma.eConsoleAppContainer().execute("ifconfig %s up" % self.iface)
 				if existBcmWifi(self.iface):
 					enigma.eConsoleAppContainer().execute("wl up")
