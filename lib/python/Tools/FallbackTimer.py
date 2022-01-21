@@ -4,7 +4,7 @@ from Components.config import config
 from Screens.MessageBox import MessageBox
 from timer import TimerEntry as TimerObject
 from urllib.parse import quote
-import xml
+from xml.etree.ElementTree import fromstring
 from base64 import encodebytes
 
 
@@ -20,7 +20,7 @@ class FallbackTimerList():
 			if config.usage.remote_fallback_openwebif_customize.value:
 				self.url = "%s:%s" % (self.url, config.usage.remote_fallback_openwebif_port.value)
 				if config.usage.remote_fallback_openwebif_userid.value and config.usage.remote_fallback_openwebif_password.value:
-					self.headers = {"Authorization": "Basic %s" % encodebytes("%s:%s" % (config.usage.remote_fallback_openwebif_userid.value, config.usage.remote_fallback_openwebif_password.value)).strip()}
+					self.headers = {"Authorization": "Basic %s" % encodebytes(("%s:%s" % (config.usage.remote_fallback_openwebif_userid.value, config.usage.remote_fallback_openwebif_password.value)).encode("UTF-8")).strip()}
 			self.getFallbackTimerList()
 		else:
 			self.url = None
@@ -51,7 +51,7 @@ class FallbackTimerList():
 
 	def gotFallbackTimerList(self, data):
 		try:
-			root = xml.etree.cElementTree.fromstring(data)
+			root = fromstring(data)
 		except Exception as e:
 			self.fallback(e)
 		self.list = [
@@ -135,7 +135,7 @@ class FallbackTimerList():
 
 	def getUrlFallback(self, data):
 		try:
-			root = xml.etree.cElementTree.fromstring(data)
+			root = fromstring(data)
 			if root[0].text == 'True':
 				self.getFallbackTimerList()
 			else:
@@ -165,14 +165,14 @@ class FallbackTimerDirs(FallbackTimerList):
 			self.fallbackFunction()
 
 	def getlocations(self, data):
-		self.locations = [c.text for c in xml.etree.ElementTree.fromstring(data)]
+		self.locations = [c.text for c in fromstring(data)]
 		try:
 			self.getUrl("web/getcurrlocation").addCallback(self.getcurrlocation).addErrback(self.fallbackFunction)
 		except:
 			self.fallbackFunction()
 
 	def getcurrlocation(self, data):
-		currlocation = [c.text for c in xml.etree.ElementTree.fromstring(data)]
+		currlocation = [c.text for c in fromstring(data)]
 		if currlocation:
 			self.fallbackFunction(currlocation[0], self.locations)
 		else:

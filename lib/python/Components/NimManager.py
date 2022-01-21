@@ -12,7 +12,7 @@ from time import localtime, mktime
 from datetime import datetime
 from itertools import chain
 
-import xml.etree.cElementTree
+import xml.etree.ElementTree
 
 socfamily = BoxInfo.getItem("socfamily")
 
@@ -1470,7 +1470,7 @@ def InitNimManager(nimmgr, update_slots=[]):
 						section.format = ConfigSelection([("unicable", _("SCR Unicable")), ("jess", _("SCR JESS"))])
 						section.format.addNotifier(formatChanged)
 
-				unicable_xml = xml.etree.cElementTree.parse(eEnv.resolve("${datadir}/enigma2/unicable.xml")).getroot()
+				unicable_xml = xml.etree.ElementTree.parse(eEnv.resolve("${datadir}/enigma2/unicable.xml")).getroot()
 				unicableList = [("unicable_lnb", _("SCR (Unicable/JESS)") + " " + _("LNB")), ("unicable_matrix", _("SCR (Unicable/JESS)") + " " + _("Switch")), ("unicable_user", _("SCR (Unicable/JESS)") + " " + _("User defined"))]
 				if not config.unicable.content.items.get("unicable", False):
 					config.unicable.unicable = ConfigSelection(unicableList)
