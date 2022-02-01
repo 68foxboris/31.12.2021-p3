@@ -1,10 +1,10 @@
 import os
 import re
 import unicodedata
-from Renderer import Renderer
+from Components.Renderer.Renderer import Renderer
 from enigma import ePixmap, ePicLoad, eServiceCenter, eServiceReference, iServiceInformation
 from Tools.Alternatives import GetWithAlternative
-from Tools.Directories import pathExists, SCOPE_SKIN_IMAGE, SCOPE_GUISKIN, resolveFilename
+from Tools.Directories import pathExists, SCOPE_SKINS, SCOPE_GUISKIN, resolveFilename
 from Components.Harddisk import harddiskmanager
 from ServiceReference import ServiceReference
 from Components.config import config
@@ -29,11 +29,11 @@ def onMountpointAdded(mountpoint):
 		if os.path.isdir(path) and path not in searchPaths:
 			for fn in os.listdir(path):
 				if fn.endswith('.png') or fn.endswith('.svg'):
-					print "[Picon] adding path:", path
+					print("[Picon] adding path:", path)
 					searchPaths.append(path)
 					break
-	except Exception, ex:
-		print "[Picon] Failed to investigate %s:" % mountpoint, ex
+	except Exception as ex:
+		print("[Picon] Failed to investigate %s:" % mountpoint, ex)
 
 
 def onMountpointRemoved(mountpoint):
@@ -41,7 +41,7 @@ def onMountpointRemoved(mountpoint):
 	path = os.path.join(mountpoint, 'picon') + '/'
 	try:
 		searchPaths.remove(path)
-		print "[Picon] removed path:", path
+		print("[Picon] removed path:", path)
 	except:
 		pass
 
